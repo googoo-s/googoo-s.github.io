@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: googoo-s.github.io/sitemap.xml

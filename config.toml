@@ -1,4 +1,4 @@
-baseURL = "https://googoo-s.github.io"
+baseURL = "googoo-s.github.io"
 languageCode = "zh-CN"
 title = "googoo-s"
 theme = "hugo-PaperMod"
