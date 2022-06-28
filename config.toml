@@ -2,6 +2,7 @@ baseURL = "googoo-s.github.io"
 languageCode = "zh-CN"
 title = "googoo-s"
 theme = "hugo-PaperMod"
+publishDir = "docs"
 ignoreFiles = [ "\\.foo$", "\\.boo$" ]
 
 paginate = 5           # 每页显示的博文数量
