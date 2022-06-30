@@ -1,0 +1,44 @@
+baseURL = "googoo-s.github.io"
+languageCode = "zh-CN"
+title = "googoo-s"
+theme = "hugo-PaperMod"
+publishDir = "docs"
+ignoreFiles = [ "\\.foo$", "\\.boo$" ]
+
+paginate = 5           # 每页显示的博文数量
+enableEmoji = true      # 允许使用 Emoji 表情，建议 true
+enableRobotsTXT = true  # 允许爬虫抓取到搜索引擎，建议 true
+googleAnalytics = ""    # 谷歌统计
+
+[blackfriday]
+  hrefTargetBlank = true
+  nofollowLinks = true
+  noreferrerLinks = true
+
+[Permalinks]
+ posts = "/:year/:filename/"
+
+[menu]
+  [[menu.main]]
+    name = "Blog"
+    url = "/blog/"
+    weight = 1
+
+  [[menu.main]]
+    name = "Other"
+    url = "/other/"
+    weight = 2
+
+ 
+
+
+[params]
+    since = 2022
+    author = "googoo-s"                   # Author's name
+    avatar = "lxh.jpeg" 	              # Author's avatar
+    subtitle = " 😀 😏 😳 😕 🙄 🤔 🤗 😍 😆 😑 "    # Subtitle
+
+
+
+[params.social]
+    GitHub = "https://github.com/googoo-s"
