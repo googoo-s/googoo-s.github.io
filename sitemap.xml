@@ -2,13 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://googoo-s.github.io/categories/</loc>
-  </url><url>
     <loc>https://googoo-s.github.io/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://googoo-s.github.io/tags/java/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://googoo-s.github.io/posts/java%E4%BB%A3%E7%A0%81%E8%BF%90%E8%A1%8C/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://googoo-s.github.io/posts/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://googoo-s.github.io/tags/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://googoo-s.github.io/archives/</loc>
+  </url><url>
+    <loc>https://googoo-s.github.io/categories/</loc>
   </url><url>
     <loc>https://googoo-s.github.io/search/</loc>
   </url>
