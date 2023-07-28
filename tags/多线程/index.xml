@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>多线程 on</title><link>https://googoo-s.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/</link><description>Recent content in 多线程 on</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://googoo-s.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://googoo-s.github.io/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%8F%AF%E8%A7%81%E6%80%A7%E5%8E%9F%E5%AD%90%E6%80%A7%E5%92%8C%E6%9C%89%E5%BA%8F%E6%80%A7%E9%97%AE%E9%A2%98%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8BBug%E7%9A%84%E6%BA%90%E5%A4%B4/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%8F%AF%E8%A7%81%E6%80%A7%E5%8E%9F%E5%AD%90%E6%80%A7%E5%92%8C%E6%9C%89%E5%BA%8F%E6%80%A7%E9%97%AE%E9%A2%98%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8BBug%E7%9A%84%E6%BA%90%E5%A4%B4/</guid><description>我们的 CPU、内存、I/O 设备都在不断迭代，不断朝着更快的方向努力。但是，在这个快速发展的过程中，有一个核心矛盾一直存在，就是这三者的速度差异
+为了合理利用 CPU 的高性能，平衡这三者的速度差异，计算机体系结构、操作系统、编译程序都做出了贡献，主要体现为：
+cpu增加缓存，以均衡与内存的速度差异
+操作系统增加了进程、线程，以分时复用CPU,进而均衡 CPU 与 I/O 设备的速度差异
+编译程序优化指令执行次序，使得缓存能够得到更加合理地利用。
+这些优化导致了一些问题。</description></item><item><title/><link>https://googoo-s.github.io/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/</guid><description>并行、并发的区别 从操作系统的角度来看，线程是CPU分配的最小单位
+并发：两个及两个以上的作业在同一 时间段 内执行。
+并行：两个及两个以上的作业在同一 时刻 执行。
+同步和异步的区别 同步 ： 发出一个调用之后，在没有得到结果之前， 该调用就不可以返回，一直等待。</description></item></channel></rss>

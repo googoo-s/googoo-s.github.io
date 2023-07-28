@@ -1,0 +1,200 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="已经知道通过局部变量可以做到避免共享，那还有没有其他方法可以做到呢？
+有的，Java 语言提供的**线程本地存储（ThreadLocal）**就能够做到
+ThreadLocal 的使用方法 下面这个静态类 ThreadId 会为每个线程分配一个唯一的线程 Id，如果一个线程前后两次调用 ThreadId 的 get() 方法，两次 get() 方法的返回值是相同的。但如果是两个线程分别调用 ThreadId 的 get() 方法，那么两个线程看到的 get() 方法的返回值是不同的。"><meta property="og:title" content><meta property="og:description" content="已经知道通过局部变量可以做到避免共享，那还有没有其他方法可以做到呢？
+有的，Java 语言提供的**线程本地存储（ThreadLocal）**就能够做到
+ThreadLocal 的使用方法 下面这个静态类 ThreadId 会为每个线程分配一个唯一的线程 Id，如果一个线程前后两次调用 ThreadId 的 get() 方法，两次 get() 方法的返回值是相同的。但如果是两个线程分别调用 ThreadId 的 get() 方法，那么两个线程看到的 get() 方法的返回值是不同的。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BA%BF%E7%A8%8B%E6%9C%AC%E5%9C%B0%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F-ThreadLocal/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="已经知道通过局部变量可以做到避免共享，那还有没有其他方法可以做到呢？
+有的，Java 语言提供的**线程本地存储（ThreadLocal）**就能够做到
+ThreadLocal 的使用方法 下面这个静态类 ThreadId 会为每个线程分配一个唯一的线程 Id，如果一个线程前后两次调用 ThreadId 的 get() 方法，两次 get() 方法的返回值是相同的。但如果是两个线程分别调用 ThreadId 的 get() 方法，那么两个线程看到的 get() 方法的返回值是不同的。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.0ac1455204506c058198872f05e49d0d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=/Java/%e5%a4%9a%e7%ba%bf%e7%a8%8b/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f/%e7%ba%bf%e7%a8%8b%e6%9c%ac%e5%9c%b0%e5%ad%98%e5%82%a8%e6%a8%a1%e5%bc%8f%20ThreadLocal.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details open><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#猜测实现>猜测实现</a></li><li><a href=#ava实现>ava实现</a></li></ol></nav></details></aside><p>已经知道通过<strong>局部变量可以做到避免共享</strong>，那还有没有其他方法可以做到呢？</p><p>有的，Java 语言提供的**线程本地存储（ThreadLocal）**就能够做到</p><a href=#threadlocal-的使用方法><h1 id=threadlocal-的使用方法><span class=hanchor arialabel=Anchor># </span>ThreadLocal 的使用方法</h1></a><p>下面这个静态类 ThreadId 会为每个线程分配一个唯一的线程 Id，如果一个线程前后两次调用 ThreadId 的 get() 方法，两次 get() 方法的返回值是相同的。但如果是两个线程分别调用 ThreadId 的 get() 方法，那么两个线程看到的 get() 方法的返回值是不同的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>static</span> <span class=nx>class</span> <span class=nx>ThreadId</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>static</span> <span class=nx>final</span> <span class=nx>AtomicLong</span> <span class=nx>nextId</span><span class=p>=</span><span class=nx>new</span> <span class=nf>AtomicLong</span><span class=p>(</span><span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//定义ThreadLocal变量
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>static</span> <span class=nx>final</span> <span class=nx>ThreadLocal</span><span class=p>&lt;</span><span class=nx>Long</span><span class=p>&gt;</span> <span class=nx>tl</span><span class=p>=</span> <span class=nx>ThreadLocal</span><span class=p>.</span><span class=nf>withInitial</span><span class=p>(()</span><span class=o>-</span><span class=p>&gt;</span><span class=nx>nextId</span><span class=p>.</span><span class=nf>getAndIncrement</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//此方法会为每个线程分配一个唯一的Id
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>static</span> <span class=nx>long</span> <span class=nf>get</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>tl</span><span class=p>.</span><span class=nf>get</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>你可能知道 SimpleDateFormat 不是线程安全的，那如果需要在并发场景下使用它，你该怎么办呢？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>static</span> <span class=nx>class</span> <span class=nx>SafeDateFormat</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//定义ThreadLocal变量
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>static</span> <span class=nx>final</span> <span class=nx>ThreadLocal</span><span class=p>&lt;</span><span class=nx>DateFormat</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nx>tl</span><span class=p>=</span><span class=nx>ThreadLocal</span><span class=p>.</span><span class=nf>withInitial</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=p>()</span><span class=o>-</span><span class=p>&gt;</span> <span class=nx>new</span> <span class=nf>SimpleDateFormat</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>      <span class=s>&#34;yyyy-MM-dd HH:mm:ss&#34;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>      
+</span></span><span class=line><span class=cl>  <span class=nx>static</span> <span class=nx>DateFormat</span> <span class=nf>get</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>tl</span><span class=p>.</span><span class=nf>get</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=c1>//不同线程执行下面代码
+</span></span></span><span class=line><span class=cl><span class=c1>//返回的df是不同的
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>DateFormat</span> <span class=nx>df</span> <span class=p>=</span>
+</span></span><span class=line><span class=cl>  <span class=nx>SafeDateFormat</span><span class=p>.</span><span class=nf>get</span><span class=p>()</span><span class=err>；</span>
+</span></span></code></pre></td></tr></table></div></div><p>同样地，不同线程调用 SafeDateFormat 的 get() 方法将返回不同的 SimpleDateFormat 对象实例，由于不同线程并不共享 SimpleDateFormat，所以就像局部变量一样，是线程安全的</p><a href=#threadlocal的工作原理><h1 id=threadlocal的工作原理><span class=hanchor arialabel=Anchor># </span>ThreadLocal的工作原理</h1></a><a href=#猜测实现><h2 id=猜测实现><span class=hanchor arialabel=Anchor># </span>猜测实现</h2></a><p>ThreadLocal 的目标是让不同的线程有不同的变量 V，那最直接的方法就是创建一个 Map，它的 Key 是线程，Value 是每个线程拥有的变量 V，ThreadLocal 内部持有这样的一个 Map 就可以了</p><p><img src=https://googoo-s.github.io//statistic/asynccode-155.png width=auto alt></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>class</span> <span class=nx>MyThreadLocal</span><span class=p>&lt;</span><span class=nx>T</span><span class=p>&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>Map</span><span class=p>&lt;</span><span class=nx>Thread</span><span class=p>,</span> <span class=nx>T</span><span class=p>&gt;</span> <span class=nx>locals</span> <span class=p>=</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>new</span> <span class=nx>ConcurrentHashMap</span><span class=p>&lt;&gt;();</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//获取线程变量  
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>T</span> <span class=nf>get</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>locals</span><span class=p>.</span><span class=nf>get</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>      <span class=nx>Thread</span><span class=p>.</span><span class=nf>currentThread</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//设置线程变量
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>void</span> <span class=nf>set</span><span class=p>(</span><span class=nx>T</span> <span class=nx>t</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>locals</span><span class=p>.</span><span class=nf>put</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>      <span class=nx>Thread</span><span class=p>.</span><span class=nf>currentThread</span><span class=p>(),</span> <span class=nx>t</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#ava实现><h2 id=ava实现><span class=hanchor arialabel=Anchor># </span>ava实现</h2></a><p>Java 的实现里面也有一个 Map，叫做 ThreadLocalMap，不过持有 ThreadLocalMap 的不是 ThreadLocal，而是 Thread。Thread 这个类内部有一个私有属性 threadLocals，其类型就是 ThreadLocalMap，ThreadLocalMap 的 Key 是 ThreadLocal。</p><p><img src=https://googoo-s.github.io//statistic/asynccode-154.png width=auto alt></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>class</span> <span class=nx>Thread</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//内部持有ThreadLocalMap
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>ThreadLocal</span><span class=p>.</span><span class=nx>ThreadLocalMap</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>threadLocals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=nx>class</span> <span class=nx>ThreadLocal</span><span class=p>&lt;</span><span class=nx>T</span><span class=p>&gt;{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>public</span> <span class=nx>T</span> <span class=nf>get</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//首先获取线程持有的
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>//ThreadLocalMap
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>ThreadLocalMap</span> <span class=kd>map</span> <span class=p>=</span>
+</span></span><span class=line><span class=cl>      <span class=nx>Thread</span><span class=p>.</span><span class=nf>currentThread</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=nx>threadLocals</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//在ThreadLocalMap中
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>//查找变量
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>Entry</span> <span class=nx>e</span> <span class=p>=</span> 
+</span></span><span class=line><span class=cl>      <span class=kd>map</span><span class=p>.</span><span class=nf>getEntry</span><span class=p>(</span><span class=nx>this</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>e</span><span class=p>.</span><span class=nx>value</span><span class=p>;</span>  
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=nx>static</span> <span class=nx>class</span> <span class=nx>ThreadLocalMap</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//内部是数组而不是Map
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>Entry</span><span class=p>[]</span> <span class=nx>table</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//根据ThreadLocal查找Entry
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>Entry</span> <span class=nf>getEntry</span><span class=p>(</span><span class=nx>ThreadLocal</span> <span class=nx>key</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>      <span class=c1>//省略查找逻辑
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//Entry定义
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>static</span> <span class=nx>class</span> <span class=nx>Entry</span> <span class=nx>extends</span>
+</span></span><span class=line><span class=cl>    <span class=nx>WeakReference</span><span class=p>&lt;</span><span class=nx>ThreadLocal</span><span class=p>&gt;{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>Object</span> <span class=nx>value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>很显然 Java 的实现更合理一些。在 Java 的实现方案里面，</p><ul><li><p>ThreadLocal 仅仅是一个代理工具类，内部并不持有任何与线程相关的数据，所有和线程相关的数据都存储在 Thread 里面</p></li><li><p>还有一个更加深层次的原因，那就是不容易产生内存泄露</p><ul><li><p>在我们的设计方案中，ThreadLocal 持有的 Map 会持有 Thread 对象的引用，这就意味着，只要 ThreadLocal 对象存在，那么 Map 中的 Thread 对象就永远不会被回收</p></li><li><p>而 Java 的实现中 Thread 持有 ThreadLocalMap，而且 ThreadLocalMap 里对 ThreadLocal 的引用还是弱引用（WeakReference），所以只要 Thread 对象可以被回收，那么 ThreadLocalMap 就能被回收</p></li></ul></li></ul><a href=#threadlocal与内存泄漏><h1 id=threadlocal与内存泄漏><span class=hanchor arialabel=Anchor># </span>ThreadLocal与内存泄漏</h1></a><p><strong>在线程池中使用 ThreadLocal 为什么可能导致内存泄露呢</strong>？</p><p>原因就出在线程池中线程的存活时间太长，往往都是和程序同生共死的，这就意味着 Thread 持有的 ThreadLocalMap 一直都不会被回收，再加上 ThreadLocalMap 中的 Entry 对 ThreadLocal 是弱引用（WeakReference），所以只要 ThreadLocal 结束了自己的生命周期是可以被回收掉的。但是 Entry 中的 Value 却是被 Entry 强引用的，所以即便 Value 的生命周期结束了，Value 也是无法被回收的，从而导致内存泄露</p><p>那在线程池中，我们该如何正确使用 ThreadLocal 呢？</p><p>，既然 JVM 不能做到自动释放对 Value 的强引用，那我们手动释放就可以了。如何能做到手动释放呢？估计你马上想到 try{}finally{}方案了，这个简直就是手动释放资源的利器</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>ExecutorService</span> <span class=nx>es</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nx>ThreadLocal</span> <span class=nx>tl</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nx>es</span><span class=p>.</span><span class=nf>execute</span><span class=p>(()</span><span class=o>-</span><span class=p>&gt;{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//ThreadLocal增加变量
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>tl</span><span class=p>.</span><span class=nf>set</span><span class=p>(</span><span class=nx>obj</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=nx>try</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 省略业务逻辑代码
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=p>}</span><span class=nx>finally</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//手动清理ThreadLocal 
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>tl</span><span class=p>.</span><span class=nf>remove</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#inheritablethreadlocal-与继承性><h1 id=inheritablethreadlocal-与继承性><span class=hanchor arialabel=Anchor># </span>InheritableThreadLocal 与继承性</h1></a><p>通过 ThreadLocal 创建的线程变量，其子线程是无法继承的。也就是说你在线程中<strong>通过 ThreadLocal 创建了线程变量 V，而后该线程创建了子线程，你在子线程中是无法通过 ThreadLocal 来访问父线程的线程变量 V 的</strong>.</p><p>Java 提供了 <strong>InheritableThreadLocal</strong> 来支持这种特性，InheritableThreadLocal 是 ThreadLocal 子类，所以用法和 ThreadLocal 相同</p><p>不过，我完全不建议你在线程池中使用 InheritableThreadLocal</p><ul><li>可能导致内存泄露</li></ul></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>

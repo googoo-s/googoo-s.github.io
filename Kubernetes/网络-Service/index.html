@@ -1,0 +1,191 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="而在云原生时代，微服务无疑是应用的主流形态。为了更好地支持微服务以及服务网格这样的应用架构，Kubernetes 又专门定义了一个新的对象：Service，它是集群内部的负载均衡机制，用来解决服务发现的关键问题
+为什么要有 Service 解决服务发现的问题，实现负载均衡，它们在前端与后端之间加入了一个“中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。
+LVS、Nginx 毕竟不是云原生技术，所以 Kubernetes 就按照这个思路，定义了新的 API 对象**：Service。**
+Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给Service 分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。"><meta property="og:title" content><meta property="og:description" content="而在云原生时代，微服务无疑是应用的主流形态。为了更好地支持微服务以及服务网格这样的应用架构，Kubernetes 又专门定义了一个新的对象：Service，它是集群内部的负载均衡机制，用来解决服务发现的关键问题
+为什么要有 Service 解决服务发现的问题，实现负载均衡，它们在前端与后端之间加入了一个“中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。
+LVS、Nginx 毕竟不是云原生技术，所以 Kubernetes 就按照这个思路，定义了新的 API 对象**：Service。**
+Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给Service 分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/Kubernetes/%E7%BD%91%E7%BB%9C-Service/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="而在云原生时代，微服务无疑是应用的主流形态。为了更好地支持微服务以及服务网格这样的应用架构，Kubernetes 又专门定义了一个新的对象：Service，它是集群内部的负载均衡机制，用来解决服务发现的关键问题
+为什么要有 Service 解决服务发现的问题，实现负载均衡，它们在前端与后端之间加入了一个“中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。
+LVS、Nginx 毕竟不是云原生技术，所以 Kubernetes 就按照这个思路，定义了新的 API 对象**：Service。**
+Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给Service 分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.0ac1455204506c058198872f05e49d0d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=/Kubernetes/%e7%bd%91%e7%bb%9c-Service.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details open><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#名字空间namespace>名字空间（namespace）</a></li></ol></nav></details></aside><p>而在云原生时代，微服务无疑是应用的主流形态。为了更好地支持微服务以及服务网格这样的应用架构，Kubernetes 又专门定义了一个新的对象：<strong>Service，它是集群内部的负载均衡机制，用来解决服务发现的关键问题</strong></p><a href=#为什么要有-service><h1 id=为什么要有-service><span class=hanchor arialabel=Anchor># </span>为什么要有 Service</h1></a><p><strong>解决服务发现的问题，实现负载均衡</strong>，它们在前端与后端之间加入了一个“中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。</p><p>LVS、Nginx 毕竟不是云原生技术，所以 Kubernetes 就按照这个思路，定义了新的 API 对象**：Service。**</p><p>Service 的工作原理和 LVS、Nginx 差不多，<strong>Kubernetes 会给Service 分配一个静态 IP 地址</strong>，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把<strong>流量转发给后面的某个 Pod</strong>。</p><p><img src=https://googoo-s.github.io//statistic/asynccode-577.png width=auto alt></p><p>这里 <strong>Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则</strong>，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构</p><p>Service实现负载均衡的的技术：</p><ul><li><p>Iptables</p></li><li><p>Userspace (性能更差)</p></li><li><p>ipvs（性能更好）</p></li></ul><a href=#如何通过yaml-描述service><h1 id=如何通过yaml-描述service><span class=hanchor arialabel=Anchor># </span><strong>如何通过YAML 描述Service</strong></h1></a><p>Service与 Pod 一样，属于 Kubernetes 的核心对象，不关联业务应用，与 Job、Deployment 是不同的。</p><blockquote><p>虽然它可以自动创建 YAML 样板，但不是用命令 kubectl create，而是另外一个命令 kubectl expose，也许 Kubernetes 认为“expose”能够更好地表达 Service“暴露”服务地址的意思吧。</p><p>所以 kubectl expose 支持从多种对象创建服务，Pod、Deployment、DaemonSet 都可以。</p><p>使用 kubectl expose 指令时还需要用参数 &ndash;port 和 &ndash;target-port 分别指定映射端口和容器端口</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>export</span> <span class=nx>out</span><span class=p>=</span><span class=s>&#34;--dry-run=client -o yaml&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>kubectl</span> <span class=nx>expose</span> <span class=nx>deploy</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>dep</span> <span class=o>--</span><span class=nx>port</span><span class=p>=</span><span class=mi>80</span> <span class=o>--</span><span class=nx>target</span><span class=o>-</span><span class=nx>port</span><span class=p>=</span><span class=mi>80</span> <span class=err>$</span><span class=nx>out</span>
+</span></span></code></pre></td></tr></table></div></div></blockquote><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>Service</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>svc</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl><span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>selector</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>app</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>dep</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>  <span class=nx>ports</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=o>-</span> <span class=nx>port</span><span class=p>:</span> <span class=mi>80</span>
+</span></span><span class=line><span class=cl>    <span class=nx>targetPort</span><span class=p>:</span> <span class=mi>80</span>
+</span></span><span class=line><span class=cl>    <span class=nx>protocol</span><span class=p>:</span> <span class=nx>TCP</span>
+</span></span></code></pre></td></tr></table></div></div><p>selector 和 Deployment/DaemonSet 里的作用是一样的，用来过滤出要代理的那些 Pod。</p><p>ports 就很好理解了，里面的三个字段分别表示外部端口、内部端口和使用的协议，在这里就是内外部都使用 80 端口，协议是 TCP。当然，你在这里也可以把 ports 改成“8080”等其他的端口，这样外部服务看到的就是 Service 给出的端口，而不会知道 Pod 的真正服务端口。</p><p><img src=https://googoo-s.github.io//statistic/asynccode-585.png width=auto alt></p><a href=#如何在kubernets-中使用service><h1 id=如何在kubernets-中使用service><span class=hanchor arialabel=Anchor># </span>如何在Kubernets 中使用Service</h1></a><p>首先，我们创建一个 ConfigMap，定义一个 Nginx 的配置片段，它会输出服务器的地址、主机名、请求的 URI 等基本信息</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>ConfigMap</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>conf</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>data</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=k>default</span><span class=p>.</span><span class=nx>conf</span><span class=p>:</span> <span class=p>|</span>
+</span></span><span class=line><span class=cl>    <span class=nx>server</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>listen</span> <span class=mi>80</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=nx>location</span> <span class=o>/</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>default_type</span> <span class=nx>text</span><span class=o>/</span><span class=nx>plain</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>200</span>
+</span></span><span class=line><span class=cl>          <span class=err>&#39;</span><span class=nx>srv</span> <span class=p>:</span> <span class=err>$</span><span class=nx>server_addr</span><span class=p>:</span><span class=err>$</span><span class=nx>server_port</span><span class=err>\</span><span class=nx>nhost</span><span class=p>:</span> <span class=err>$</span><span class=nx>hostname</span><span class=err>\</span><span class=nx>nuri</span> <span class=p>:</span> <span class=err>$</span><span class=nx>request_method</span> <span class=err>$</span><span class=nx>host</span> <span class=err>$</span><span class=nx>request_uri</span><span class=err>\</span><span class=nx>ndate</span><span class=p>:</span> <span class=err>$</span><span class=nx>time_iso8601</span><span class=err>\</span><span class=nx>n</span><span class=err>&#39;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后我们在 Deployment 的“template.volumes”里定义存储卷，再用“volumeMounts”把配置文件加载进 Nginx 容器里</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>apps</span><span class=o>/</span><span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>Deployment</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>dep</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>replicas</span><span class=p>:</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl>  <span class=nx>selector</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>matchLabels</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>app</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>dep</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nx>template</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>labels</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nx>app</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>dep</span>
+</span></span><span class=line><span class=cl>    <span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>volumes</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=o>-</span> <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>conf</span><span class=o>-</span><span class=nx>vol</span>
+</span></span><span class=line><span class=cl>        <span class=nx>configMap</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>          <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>conf</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      <span class=nx>containers</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=o>-</span> <span class=nx>image</span><span class=p>:</span> <span class=nx>nginx</span><span class=p>:</span><span class=nx>alpine</span>
+</span></span><span class=line><span class=cl>        <span class=nx>name</span><span class=p>:</span> <span class=nx>nginx</span>
+</span></span><span class=line><span class=cl>        <span class=nx>ports</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=o>-</span> <span class=nx>containerPort</span><span class=p>:</span> <span class=mi>80</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nx>volumeMounts</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=o>-</span> <span class=nx>mountPath</span><span class=p>:</span> <span class=o>/</span><span class=nx>etc</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>conf</span><span class=p>.</span><span class=nx>d</span>
+</span></span><span class=line><span class=cl>          <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>conf</span><span class=o>-</span><span class=nx>vol</span>
+</span></span></code></pre></td></tr></table></div></div><p>创建</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>Service</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>svc</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl><span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>selector</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>app</span><span class=p>:</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>dep</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>  <span class=nx>ports</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=o>-</span> <span class=nx>port</span><span class=p>:</span> <span class=mi>80</span>
+</span></span><span class=line><span class=cl>    <span class=nx>targetPort</span><span class=p>:</span> <span class=mi>80</span>
+</span></span><span class=line><span class=cl>    <span class=nx>protocol</span><span class=p>:</span> <span class=nx>TCP</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>kubectl</span> <span class=nx>apply</span> <span class=o>-</span><span class=nx>f</span> <span class=nx>svc</span><span class=p>.</span><span class=nx>yml</span>
+</span></span></code></pre></td></tr></table></div></div><p><img src=https://googoo-s.github.io//statistic/asynccode-581.png width=auto alt></p><p>你可以看到，Kubernetes 为 Service 对象自动分配了一个 IP 地址“10.96.240.115”，这个地址段是独立于 Pod 地址段的（比如第 17 讲里的 10.10.xx.xx）。而且 Service 对象的 IP 地址还有一个特点，<strong>它是一个“虚地址”，不存在实体，只能用来转发流量。</strong></p><p>想要看 Service 代理了哪些后端的 Pod，你可以用 kubectl describe 命令：kubectl describe svc ngx-svc</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>kubectl</span> <span class=nx>describe</span> <span class=nx>svc</span> <span class=nx>ngx</span><span class=o>-</span><span class=nx>svc</span>
+</span></span></code></pre></td></tr></table></div></div><p><img src=https://googoo-s.github.io//statistic/asynccode-582.png width=auto alt></p><a href=#如何以域名的方式使用-service><h1 id=如何以域名的方式使用-service><span class=hanchor arialabel=Anchor># </span>如何以域名的方式使用 Service</h1></a><p>我们先来看看 <strong>DNS 域名</strong>。<strong>Service 对象的 IP 地址是静态的，保持稳定，这在微服务里确实很重要</strong>， <strong>DNS 插件就派上了用处</strong>，它可以为 Service 创建易写易记的域名，让 Service 更容易使用。</p><a href=#名字空间namespace><h2 id=名字空间namespace><span class=hanchor arialabel=Anchor># </span>名字空间（namespace）</h2></a><p>Kubernetes 有一个默认的名字空间，叫“default”，如果不显式指定，API 对象都会在这个“default”名字空间里。</p><p>而其他的名字空间都有各自的用途，比如“kube-system”就包含了 apiserver、etcd 等核心组件的 Pod。</p><p>DNS 是一种层次结构，为了避免太多的域名导致冲突，Kubernetes 就把名字空间作为域名的一部分，减少了重名的可能性</p><p>service 对象的域名完全形式是“<strong>对象. 名字空间.svc.cluster.loca</strong>l”，但很多时候也可以省略后面的部分，直接写**“对象. 名字空间**”甚至“<strong>对象名</strong>”就足够了，默认会使用对象所在的名字空间（比如这里就是 default）。</p><p>DNS 域名的用法，还是先 kubectl exec 进入 Pod，然后用 curl 访问 ngx-svc、ngx-svc.default 等域名：</p><p><img src=https://googoo-s.github.io//statistic/asynccode-583.png width=auto alt></p><blockquote><p>（顺便说一下，Kubernetes 也为每个 Pod 分配了域名，形式是“IP 地址. 名字空间.pod.cluster.local”，但需要把 IP 地址里的 . 改成 - 。比如地址 10.10.1.87，它对应的域名就是 10-10-1-87.default.pod。）</p></blockquote><a href=#如何让service对外暴露><h1 id=如何让service对外暴露><span class=hanchor arialabel=Anchor># </span>如何让Service对外暴露</h1></a><p><strong>由于 Service 是一种负载均衡技术，所以它不仅能够管理 Kubernetes 集群内部的服务，还能够担当向集群外部暴露服务的重任。</strong></p><p>Service Type</p><ul><li><p>ClusterIP:Service 的静态 IP 地址只能在集群内访问</p></li><li><p>ExternalName:由云服务商提供</p></li><li><p>LoadBalancer:由云服务商提供</p></li><li><p>Service: 除了会对后端的 Pod 做负载均衡之外，还会在<strong>集群里的每个节点上创建一个独立的端口，用这个端口对外提供服务，这也正是“NodePort”这个名字的由来</strong></p><ul><li>这个端口号属于节点，外部能够直接访问，<strong>所以现在我们就可以不用登录集群节点或者进入 Pod 内部，直接在集群外使用任意一个节点的 IP 地址</strong>，就能够访问 Service 和它代理的后端服务了。</li></ul></li></ul><p>NodePort 与 Service、Deployment 的对应关系画成了图，你看了应该就能更好地明白它的工作原理：</p><p><img src=https://googoo-s.github.io//statistic/asynccode-584.png width=auto alt></p><p>NodePort 类型的缺点</p><ul><li><p>第一个缺点是它的端口数量很有限。Kubernetes 为了避免端口冲突，默认只在“30000~32767”这个范围内随机分配，只有 2000 多个，而且都不是标准端口号，这对于具有大量业务应用的系统来说根本不够用。</p></li><li><p>第二个缺点是它会在每个节点上都开端口，然后使用 kube-proxy 路由到真正的后端 Service，这对于有很多计算节点的大集群来说就带来了一些网络通信成本，不是特别经济。</p></li><li><p>第三个缺点**，它要求向外界暴露节点的 IP 地址，这在很多时候是不可行的**，<strong>为了安全还需要在集群外再搭一个反向代理，增加了方案的复杂度</strong>。</p></li></ul></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>

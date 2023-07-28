@@ -1,0 +1,154 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="Pod 已经是一个相对完善的对象，专门负责管理容器，那么我们就不应该再“画蛇添足”地盲目为它扩充功能，而是要保持它的独立性，**容器之外的功能就需要定义其他的对象，把 Pod 作为它的一个成员“组合”**进去。
+为什么要有 Job/CronJob Nginx 和 busybox，它们分别代表了 Kubernetes 里的两大类业务。一类是像 Nginx 这样长时间运行的**“在线业务”，另一类是像 busybox 这样短时间运行的“离线业务**”
+  在线业务”类型的应用有很多，比如 Nginx、Node.js、MySQL、Redis 等等，一旦运行起来基本上不会停，也就是永远在线。"><meta property="og:title" content><meta property="og:description" content="Pod 已经是一个相对完善的对象，专门负责管理容器，那么我们就不应该再“画蛇添足”地盲目为它扩充功能，而是要保持它的独立性，**容器之外的功能就需要定义其他的对象，把 Pod 作为它的一个成员“组合”**进去。
+为什么要有 Job/CronJob Nginx 和 busybox，它们分别代表了 Kubernetes 里的两大类业务。一类是像 Nginx 这样长时间运行的**“在线业务”，另一类是像 busybox 这样短时间运行的“离线业务**”
+  在线业务”类型的应用有很多，比如 Nginx、Node.js、MySQL、Redis 等等，一旦运行起来基本上不会停，也就是永远在线。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/Kubernetes/%E4%BD%9C%E4%B8%9A%E7%AE%A1%E7%90%86-Job-%E4%B8%8E-CronJob/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="Pod 已经是一个相对完善的对象，专门负责管理容器，那么我们就不应该再“画蛇添足”地盲目为它扩充功能，而是要保持它的独立性，**容器之外的功能就需要定义其他的对象，把 Pod 作为它的一个成员“组合”**进去。
+为什么要有 Job/CronJob Nginx 和 busybox，它们分别代表了 Kubernetes 里的两大类业务。一类是像 Nginx 这样长时间运行的**“在线业务”，另一类是像 busybox 这样短时间运行的“离线业务**”
+  在线业务”类型的应用有很多，比如 Nginx、Node.js、MySQL、Redis 等等，一旦运行起来基本上不会停，也就是永远在线。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.0ac1455204506c058198872f05e49d0d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=/Kubernetes/%e4%bd%9c%e4%b8%9a%e7%ae%a1%e7%90%86-Job%20%e4%b8%8e%20CronJob.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details open><summary>Table of Contents</summary><nav id=TableOfContents></nav></details></aside><p>Pod 已经是一个相对完善的对象，专门负责管理容器，<strong>那么我们就不应该再“画蛇添足”地盲目为它扩充功能</strong>，而是要保持它的独立性，**容器之外的功能就需要定义其他的对象，把 Pod 作为它的一个成员“组合”**进去。</p><a href=#为什么要有-jobcronjob><h1 id=为什么要有-jobcronjob><span class=hanchor arialabel=Anchor># </span>为什么要有 Job/CronJob</h1></a><p>Nginx 和 busybox，它们分别代表了 Kubernetes 里的两大类业务。一类是像 Nginx 这样长时间运行的**“在线业务”，<strong>另一类是像 busybox 这样短时间运行的</strong>“离线业务**”</p><ul><li><p>在线业务”类型的应用有很多，比如 Nginx、Node.js、MySQL、Redis 等等，一<strong>旦运行起来基本上不会停，也就是永远在线。</strong></p></li><li><p>离线业务”的特点是必定会退出，<strong>不会无期限地运行下去</strong>，所以它的调度策略也就与“在线业务”存在很大的不同，需要考虑运行超时、状态检查、失败重试、获取计算结果等管理事项</p></li></ul><hr><ul><li><p>“临时任务”就是 API 对象 Job，</p></li><li><p>“定时任务”就是 API 对象 CronJob，</p></li><li><p>使用这两个对象你就能够在 Kubernetes 里调度管理任意的离线业务了。</p></li></ul><a href=#如何使用-yaml-描述-job><h1 id=如何使用-yaml-描述-job><span class=hanchor arialabel=Anchor># </span>如何使用 YAML 描述 Job</h1></a><ul><li><p>apiVersion 不是 v1，而是 batch/v1。</p></li><li><p>kind 是 Job，这个和对象的名字是一致的。</p></li><li><p>metadata 里仍然要有 name 标记名字，也可以用 labels 添加任意的标签。如果记不住这些也不要紧，你还可以使用命令 kubectl explain job 来看它的字段说明。不过想要生成 YAML 样板文件的话<strong>不能使用 kubectl run</strong>，因为 kubectl run 只能创建 Pod，要创建 Pod 以外的其他 API 对象，<strong>需要使用命令 kubectl create</strong>，再加上对象的类型名。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>export</span> <span class=nx>out</span><span class=p>=</span><span class=s>&#34;--dry-run=client -o yaml&#34;</span>              <span class=err>#</span> <span class=nx>定义Shell变量</span>
+</span></span><span class=line><span class=cl><span class=nx>kubectl</span> <span class=nx>create</span> <span class=nx>job</span> <span class=nx>echo</span><span class=o>-</span><span class=nx>job</span> <span class=o>--</span><span class=nx>image</span><span class=p>=</span><span class=nx>busybox</span> <span class=err>$</span><span class=nx>out</span>
+</span></span></code></pre></td></tr></table></div></div><p>会生成一个基本的 YAML 文件，保存之后做点修改，就有了一个 Job 对象：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>batch</span><span class=o>/</span><span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>Job</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>echo</span><span class=o>-</span><span class=nx>job</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>template</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>restartPolicy</span><span class=p>:</span> <span class=nx>OnFailure</span>
+</span></span><span class=line><span class=cl>      <span class=nx>containers</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=o>-</span> <span class=nx>image</span><span class=p>:</span> <span class=nx>busybox</span>
+</span></span><span class=line><span class=cl>        <span class=nx>name</span><span class=p>:</span> <span class=nx>echo</span><span class=o>-</span><span class=nx>job</span>
+</span></span><span class=line><span class=cl>        <span class=nx>imagePullPolicy</span><span class=p>:</span> <span class=nx>IfNotPresent</span>
+</span></span><span class=line><span class=cl>        <span class=nx>command</span><span class=p>:</span> <span class=p>[</span><span class=s>&#34;/bin/echo&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=nx>args</span><span class=p>:</span> <span class=p>[</span><span class=s>&#34;hello&#34;</span><span class=p>,</span> <span class=s>&#34;world&#34;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>&ldquo;spec”字段里，多了一个 template 字段，然后又是一个“spec”</strong>，</p><ul><li><p><strong>Job 对象里应用了组合模式</strong>，t<strong>emplate 字段定义了一个“应用模板”，里面嵌入了一个 Pod，这样 Job 就可以从这个模板来创建出 Pod。</strong></p></li><li><p>这个 Pod 因为受 Job 的管理控制，不直接和 apiserver 打交道，也就没必要重复 apiVersion 等“头字段”，只需要定义好关键的 spec</p></li></ul><p><img src=https://googoo-s.github.io//statistic/asynccode-610.png width=auto alt></p><a href=#开kubernetes-中操作job><h1 id=开kubernetes-中操作job><span class=hanchor arialabel=Anchor># </span>开Kubernetes 中操作Job</h1></a><p>创建 Job 对象</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>kubectl</span> <span class=nx>apply</span> <span class=o>-</span><span class=nx>f</span> <span class=nx>job</span><span class=p>.</span><span class=nx>yml</span>
+</span></span></code></pre></td></tr></table></div></div><p>用 kubectl get job、kubectl get pod 来分别查看 Job 和 Pod 的状态：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=nx>kubectl</span> <span class=nx>get</span> <span class=nx>jobkubectl</span> <span class=nx>get</span> <span class=nx>pod</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以在 Job 级别、Pod 级别添加任意的字段来定制业务，这种优势是简单的容器技术无法相比的。</p><p>这里我列出<strong>几个控制离线作业的重要字段</strong>，其他更详细的信息可以参考 Job 文档：</p><ul><li><p>activeDeadlineSeconds，设置 Pod 运行的超时时间。</p></li><li><p>backoffLimit，设置 Pod 的失败重试次数。</p></li><li><p>completions，Job 完成需要运行多少个 Pod，默认是 1 个。</p></li><li><p>parallelism，它与 completions 相关，表示允许并发运行的 Pod 数量，避免过多占用资源。</p></li></ul><p>创建一个 Job 对象，名字叫“sleep-job”，它随机睡眠一段时间再退出，模拟运行时间较长的作业（比如 MapReduce）。Job 的参数设置成 15 秒超时，最多重试 2 次，总共需要运行完 4 个 Pod，但同一时刻最多并发 2 个 Pod：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>batch</span><span class=o>/</span><span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>Job</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>sleep</span><span class=o>-</span><span class=nx>job</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>activeDeadlineSeconds</span><span class=p>:</span> <span class=mi>15</span>
+</span></span><span class=line><span class=cl>  <span class=nx>backoffLimit</span><span class=p>:</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl>  <span class=nx>completions</span><span class=p>:</span> <span class=mi>4</span>
+</span></span><span class=line><span class=cl>  <span class=nx>parallelism</span><span class=p>:</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nx>template</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>restartPolicy</span><span class=p>:</span> <span class=nx>OnFailure</span>
+</span></span><span class=line><span class=cl>      <span class=nx>containers</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=o>-</span> <span class=nx>image</span><span class=p>:</span> <span class=nx>busybox</span>
+</span></span><span class=line><span class=cl>        <span class=nx>name</span><span class=p>:</span> <span class=nx>echo</span><span class=o>-</span><span class=nx>job</span>
+</span></span><span class=line><span class=cl>        <span class=nx>imagePullPolicy</span><span class=p>:</span> <span class=nx>IfNotPresent</span>
+</span></span><span class=line><span class=cl>        <span class=nx>command</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>          <span class=o>-</span> <span class=nx>sh</span>
+</span></span><span class=line><span class=cl>          <span class=o>-</span> <span class=o>-</span><span class=nx>c</span>
+</span></span><span class=line><span class=cl>          <span class=o>-</span> <span class=nx>sleep</span> <span class=err>$</span><span class=p>((</span><span class=err>$</span><span class=nx>RANDOM</span> <span class=o>%</span> <span class=mi>10</span> <span class=o>+</span> <span class=mi>1</span><span class=p>))</span> <span class=o>&amp;&amp;</span> <span class=nx>echo</span> <span class=nx>done</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#如何使用-yaml-描述-cronjob><h1 id=如何使用-yaml-描述-cronjob><span class=hanchor arialabel=Anchor># </span>如何使用 YAML 描述 CronJob</h1></a><p>注意两点。</p><ul><li><p>第一，因为 CronJob 的名字有点长，所以 Kubernetes 提供了简写 cj，这个简写也可以使用命令 kubectl api-resources 看到；</p></li><li><p>第二，CronJob 需要定时运行，所以我们在命令行里还需要指定参数 &ndash;schedule</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>apiVersion</span><span class=p>:</span> <span class=nx>batch</span><span class=o>/</span><span class=nx>v1</span>
+</span></span><span class=line><span class=cl><span class=nx>kind</span><span class=p>:</span> <span class=nx>CronJob</span>
+</span></span><span class=line><span class=cl><span class=nx>metadata</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>name</span><span class=p>:</span> <span class=nx>echo</span><span class=o>-</span><span class=nx>cj</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=nx>schedule</span><span class=p>:</span> <span class=err>&#39;</span><span class=o>*/</span><span class=mi>1</span> <span class=o>*</span> <span class=o>*</span> <span class=o>*</span> <span class=o>*</span><span class=err>&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=nx>jobTemplate</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>      <span class=nx>template</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nx>spec</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>          <span class=nx>restartPolicy</span><span class=p>:</span> <span class=nx>OnFailure</span>
+</span></span><span class=line><span class=cl>          <span class=nx>containers</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>          <span class=o>-</span> <span class=nx>image</span><span class=p>:</span> <span class=nx>busybox</span>
+</span></span><span class=line><span class=cl>            <span class=nx>name</span><span class=p>:</span> <span class=nx>echo</span><span class=o>-</span><span class=nx>cj</span>
+</span></span><span class=line><span class=cl>            <span class=nx>imagePullPolicy</span><span class=p>:</span> <span class=nx>IfNotPresent</span>
+</span></span><span class=line><span class=cl>            <span class=nx>command</span><span class=p>:</span> <span class=p>[</span><span class=s>&#34;/bin/echo&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=nx>args</span><span class=p>:</span> <span class=p>[</span><span class=s>&#34;hello&#34;</span><span class=p>,</span> <span class=s>&#34;world&#34;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>重点关注它的 spec 字段，你会发现它居然连续有三个 spec 嵌套层次：</p><ul><li><p>第一个 spec 是 CronJob 自己的对象规格声明</p></li><li><p>第二个 spec 从属于“jobTemplate”，它定义了一个 Job 对象。</p></li><li><p>第三个 spec 从属于“template”，它定义了 Job 里运行的 Pod。</p></li></ul><p><img src=https://googoo-s.github.io//statistic/asynccode-611.png width=auto alt></p><p>CronJob 还有一个新字段就是“schedule”，用来定义任务周期运行的规则。它使用的是标准的 Cron 语法，指定分钟、小时、天、月、周，和 Linux 上的 crontab 是一样的</p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>

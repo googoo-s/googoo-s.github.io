@@ -1,0 +1,314 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="Nginx 编译安装与配置使用
+1.查看系统版本/安装常用软件(系统最小化安装)
+1 2  #cat /etc/centos-release CentOS Linux release 7.6.1810 (Core)   1、安装编译环境 1  yum -y install gcc gcc-c++   2、安装pcre软件包（使nginx支持http rewrite模块） 1  yum install -y pcre pcre-devel   3、安装 openssl-devel（使 nginx 支持 ssl） 1  yum install -y openssl openssl-devel   4、安装zlib 1  yum install -y zlib zlib-devel gd gd-devel   5、创建用户 nginx 1  useradd -s /sbin/nologin nginx   6、编译安装 nginx 1、下载安装包 1 2 3  wget http://nginx."><meta property="og:title" content><meta property="og:description" content="Nginx 编译安装与配置使用
+1.查看系统版本/安装常用软件(系统最小化安装)
+1 2  #cat /etc/centos-release CentOS Linux release 7.6.1810 (Core)   1、安装编译环境 1  yum -y install gcc gcc-c++   2、安装pcre软件包（使nginx支持http rewrite模块） 1  yum install -y pcre pcre-devel   3、安装 openssl-devel（使 nginx 支持 ssl） 1  yum install -y openssl openssl-devel   4、安装zlib 1  yum install -y zlib zlib-devel gd gd-devel   5、创建用户 nginx 1  useradd -s /sbin/nologin nginx   6、编译安装 nginx 1、下载安装包 1 2 3  wget http://nginx."><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/Nginx%E4%B8%8EOpenResty/ngixn/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="Nginx 编译安装与配置使用
+1.查看系统版本/安装常用软件(系统最小化安装)
+1 2  #cat /etc/centos-release CentOS Linux release 7.6.1810 (Core)   1、安装编译环境 1  yum -y install gcc gcc-c++   2、安装pcre软件包（使nginx支持http rewrite模块） 1  yum install -y pcre pcre-devel   3、安装 openssl-devel（使 nginx 支持 ssl） 1  yum install -y openssl openssl-devel   4、安装zlib 1  yum install -y zlib zlib-devel gd gd-devel   5、创建用户 nginx 1  useradd -s /sbin/nologin nginx   6、编译安装 nginx 1、下载安装包 1 2 3  wget http://nginx."><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.0ac1455204506c058198872f05e49d0d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=/Nginx%e4%b8%8eOpenResty/ngixn/%e7%bc%96%e8%af%91%e5%ae%89%e8%a3%85.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details open><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><ol><li><a href=#1安装编译环境>1、安装编译环境</a></li><li><a href=#2安装pcre软件包使nginx支持http-rewrite模块>2、安装pcre软件包（使nginx支持http rewrite模块）</a></li><li><a href=#3安装-openssl-devel使-nginx-支持-ssl>3、安装 openssl-devel（使 nginx 支持 ssl）</a></li><li><a href=#4安装zlib>4、安装zlib</a></li><li><a href=#5创建用户-nginx>5、创建用户 nginx</a></li><li><a href=#6编译安装-nginx>6、编译安装 nginx</a></li><li><a href=#1下载安装包>1、下载安装包</a></li><li><a href=#2编译配置>2、编译配置</a></li><li><a href=#3配置-nginx-命令和服务并开机启动>3、配置 Nginx 命令和服务并开机启动</a></li><li><a href=#1创建服务配置文件>1、创建服务配置文件</a></li><li><a href=#2添加执行权限>2、添加执行权限</a></li><li><a href=#3启动服务先停止nginx服务>3、启动服务(先停止nginx服务)</a></li><li><a href=#4添加开机启动>4、添加开机启动</a></li><li><a href=#5nginx-编译参数>5、Nginx 编译参数</a></li><li><a href=#6nginx-配置文件>6、Nginx 配置文件</a></li><li><a href=#7检测-nginx-配置文件是否正确>7、检测 nginx 配置文件是否正确</a></li><li><a href=#8启动-nginx-服务>8、启动 nginx 服务</a></li><li><a href=#9nginx-命令控制>9、Nginx 命令控制</a></li></ol></li></ol></nav></details></aside><p>Nginx 编译安装与配置使用</p><p>1.查看系统版本/安装常用软件(系统最小化安装)</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-PHP data-lang=PHP><span class=line><span class=cl><span class=c1>#cat /etc/centos-release
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>CentOS</span> <span class=nx>Linux</span> <span class=nx>release</span> <span class=mf>7.6</span><span class=o>.</span><span class=mi>1810</span> <span class=p>(</span><span class=nx>Core</span><span class=p>)</span> 
+</span></span></code></pre></td></tr></table></div></div><a href=#1安装编译环境><h3 id=1安装编译环境><span class=hanchor arialabel=Anchor># </span>1、安装编译环境</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl> <span class=n>yum</span> <span class=o>-</span><span class=n>y</span> <span class=n>install</span> <span class=n>gcc</span> <span class=n>gcc</span><span class=o>-</span><span class=n>c</span><span class=o>++</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#2安装pcre软件包使nginx支持http-rewrite模块><h3 id=2安装pcre软件包使nginx支持http-rewrite模块><span class=hanchor arialabel=Anchor># </span>2、安装pcre软件包（使nginx支持http rewrite模块）</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl><span class=n>yum</span> <span class=n>install</span> <span class=o>-</span><span class=n>y</span> <span class=n>pcre</span> <span class=n>pcre</span><span class=o>-</span><span class=n>devel</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#3安装-openssl-devel使-nginx-支持-ssl><h3 id=3安装-openssl-devel使-nginx-支持-ssl><span class=hanchor arialabel=Anchor># </span>3、安装 openssl-devel（使 nginx 支持 ssl）</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl><span class=n>yum</span> <span class=n>install</span> <span class=o>-</span><span class=n>y</span> <span class=n>openssl</span> <span class=n>openssl</span><span class=o>-</span><span class=n>devel</span> 
+</span></span></code></pre></td></tr></table></div></div><a href=#4安装zlib><h3 id=4安装zlib><span class=hanchor arialabel=Anchor># </span>4、安装zlib</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl><span class=n>yum</span> <span class=n>install</span> <span class=o>-</span><span class=n>y</span> <span class=n>zlib</span> <span class=n>zlib</span><span class=o>-</span><span class=n>devel</span> <span class=n>gd</span> <span class=n>gd</span><span class=o>-</span><span class=n>devel</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#5创建用户-nginx><h3 id=5创建用户-nginx><span class=hanchor arialabel=Anchor># </span>5、创建用户 nginx</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl><span class=n>useradd</span> <span class=o>-</span><span class=n>s</span> <span class=o>/</span><span class=n>sbin</span><span class=o>/</span><span class=n>nologin</span> <span class=n>nginx</span> 
+</span></span></code></pre></td></tr></table></div></div><a href=#6编译安装-nginx><h3 id=6编译安装-nginx><span class=hanchor arialabel=Anchor># </span>6、编译安装 nginx</h3></a><a href=#1下载安装包><h3 id=1下载安装包><span class=hanchor arialabel=Anchor># </span>1、下载安装包</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl><span class=n>wget</span> <span class=n>http</span><span class=p>:</span><span class=o>//</span><span class=n>nginx.org</span><span class=o>/</span><span class=n>download</span><span class=o>/</span><span class=n>nginx</span><span class=o>-</span><span class=mf>1.16.0</span><span class=p>.</span><span class=n>tar.gz</span>
+</span></span><span class=line><span class=cl><span class=o>#</span> <span class=n>tar</span> <span class=o>-</span><span class=n>zxvf</span> <span class=n>nginx</span><span class=o>-</span><span class=mf>1.16.0</span><span class=p>.</span><span class=n>tar.gz</span>
+</span></span><span class=line><span class=cl><span class=o>#</span> <span class=n>cd</span> <span class=n>nginx</span><span class=o>-</span><span class=mf>1.16.0</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#2编译配置><h3 id=2编译配置><span class=hanchor arialabel=Anchor># </span>2、编译配置</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-PHP data-lang=PHP><span class=line><span class=cl><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>nginx</span><span class=o>-</span><span class=mf>1.16</span><span class=o>.</span><span class=mi>0</span><span class=p>]</span><span class=c1># ./configure --prefix=/usr/local/nginx \
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>--</span><span class=nx>user</span><span class=o>=</span><span class=nx>nginx</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>group</span><span class=o>=</span><span class=nx>nginx</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>pcre</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_ssl_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_v2_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_realip_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_addition_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_sub_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_dav_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_flv_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_mp4_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_gunzip_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_gzip_static_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_random_index_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_secure_link_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_stub_status_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_auth_request_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_image_filter_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>http_slice_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>mail</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>threads</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>file</span><span class=o>-</span><span class=nx>aio</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>stream</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>mail_ssl_module</span> <span class=nx>\</span>
+</span></span><span class=line><span class=cl><span class=o>--</span><span class=nx>with</span><span class=o>-</span><span class=nx>stream_ssl_module</span> 
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>nginx</span><span class=o>-</span><span class=mf>1.16</span><span class=o>.</span><span class=mi>0</span><span class=p>]</span><span class=c1>#make &amp;&amp; make install
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>nginx</span><span class=o>-</span><span class=mf>1.16</span><span class=o>.</span><span class=mi>0</span><span class=p>]</span><span class=c1># cd /usr/local/nginx/sbin
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># ./nginx              # 启动Nginx
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># ./nginx -t           # 验证配置文件是正确
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># ./nginx -s reload    # 重启Nginx
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># ./nginx -s stop      # 停止Nginx
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># ./nginx -v            # 查看是否安装成功
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>nginx</span> <span class=nx>version</span><span class=o>:</span> <span class=nx>nginx</span><span class=o>/</span><span class=mf>1.16</span><span class=o>.</span><span class=mi>0</span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># netstat -ntlp | grep nginx # 查看是否启动
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>tcp</span>   <span class=mi>0</span>    <span class=mi>0</span> <span class=mf>0.0</span><span class=o>.</span><span class=mf>0.0</span><span class=o>:</span><span class=mi>80</span>     <span class=mf>0.0</span><span class=o>.</span><span class=mf>0.0</span><span class=o>:*</span>     <span class=nx>LISTEN</span>    <span class=mi>20949</span><span class=o>/</span><span class=nx>nginx</span><span class=o>:</span> <span class=nx>master</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#3配置-nginx-命令和服务并开机启动><h3 id=3配置-nginx-命令和服务并开机启动><span class=hanchor arialabel=Anchor># </span>3、配置 Nginx 命令和服务并开机启动</h3></a><a href=#1创建服务配置文件><h3 id=1创建服务配置文件><span class=hanchor arialabel=Anchor># </span>1、创建服务配置文件</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-PHP data-lang=PHP><span class=line><span class=cl><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># vim /usr/lib/systemd/system/nginx.service
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>Unit</span><span class=p>]</span><span class=nx>Description</span><span class=o>=</span><span class=nx>nginx</span> <span class=o>-</span> <span class=nx>high</span> <span class=nx>performance</span> <span class=nx>web</span> <span class=nx>serverDocumentation</span><span class=o>=</span><span class=nx>http</span><span class=o>://</span><span class=nx>nginx</span><span class=o>.</span><span class=nx>org</span><span class=o>/</span><span class=nx>en</span><span class=o>/</span><span class=nx>docs</span><span class=o>/</span><span class=nx>After</span><span class=o>=</span><span class=nx>network</span><span class=o>.</span><span class=nx>target</span> <span class=nx>remote</span><span class=o>-</span><span class=nx>fs</span><span class=o>.</span><span class=nx>target</span> <span class=nx>nss</span><span class=o>-</span><span class=nx>lookup</span><span class=o>.</span><span class=nx>target</span><span class=p>[</span><span class=nx>Service</span><span class=p>]</span><span class=nx>Type</span><span class=o>=</span><span class=nx>forkingPIDFile</span><span class=o>=/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>logs</span><span class=o>/</span><span class=nx>nginx</span><span class=o>.</span><span class=nx>pidExecStartPre</span><span class=o>=/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>sbin</span><span class=o>/</span><span class=nx>nginx</span> <span class=o>-</span><span class=nx>t</span> <span class=o>-</span><span class=nx>c</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>conf</span><span class=o>/</span><span class=nx>nginx</span><span class=o>.</span><span class=nx>confExecStart</span><span class=o>=/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>sbin</span><span class=o>/</span><span class=nx>nginx</span> <span class=o>-</span><span class=nx>c</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>conf</span><span class=o>/</span><span class=nx>nginx</span><span class=o>.</span><span class=nx>confExecReload</span><span class=o>=</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>sbin</span><span class=o>/</span><span class=nx>nginx</span> <span class=o>-</span><span class=nx>s</span> <span class=nx>reloadExecStop</span><span class=o>=</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>local</span><span class=o>/</span><span class=nx>nginx</span><span class=o>/</span><span class=nx>sbin</span><span class=o>/</span><span class=nx>nginx</span> <span class=o>-</span><span class=nx>s</span> <span class=nx>stopPrivateTmp</span><span class=o>=</span><span class=k>true</span><span class=p>[</span><span class=nx>Install</span><span class=p>]</span><span class=nx>WantedBy</span><span class=o>=</span><span class=nx>multi</span><span class=o>-</span><span class=nx>user</span><span class=o>.</span><span class=nx>target</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#2添加执行权限><h3 id=2添加执行权限><span class=hanchor arialabel=Anchor># </span>2、添加执行权限</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-PHP data-lang=PHP><span class=line><span class=cl><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># chmod +x /usr/lib/systemd/system/nginx.service
+</span></span></span></code></pre></td></tr></table></div></div><a href=#3启动服务先停止nginx服务><h3 id=3启动服务先停止nginx服务><span class=hanchor arialabel=Anchor># </span>3、启动服务(先停止nginx服务)</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-PHP data-lang=PHP><span class=line><span class=cl><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1>## systemctl daemon-reload
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># systemctl start nginx.service   # 启动
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1>#systemctl stop nginx.service    # 停止
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># systemctl reload nginx.service  # 修改配置后重新加载生效 
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># systemctl restart nginx.service # 重启
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># systemctl status nginx   # 查看服务是否启动
+</span></span></span></code></pre></td></tr></table></div></div><a href=#4添加开机启动><h3 id=4添加开机启动><span class=hanchor arialabel=Anchor># </span>4、添加开机启动</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-PHP data-lang=PHP><span class=line><span class=cl><span class=p>[</span><span class=nx>root</span><span class=o>@</span><span class=nx>localhost</span><span class=o>.</span><span class=nx>com</span> <span class=nx>sbin</span><span class=p>]</span><span class=c1># systemctl enable nginx.service
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>Created</span> <span class=nx>symlink</span> <span class=nx>from</span> <span class=o>/</span><span class=nx>etc</span><span class=o>/</span><span class=nx>systemd</span><span class=o>/</span><span class=nx>system</span><span class=o>/</span><span class=nx>multi</span><span class=o>-</span><span class=nx>user</span><span class=o>.</span><span class=nx>target</span><span class=o>.</span><span class=nx>wants</span><span class=o>/</span><span class=nx>nginx</span><span class=o>.</span><span class=nx>service</span> <span class=nx>to</span> <span class=o>/</span><span class=nx>usr</span><span class=o>/</span><span class=nx>lib</span><span class=o>/</span><span class=nx>systemd</span><span class=o>/</span><span class=nx>system</span><span class=o>/</span><span class=nx>nginx</span><span class=o>.</span><span class=nx>service</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#5nginx-编译参数><h3 id=5nginx-编译参数><span class=hanchor arialabel=Anchor># </span>5、Nginx 编译参数</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Lua data-lang=Lua><span class=line><span class=cl><span class=o>#</span> <span class=err>查看</span> <span class=n>nginx</span> <span class=err>安装的模块</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>root</span><span class=err>@</span><span class=n>localhost.com</span> <span class=n>sbin</span><span class=p>]</span><span class=o>#</span> <span class=n>nginx</span> <span class=o>-</span><span class=n>V</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>#</span> <span class=err>模块参数具体功能</span> 
+</span></span><span class=line><span class=cl><span class=c1>--with-cc-opt=&#39;-g -O2 -fPIE -fstack-protector&#39;   # 设置额外的参数将被添加到CFLAGS变量。（FreeBSD或者ubuntu使用）</span>
+</span></span><span class=line><span class=cl><span class=c1>--param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2&#39; </span>
+</span></span><span class=line><span class=cl><span class=c1>--with-ld-opt=&#39;-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now&#39; </span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>--prefix=/usr/share/nginx                        # 指向安装目录</span>
+</span></span><span class=line><span class=cl><span class=c1>--conf-path=/etc/nginx/nginx.conf                # 指定配置文件</span>
+</span></span><span class=line><span class=cl><span class=c1>--http-log-path=/var/log/nginx/access.log        # 指定访问日志</span>
+</span></span><span class=line><span class=cl><span class=c1>--error-log-path=/var/log/nginx/error.log        # 指定错误日志</span>
+</span></span><span class=line><span class=cl><span class=c1>--lock-path=/var/lock/nginx.lock                 # 指定lock文件</span>
+</span></span><span class=line><span class=cl><span class=c1>--pid-path=/run/nginx.pid                        # 指定pid文件</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>--http-client-body-temp-path=/var/lib/nginx/body    # 设定http客户端请求临时文件路径</span>
+</span></span><span class=line><span class=cl><span class=c1>--http-fastcgi-temp-path=/var/lib/nginx/fastcgi     # 设定http fastcgi临时文件路径</span>
+</span></span><span class=line><span class=cl><span class=c1>--http-proxy-temp-path=/var/lib/nginx/proxy         # 设定http代理临时文件路径</span>
+</span></span><span class=line><span class=cl><span class=c1>--http-scgi-temp-path=/var/lib/nginx/scgi           # 设定http scgi临时文件路径</span>
+</span></span><span class=line><span class=cl><span class=c1>--http-uwsgi-temp-path=/var/lib/nginx/uwsgi         # 设定http uwsgi临时文件路径</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>--with-debug                                        # 启用debug日志</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-pcre-jit                                     # 编译PCRE包含“just-in-time compilation”</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-ipv6                                         # 启用ipv6支持</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_ssl_module                              # 启用ssl支持</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_stub_status_module                      # 获取nginx自上次启动以来的状态</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_realip_module                 # 允许从请求标头更改客户端的IP地址值，默认为关</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_auth_request_module           # 实现基于一个子请求的结果的客户端授权。如果该子请求返回的2xx响应代码，所述接入是允许的。如果它返回401或403中，访问被拒绝与相应的错误代码。由子请求返回的任何其他响应代码被认为是一个错误。</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_addition_module               # 作为一个输出过滤器，支持不完全缓冲，分部分响应请求</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_dav_module                    # 增加PUT,DELETE,MKCOL：创建集合,COPY和MOVE方法 默认关闭，需编译开启</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_geoip_module                  # 使用预编译的MaxMind数据库解析客户端IP地址，得到变量值</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_gunzip_module                 # 它为不支持“gzip”编码方法的客户端解压具有“Content-Encoding: gzip”头的响应。</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_gzip_static_module            # 在线实时压缩输出数据流</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_image_filter_module           # 传输JPEG/GIF/PNG 图片的一个过滤器）（默认为不启用。gd库要用到）</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_spdy_module                   # SPDY可以缩短网页的加载时间</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_sub_module                    # 允许用一些其他文本替换nginx响应中的一些文本</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-http_xslt_module                   # 过滤转换XML请求</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-mail                               # 启用POP3/IMAP4/SMTP代理模块支持</span>
+</span></span><span class=line><span class=cl><span class=c1>--with-mail_ssl_module                    # 启用ngx_mail_ssl_module支持启用外部模块支持</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#6nginx-配置文件><h3 id=6nginx-配置文件><span class=hanchor arialabel=Anchor># </span>6、Nginx 配置文件</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>[root@localhost.com sbin]# vim /usr/local/nginx/conf/nginx.conf
+</span></span><span class=line><span class=cl># 全局参数设置 
+</span></span><span class=line><span class=cl>worker_processes  1;          # 设置nginx启动进程的数量，一般设置成与逻辑cpu数量相同 
+</span></span><span class=line><span class=cl>error_log  logs/error.log;    # 指定错误日志 
+</span></span><span class=line><span class=cl>worker_rlimit_nofile 102400;  # 设置一个nginx进程能打开的最大文件数 
+</span></span><span class=line><span class=cl>pid        /var/run/nginx.pid; 
+</span></span><span class=line><span class=cl>events {                      # 事件配置
+</span></span><span class=line><span class=cl>    worker_connections  10240; # 设置一个进程的最大并发连接数
+</span></span><span class=line><span class=cl>    use epoll;                # 事件驱动类型
+</span></span><span class=line><span class=cl>} 
+</span></span><span class=line><span class=cl># http 服务相关设置 
+</span></span><span class=line><span class=cl>http {  
+</span></span><span class=line><span class=cl>    log_format  main  &#39;remote_addr - remote_user [time_local] &#34;request&#34; &#39;
+</span></span><span class=line><span class=cl>                      &#39;status body_bytes_sent &#34;$http_referer&#34; &#39;
+</span></span><span class=line><span class=cl>                      &#39;&#34;http_user_agent&#34; &#34;http_x_forwarded_for&#34;&#39;; 
+</span></span><span class=line><span class=cl>    access_log  /var/log/nginx/access.log  main;    #设置访问日志的位置和格式 
+</span></span><span class=line><span class=cl>    sendfile          on;      # 用于开启文件高效传输模式，一般设置为on，若nginx是用来进行磁盘IO负载应用时，可以设置为off，降低系统负载
+</span></span><span class=line><span class=cl>    tcp_nopush        on;      # 减少网络报文段数量，当有数据时，先别着急发送, 确保数据包已经装满数据, 避免了网络拥塞
+</span></span><span class=line><span class=cl>    tcp_nodelay       on;      # 提高I/O性能，确保数据尽快发送, 提高可数据传输效率                           
+</span></span><span class=line><span class=cl>    gzip              on;      # 是否开启 gzip 压缩 
+</span></span><span class=line><span class=cl>    keepalive_timeout  65;     # 设置长连接的超时时间，请求完成之后还要保持连接多久，不是请求时间多久，目的是保持长连接，减少创建连接过程给系统带来的性能损                                    耗，类似于线程池，数据库连接池
+</span></span><span class=line><span class=cl>    types_hash_max_size 2048;  # 影响散列表的冲突率。types_hash_max_size 越大，就会消耗更多的内存，但散列key的冲突率会降低，检索速度就更快。                                            types_hash_max_size越小，消耗的内存就越小，但散列key的冲突率可能上升
+</span></span><span class=line><span class=cl>    include             /etc/nginx/mime.types;  # 关联mime类型，关联资源的媒体类型(不同的媒体类型的打开方式)
+</span></span><span class=line><span class=cl>    default_type        application/octet-stream;  # 根据文件的后缀来匹配相应的MIME类型，并写入Response header，导致浏览器播放文件而不是下载
+</span></span><span class=line><span class=cl># 虚拟服务器的相关设置 
+</span></span><span class=line><span class=cl>    server { 
+</span></span><span class=line><span class=cl>        listen      80;        # 设置监听的端口 
+</span></span><span class=line><span class=cl>        server_name  localhost;        # 设置绑定的主机名、域名或ip地址 
+</span></span><span class=line><span class=cl>        charset koi8-r;        # 设置编码字符 
+</span></span><span class=line><span class=cl>        location / { 
+</span></span><span class=line><span class=cl>            root  /var/www/nginx;           # 设置服务器默认网站的根目录位置 
+</span></span><span class=line><span class=cl>            index  index.html index.htm;    # 设置默认打开的文档 
+</span></span><span class=line><span class=cl>            } 
+</span></span><span class=line><span class=cl>        error_page  500 502 503 504  /50x.html; # 设置错误信息返回页面 
+</span></span><span class=line><span class=cl>            location = /50x.html { 
+</span></span><span class=line><span class=cl>            root  html;        # 这里的绝对位置是/var/www/nginx/html 
+</span></span><span class=line><span class=cl>        } 
+</span></span><span class=line><span class=cl>    } 
+</span></span><span class=line><span class=cl> }
+</span></span></code></pre></td></tr></table></div></div><a href=#7检测-nginx-配置文件是否正确><h3 id=7检测-nginx-配置文件是否正确><span class=hanchor arialabel=Anchor># </span>7、检测 nginx 配置文件是否正确</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>[root@localhost.com sbin]#usr/local/nginx/sbin/nginx -t
+</span></span></code></pre></td></tr></table></div></div><a href=#8启动-nginx-服务><h3 id=8启动-nginx-服务><span class=hanchor arialabel=Anchor># </span>8、启动 nginx 服务</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>[root@localhost.com sbin]# /usr/local/nginx/sbin/nginx
+</span></span></code></pre></td></tr></table></div></div><a href=#9nginx-命令控制><h3 id=9nginx-命令控制><span class=hanchor arialabel=Anchor># </span>9、Nginx 命令控制</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>nginx -c /path/to/nginx.conf     # 以特定目录下的配置文件启动nginx:
+</span></span><span class=line><span class=cl>nginx -s reload                  # 修改配置后重新加载生效
+</span></span><span class=line><span class=cl>nginx -s reopen                  # 重新打开日志文件
+</span></span><span class=line><span class=cl>nginx -s stop                    # 快速停止nginx
+</span></span><span class=line><span class=cl>nginx -s quit                    # 完整有序的停止nginx
+</span></span><span class=line><span class=cl>nginx -t                         # 测试当前配置文件是否正确
+</span></span><span class=line><span class=cl>nginx -t -c /path/to/nginx.conf  # 测试特定的nginx配置文件是否正确
+</span></span></code></pre></td></tr></table></div></div></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>
