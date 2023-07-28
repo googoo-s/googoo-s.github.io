@@ -1,0 +1,299 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="什么是 Maven Maven 是一种用来管理 Java 项目的工具，但不是那种用来管理资源规划和调度的工具。 相反，它处理的是管理一个具体的项目所涉及的各种任务，如编译、测试、打包、文档以及分发。
+Maven 包括以下的几个部分。
+  一组用于处理依赖管理、目录结构以及构建工作流的约定。
+ 基于这些约定实现的标准化 ，可以极大地简化开发过程。例如，一个常用的目录结构使得开发者可以更加容易地跟上不熟悉的项目的节奏。    一个用于项目配置的XML Schema：项目对象模型（Project Object Model），简称POM①。"><meta property="og:title" content><meta property="og:description" content="什么是 Maven Maven 是一种用来管理 Java 项目的工具，但不是那种用来管理资源规划和调度的工具。 相反，它处理的是管理一个具体的项目所涉及的各种任务，如编译、测试、打包、文档以及分发。
+Maven 包括以下的几个部分。
+  一组用于处理依赖管理、目录结构以及构建工作流的约定。
+ 基于这些约定实现的标准化 ，可以极大地简化开发过程。例如，一个常用的目录结构使得开发者可以更加容易地跟上不熟悉的项目的节奏。    一个用于项目配置的XML Schema：项目对象模型（Project Object Model），简称POM①。"><meta property="og:type" content="website"><meta property="og:image" content="https://quartz.jzhao.xyz/icon.png"><meta property="og:url" content="https://quartz.jzhao.xyz/maven/maven-overview/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="什么是 Maven Maven 是一种用来管理 Java 项目的工具，但不是那种用来管理资源规划和调度的工具。 相反，它处理的是管理一个具体的项目所涉及的各种任务，如编译、测试、打包、文档以及分发。
+Maven 包括以下的几个部分。
+  一组用于处理依赖管理、目录结构以及构建工作流的约定。
+ 基于这些约定实现的标准化 ，可以极大地简化开发过程。例如，一个常用的目录结构使得开发者可以更加容易地跟上不熟悉的项目的节奏。    一个用于项目配置的XML Schema：项目对象模型（Project Object Model），简称POM①。"><meta name=twitter:image content="https://quartz.jzhao.xyz/icon.png"><meta name=twitter:site content="_jzhao"><title>🪴 Quartz 3.3</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://quartz.jzhao.xyz//icon.png><link href=https://quartz.jzhao.xyz/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://quartz.jzhao.xyz/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://quartz.jzhao.xyz/js/darkmode.63d6a3e095d0bd2b935b62adec9dc11b.min.js></script>
+<script src=https://quartz.jzhao.xyz/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://quartz.jzhao.xyz/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://quartz.jzhao.xyz/",fetchData=Promise.all([fetch("https://quartz.jzhao.xyz/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://quartz.jzhao.xyz/indices/contentIndex.fd0b08e0fcf0fc58c8d873581bcb40dd.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://quartz.jzhao.xyz",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://quartz.jzhao.xyz",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/quartz.jzhao.xyz\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=quartz.jzhao.xyz src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://quartz.jzhao.xyz/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://quartz.jzhao.xyz/>🪴 Quartz 3.3</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=https://github.com/jackyzha0/quartz/tree/hugo/content/maven/maven%20overview.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#标准的目录结构>标准的目录结构</a></li><li><a href=#pom大纲>POM大纲</a></li><li><a href=#构建>构建</a><ol><li><a href=#pom-文件的用例>POM 文件的用例</a></li></ol></li><li><a href=#gav-坐标>GAV 坐标</a></li><li><a href=#依赖>依赖</a></li><li><a href=#依赖管理>依赖管理</a></li><li><a href=#构建的生命周期>构建的生命周期</a></li><li><a href=#插件>插件</a></li><li><a href=#插件管理>插件管理</a></li><li><a href=#配置文件>配置文件</a></li><li><a href=#存储库>存储库</a></li><li><a href=#快照和发布>快照和发布</a></li></ol><ol><li><a href=#继承和组合>继承和组合</a><ol><li><a href=#pom-继承>POM 继承</a></li></ol></li></ol></nav></details></aside><a href=#什么是-maven><h1 id=什么是-maven><span class=hanchor arialabel=Anchor># </span>什么是 Maven</h1></a><p>Maven 是一种用来管理 Java 项目的工具，但不是那种用来管理资源规划和调度的工具。 相反，它处理的是管理一个具体的项目所涉及的各种任务，如编译、测试、打包、文档以及分发。</p><p>Maven 包括以下的几个部分。</p><ul><li><p>一组用于处理依赖管理、目录结构以及构建工作流的约定。</p><ul><li>基于这些约定实现的标准化 ，可以极大地简化开发过程。例如，一个常用的目录结构使得开发者可以更加容易地跟上不熟悉的项目的节奏。</li></ul></li><li><p>一个用于项目配置的XML Schema：项目对象模型（Project Object Model），简称POM①。</p><ul><li>每一个Maven项目都拥有一个POM文件 ，默认命名为pom.xml，包含了Maven用于管理 该项目的所有的配置信息。</li></ul></li><li><p>一个委托外部组件来执行项目任务的插件架构。</p><ul><li>这简化了更新以及扩展 Maven 能力的过程。</li></ul></li></ul><a href=#maven-的基本概念><h1 id=maven-的基本概念><span class=hanchor arialabel=Anchor># </span>Maven 的基本概念</h1></a><a href=#标准的目录结构><h2 id=标准的目录结构><span class=hanchor arialabel=Anchor># </span>标准的目录结构</h2></a><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-213.png width=auto alt></p><a href=#pom大纲><h2 id=pom大纲><span class=hanchor arialabel=Anchor># </span>POM大纲</h2></a><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-211.png width=auto alt></p><a href=#构建><h2 id=构建><span class=hanchor arialabel=Anchor># </span>构建</h2></a><p>任何可以被 Maven 的坐标系统（参见接下来的关于 GAV 坐标的讨论）唯一标识的对象都是一个 Maven 构件。</p><ul><li><p>大多数情况下，构件是构建 Maven 项目所生成的文件，如 JAR。</p></li><li><p>但是，只包 含其他 POM（该文件本身并不产生构件）使用的定义的 POM 文件也是 Maven 构件。</p></li><li><p>Maven 构件的类型由其 POM 文件的<code>&lt;packaging></code>元素指定。最常用的值是 pom、jar、 ear、war 以及 maven-plugin</p></li></ul><a href=#pom-文件的用例><h3 id=pom-文件的用例><span class=hanchor arialabel=Anchor># </span>POM 文件的用例</h3></a><p>可以通过以下的方式来使用 POM 文件。</p><ul><li><p>默认的——用于构建一个构件。</p></li><li><p>父 POM——提供一个由子项目继承的单个配置信息源——声明这个 POM 文件作为它们 的<code>&lt;parent></code>元素的值。</p></li><li><p>聚合器——用于构建一组声明为<code>&lt;modules></code>的项目，这些子项目位于其当前聚合器项目的文件夹中，每个都包含有它自己的 POM 文件。</p></li></ul><p>作为<strong>父 POM 或者聚合器的 POM 文件的<code>&lt;packaging></code>元素的值将是 pom</strong>。注意，一个 POM</p><p>文件可能同时提供两项功能。</p><a href=#gav-坐标><h2 id=gav-坐标><span class=hanchor arialabel=Anchor># </span>GAV 坐标</h2></a><p>POM 定义了 5 种称为坐标的元素，用于标识 Maven 构件。首字母缩写 GAV 指的是必须始终指定的 3 个坐标<code>&lt;groupId></code>、<code>&lt;artifactId></code>以及<code>&lt;version></code>的首字</p><ol><li><p><code>&lt;groupId></code>是项目或者项目组的全局的唯一标识符。这通常是 Java 源代码中使用的全限定的 Java 包名。例如，io.netty、com.google。</p></li><li><p><code>&lt;artifactId></code>用于标识和某个<code>&lt;groupId></code>相关的不同的构件。例如，netty-all、 netty-handler。</p></li><li><p><code>&lt;type></code>是指和项目相关的主要构件的类型（对应于构件的 POM 文件中的<code>&lt;packaging></code> 值）。它的默认值是 jar。例如，pom、war、ear。</p></li><li><p><code>&lt;version></code>标识了构件的版本。例如，1.1、2.0-SNAPSHOT①POM 文件必须声明它所管理的构件的坐标。一个具有如下坐标的项目： 、4.1.9.Final。</p></li><li><p><code>&lt;classifier></code>用于区分属于相同的 POM 但是却被以不同的方式构建的构件。例如，javadoc、sources、jdk16、jdk17</p></li></ol><p>一个GAV</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>io</span><span class=p>.</span><span class=nx>netty</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>netty</span><span class=o>-</span><span class=nx>all</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>4.1.9</span><span class=p>.</span><span class=nx>Final</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>packaging</span><span class=p>&gt;</span><span class=nx>jar</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>packaging</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在这种情况下，它将产生这个构件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=nx>netty</span><span class=o>-</span><span class=nx>all</span>
+</span></span><span class=line><span class=cl><span class=o>-</span><span class=mf>4.1.9</span><span class=p>.</span><span class=nx>Final</span><span class=p>.</span><span class=nx>jar</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#依赖><h2 id=依赖><span class=hanchor arialabel=Anchor># </span>依赖</h2></a><p>项目的依赖是指编译和执行它所需要的外部构件</p><p>在大多数情况下，你的项目的依赖项也会有它自己的依赖。我们称这些依赖为你的项目的传递依赖。一个复杂的项目可能会有一个深层级 的依赖树；Maven提供了各种用于帮助理解和管理它的工具。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>groupId</span><span class=o>/</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>artifactId</span><span class=o>/</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>version</span><span class=o>/</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=kd>type</span><span class=o>/</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>scope</span><span class=o>/</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>systemPath</span><span class=o>/</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=o>...</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>dependencies</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>type以及scope元素对于那些值不分别是默认值jar和compile的依赖来说也是必需的</p><p><code>&lt;scope></code>元素可以具有以下值</p><ul><li><p>compile—编译和执行需要的（默认值）。</p></li><li><p>runtime—只有执行需要。</p></li><li><p>optional——不被引用了这个项目所产生的构件的其他项目，视为传递依赖。</p></li><li><p>provided——不会被包含在由这个 POM 产生的 WAR 文件的 WEB_INF/lib 目录中。</p></li><li><p>test——只有编译和测试的执行需要。</p></li><li><p>import——这将在后面的“依赖管理”一节进行讨论。</p></li></ul><p><code>&lt;systemPath></code>元素用来指定文件系统中的绝对位置。</p><a href=#依赖管理><h2 id=依赖管理><span class=hanchor arialabel=Anchor># </span>依赖管理</h2></a><p>引用了<code>&lt;dependencyManagement></code>元素的项目可以使用它所声明的依赖，而不需要指定它们的<code>&lt;version></code>坐标。如果<code>&lt;dependencyManagement></code>中的<code>&lt;version></code>在稍后有所改变，则它将被所有引用它的 POM 拾起。</p><p>在下面的示例中，所使用的 Netty 版本是在 POM 的<code>&lt;properties></code>部分中定义，在 <code>&lt;dependencyManagement></code>中引用的</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>properties</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>netty</span><span class=p>.</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>4.1.9</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>netty</span><span class=p>.</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=o>...</span> 
+</span></span><span class=line><span class=cl>    <span class=o>...</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>properties</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>dependencyManagement</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>io</span><span class=p>.</span><span class=nx>netty</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>netty</span><span class=o>-</span><span class=nx>all</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=err>$</span><span class=p>{</span><span class=nx>netty</span><span class=p>.</span><span class=nx>version</span><span class=p>}&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=o>...</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>dependencyManagement</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>对于这种使用场景，依赖的<code>&lt;scope></code>元素有一个特殊的 import 值：它将把外部 POM（没有被声明为<code>&lt;parent></code>）的<code>&lt;dependencyManagement></code>元素的内容导入到当前 POM 的<code>&lt;dependencyManagement></code>元素中</p><a href=#构建的生命周期><h2 id=构建的生命周期><span class=hanchor arialabel=Anchor># </span>构建的生命周期</h2></a><p>Maven 构建的生命周期是一个明确定义的用于构建和分发构件的过程。有 3 个内置的构建生命周期：clean、default 和 site。</p><p>一个构建的生命周期由一系列的阶段所组成。下面是默认的构建生命周期的各个阶段的一个部分清单。</p><ul><li><p> validate——检查项目是否正确，所有必需的信息是否已经就绪。</p></li><li><p> process-sources——处理源代码，如过滤任何值。</p></li><li><p> compile——编译项目的源代码。</p></li><li><p> process-test-resources——复制并处理资源到测试目标目录中。</p></li><li><p> test-compile——将测试源代码编译到测试目标目录中。</p></li><li><p> test——使用合适的单元测试框架测试编译的源代码。</p></li><li><p> package——将编译的代码打包为它的可分发格式，如 JAR。</p></li><li><p> integration-test——处理并将软件包部署到一个可以运行集成测试的环境中。</p></li><li><p> verify——运行任何的检查以验证软件包是否有效，并且符合质量标准。</p></li><li><p> install——将软件包安装到本地存储库中，在那里其他本地构建项目可以将它引用为依赖。</p></li><li><p> deploy——将最终的构件上传到远程存储库，以与其他开发人员和项目共享。</p></li></ul><a href=#插件><h2 id=插件><span class=hanchor arialabel=Anchor># </span>插件</h2></a><p>插件可能拥有多个内部步骤，或者目标，其也可以被单独调用。例如，在一个 JAR 项目中，默认的构建生命周期由 maven-jar-plugin 处理，其将构建的各个阶段映射到了它自己的以及其他插件的目标中，</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-210.png width=auto alt></p><p>注意插件的声明，它被打包为 JAR 包，使用了和<code>&lt;dependency></code>的 GAV 坐标相同的 GAV 坐标。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>org</span><span class=p>.</span><span class=nx>codehaus</span><span class=p>.</span><span class=nx>mojo</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>exec</span><span class=o>-</span><span class=nx>maven</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>1.2.1</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl> 
+</span></span></code></pre></td></tr></table></div></div><a href=#插件管理><h2 id=插件管理><span class=hanchor arialabel=Anchor># </span>插件管理</h2></a><p>如同<code>&lt;dependencyManagement></code>，<pluginmanagement>声明了其他 POM 可以使用的</p><p>信息</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>build</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>pluginManagement</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>plugins</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>maven</span><span class=o>-</span><span class=nx>compiler</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>3.2</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>configuration</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>source</span><span class=p>&gt;</span><span class=mf>1.7</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>source</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>target</span><span class=p>&gt;</span><span class=mf>1.7</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>target</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>configuration</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>org</span><span class=p>.</span><span class=nx>codehaus</span><span class=p>.</span><span class=nx>mojo</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>exec</span><span class=o>-</span><span class=nx>maven</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>1.2.1</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugins</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>pluginManagement</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>build</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#配置文件><h2 id=配置文件><span class=hanchor arialabel=Anchor># </span>配置文件</h2></a><p>配置文件（在<profiles>中定义）是一组自定义的 POM 元素，可以通过自动或者手动启用（激活）来改变 POM 的行为。</p><p>例如，你可以定义一个配置文件，它将根据 JDK 版本、操作系 统或者目标部署环境（如开发、测试或者生产环境）来设置构建参数。 可以通过命令行的-P 标志来显式地引用配置文件。下面的例子将激活一个将 POM 自定义为 使用 JDK1.6 的配置文件。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=nx>mvn</span> <span class=o>-</span><span class=nx>P</span> <span class=nx>jdk16</span> <span class=nx>clean</span> <span class=nx>install</span> 
+</span></span></code></pre></td></tr></table></div></div><a href=#存储库><h2 id=存储库><span class=hanchor arialabel=Anchor># </span>存储库</h2></a><p>Maven的构件存储库 ①</p><ul><li><p>远程存储库是一个 Maven 从其下载 POM 文件中所引用的依赖的服务。如果你有上传权 限，那么这些依赖中可能也会包含由你自己的项目所产生的构件。大量开放源代码的 Maven 项目（包含 Netty）都将它们的构件发布到可以公开访问的 Maven 存储库。</p></li><li><p>本地存储库是一个本地的目录，其包含从远程存储库下载的构件，以及你在本地机器上构建并安装的构件。它通常放在你的主目录下，</p></li></ul><p>Maven 存储库的物理目录结构使用 GAV 坐标，如同 Java 编译器使用包名一样。例如，在 Maven 下载了下面的依赖之后：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=nx>Maven</span> <span class=nx>存储库的物理目录结构使用</span> <span class=nx>GAV</span> <span class=nx>坐标</span><span class=err>，</span><span class=nx>如同</span> <span class=nx>Java</span> <span class=nx>编译器使用包名一样</span><span class=err>。</span><span class=nx>例如</span><span class=err>，</span><span class=nx>在</span> 
+</span></span><span class=line><span class=cl><span class=nx>Maven</span> <span class=nx>下载了下面的依赖之后</span><span class=err>：</span>
+</span></span></code></pre></td></tr></table></div></div><p>Maven 存储库的物理目录结构使用 GAV 坐标，如同 Java 编译器使用包名一样。例如，在 Maven 下载了下面的依赖之后：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-212.png width=auto alt></p><a href=#快照和发布><h2 id=快照和发布><span class=hanchor arialabel=Anchor># </span>快照和发布</h2></a><p>远程存储库通常会为正在开发的构件，以及那些稳定发布或者生产发布的构件，定义不同的 区域。这<strong>些区域被分别称为快照存储库和发布存储库。</strong></p><ul><li><p>一个<code>&lt;version></code>值由-SNAPSHOT 结尾的构件将被认为是还没有发布的**。这种构件可以重复 地使用相同的<code>&lt;version></code>值被上传到存储库**。每次它都会被分配一个唯一的时间戳。<strong>当项目检 索构件时，下载的是最新实例。</strong></p></li><li><p>一个<code>&lt;version></code>值不具有-SNAPSHOT 后缀的构件将会被认为是一个发布版本。通常，存储库策略只允某一特定的发布版本上传一次</p></li></ul><p>SNAPSHOT 的拉取</p><ul><li><p>当构建一个具有 SNAPSHOT 依赖的项目时，Maven 将检查本地存储库中是否有对应的副本。 如果没有，它将尝试从指定的远程存储库中检索，在这种情况下，它将接收到具有最新时间戳的构件。</p></li><li><p>如果本地的确有这个构件，并且当前构建也是这一天中的第一个，那么 Maven 将默认尝试更新该本地副本。这个行为可以通过使用 Maven 配置文件（settings.xml）中的配置或者命令行 标志来进行配置</p></li></ul><a href=#pom-实例><h1 id=pom-实例><span class=hanchor arialabel=Anchor># </span>POM 实例</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=err>?</span><span class=nx>xml</span> <span class=nx>version</span><span class=p>=</span><span class=s>&#34;1.0&#34;</span> <span class=nx>encoding</span><span class=p>=</span><span class=s>&#34;ISO-8859-15&#34;</span><span class=err>?</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>project</span> <span class=nx>xmlns</span><span class=p>=</span><span class=s>&#34;http://maven.apache.org/POM/4.0.0&#34;</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>xmlns</span><span class=p>:</span><span class=nx>xsi</span><span class=p>=</span><span class=s>&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>xsi</span><span class=p>:</span><span class=nx>schemaLocation</span><span class=p>=</span><span class=s>&#34;http://maven.apache.org/POM/4.0.0 
+</span></span></span><span class=line><span class=cl><span class=s>    http://maven.apache.org/maven-v4_0_0.xsd&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>modelVersion</span><span class=p>&gt;</span><span class=mf>4.0.0</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>modelVersion</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>com</span><span class=p>.</span><span class=nx>example</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>myproject</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>1.0</span><span class=o>-</span><span class=nx>SNAPSHOT</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>packaging</span><span class=p>&gt;</span><span class=nx>jar</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>packaging</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>name</span><span class=p>&gt;</span><span class=nx>My</span> <span class=nx>Jar</span> <span class=nx>Project</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>name</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>io</span><span class=p>.</span><span class=nx>netty</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>netty</span><span class=o>-</span><span class=nx>all</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>4.1.9</span><span class=p>.</span><span class=nx>Final</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>build</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>plugins</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>org</span><span class=p>.</span><span class=nx>apache</span><span class=p>.</span><span class=nx>maven</span><span class=p>.</span><span class=nx>plugins</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>maven</span><span class=o>-</span><span class=nx>compiler</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>3.2</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>configuration</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                    <span class=p>&lt;</span><span class=nx>source</span><span class=p>&gt;</span><span class=mf>1.7</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>source</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                    <span class=p>&lt;</span><span class=nx>target</span><span class=p>&gt;</span><span class=mf>1.7</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>target</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=o>/</span><span class=nx>configuration</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugins</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>build</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>project</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#继承和组合><h2 id=继承和组合><span class=hanchor arialabel=Anchor># </span>继承和组合</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl><span class=p>&lt;</span><span class=nx>project</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>modelVersion</span><span class=p>&gt;</span><span class=mf>4.0.0</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>modelVersion</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>parent</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>nia</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>nia</span><span class=o>-</span><span class=nx>samples</span><span class=o>-</span><span class=nx>parent</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>version</span><span class=p>&gt;</span><span class=mf>1.0</span><span class=o>-</span><span class=nx>SNAPSHOT</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>version</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>parent</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>chapter2</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>packaging</span><span class=p>&gt;</span><span class=nx>pom</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>packaging</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>name</span><span class=p>&gt;</span><span class=mf>2.</span> <span class=nx>Echo</span> <span class=nx>Client</span> <span class=nx>and</span> <span class=nx>Server</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>name</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>modules</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>module</span><span class=p>&gt;</span><span class=nx>Client</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>module</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>module</span><span class=p>&gt;</span><span class=nx>Server</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>module</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>modules</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>properties</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>echo</span><span class=o>-</span><span class=nx>server</span><span class=p>.</span><span class=nx>hostname</span><span class=p>&gt;</span><span class=nx>localhost</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>echo</span><span class=o>-</span><span class=nx>server</span><span class=p>.</span><span class=nx>hostname</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>echo</span><span class=o>-</span><span class=nx>server</span><span class=p>.</span><span class=nx>port</span><span class=p>&gt;</span><span class=mi>9999</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>echo</span><span class=o>-</span><span class=nx>server</span><span class=p>.</span><span class=nx>port</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>properties</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>io</span><span class=p>.</span><span class=nx>netty</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>netty</span><span class=o>-</span><span class=nx>all</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependency</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>dependencies</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nx>build</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=nx>plugins</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>maven</span><span class=o>-</span><span class=nx>compiler</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>maven</span><span class=o>-</span><span class=nx>failsafe</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>maven</span><span class=o>-</span><span class=nx>surefire</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>groupId</span><span class=p>&gt;</span><span class=nx>org</span><span class=p>.</span><span class=nx>codehaus</span><span class=p>.</span><span class=nx>mojo</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>groupId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>                <span class=p>&lt;</span><span class=nx>artifactId</span><span class=p>&gt;</span><span class=nx>exec</span><span class=o>-</span><span class=nx>maven</span><span class=o>-</span><span class=nx>plugin</span><span class=p>&lt;</span><span class=o>/</span><span class=nx>artifactId</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>            <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugin</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>        <span class=p>&lt;</span><span class=o>/</span><span class=nx>plugins</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=o>/</span><span class=nx>build</span><span class=p>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=o>/</span><span class=nx>project</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#pom-继承><h3 id=pom-继承><span class=hanchor arialabel=Anchor># </span>POM 继承</h3></a><ul><li><p>POM 文件可能包含子项目要继承（并可能重写）的信息。</p></li><li><p>通过parent 实现</p></li></ul><p>POM 聚合</p><ul><li><p>聚合器 POM 会构建一个或者多个子项目，这些子项目驻留在该 POM 所在目录的子目录中。 子项目，或者<code>&lt;modules></code>标签，是由它们的目录名标识的：</p></li><li><p>通过<code>&lt;modules></code> 实现</p></li></ul></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://quartz.jzhao.xyz/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by Jacky Zhao using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://quartz.jzhao.xyz/>Home</a></li><li><a href=https://twitter.com/_jzhao>Twitter</a></li><li><a href=https://github.com/jackyzha0>GitHub</a></li></ul></footer></div></div></body></html>

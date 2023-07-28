@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Redis on</title><link>https://quartz.jzhao.xyz/redis/</link><description>Recent content in Redis on</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quartz.jzhao.xyz/redis/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/AOF%E6%97%A5%E5%BF%97%E5%AE%95%E6%9C%BA%E4%BA%86Redis%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/AOF%E6%97%A5%E5%BF%97%E5%AE%95%E6%9C%BA%E4%BA%86Redis%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1/</guid><description>Redis 的持久化主要有两大机制，即 AOF（Append Only File）日志和 RDB 快照。
+AOF日志如何实现 数据库是写前日志（Write Ahead Log, WAL），也就是说，在实际写数据前，先把修改的数据记到日志文件中，以便故障时进行恢复
+AOF 日志正好相反，它是写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志，如下图所示</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/redis-%E7%9A%84%E6%85%A2%E6%93%8D%E4%BD%9C/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/redis-%E7%9A%84%E6%85%A2%E6%93%8D%E4%BD%9C/</guid><description>Redis 的快，到底是快在哪里呢？实际上，这里有一个重要的表现：它接收到一个键值对操作后，能以微秒级别的速度找到数据，并快速完成操作。
+为啥 Redis 能有这么突出的表现呢？
+一方面，这是因为它是内存数据库，所有操作都在内存上完成，内存的访问速度本身就很快。
+另一方面，这要归功于它的数据结构。这是因为，键值对是按一定的数据结构来组织的，操作键值对最终就是对数据结构进行增删改查操作，所以高效的数据结构是 Redis 快速处理数据的基础。
+一方面是因为 O(1) 复杂度的哈希表被广泛使用，包括 String、Hash 和 Set，它们的操作复杂度基本由哈希表决定，</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%86%85%E5%AD%98%E5%BF%AB%E7%85%A7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%86%85%E5%AD%98%E5%BF%AB%E7%85%A7/</guid><description>AOF 正因为记录的是操作命令，而不是实际的数据，所以，用 AOF 方法进行故障恢复的时候，需要逐一把操作日志都执行一遍。如果操作日志非常多，Redis 就会恢复得很缓慢，影响到正常使用。
+另一种持久化方法：内存快照。所谓内存快照，就是指内存中的数据在某一个时刻的状态记录。
+对 Redis 来说，它实现类似照片记录效果的方式，就是把某一时刻的状态以文件的形式写到磁盘上，也就是快照。这样一来，即使宕机，快照文件也不会丢失，数据的可靠性也就得到了保证。这个快照文件就称为 RDB 文件，其中，RDB 就是 Redis DataBase 的缩写。
+有两个关键问题
+对哪些数据做快照？这关系到快照的执行效率问题；
+做快照时，数据还能被增删改吗？这关系到 Redis 是否被阻塞，能否同时正常处理请求。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%A4%9A%E4%BA%86%E6%98%AF%E8%AF%A5%E5%8A%A0%E5%86%85%E5%AD%98%E8%BF%98%E6%98%AF%E5%8A%A0%E5%AE%9E%E4%BE%8B/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%A4%9A%E4%BA%86%E6%98%AF%E8%AF%A5%E5%8A%A0%E5%86%85%E5%AD%98%E8%BF%98%E6%98%AF%E5%8A%A0%E5%AE%9E%E4%BE%8B/</guid><description>在使用 RDB 进行持久化时，Redis 会 fork 子进程来完成，fork 操作的用时和 Redis 的数据量是正相关的，而 fork 在执行时会阻塞主线程。数据量越大，fork 操作造成的主线程阻塞的时间越长。所以，在使用 RDB 对 25GB 的数据进行持久化时，数据量较大，后台运行的子进程在 fork 创建时阻塞了主线程，于是就导致 Redis 响应变慢了。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6%E4%B8%BB%E5%BA%93%E6%8C%82%E4%BA%86%E5%A6%82%E4%BD%95%E4%B8%8D%E9%97%B4%E6%96%AD%E6%9C%8D%E5%8A%A1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6%E4%B8%BB%E5%BA%93%E6%8C%82%E4%BA%86%E5%A6%82%E4%BD%95%E4%B8%8D%E9%97%B4%E6%96%AD%E6%9C%8D%E5%8A%A1/</guid><description>但是，一旦有写操作请求了，按照主从库模式下的读写分离要求，需要由主库来完成写操作。如果主库挂了，如何不间断服务
+如果主库挂了，我们就需要运行一个新主库，比如说把一个从库切换为主库，把它当成主库。
+这就涉及到三个问题：
+主库真的挂了吗？
+该选择哪个从库作为主库？
+怎么把新主库的相关信息通知给从库和客户端呢？
+在 Redis 主从集群中，哨兵机制是实现主从库自动切换的关键机制，它有效地解决了主从复制模式下故障转移的这三个问题
+哨兵机制的基本流程 哨兵主要负责的就是三个任务：</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E5%93%A8%E5%85%B5%E6%8C%82%E4%BA%86%E4%B8%BB%E4%BB%8E%E5%BA%93%E5%88%87%E6%8D%A2/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E5%93%A8%E5%85%B5%E6%8C%82%E4%BA%86%E4%B8%BB%E4%BB%8E%E5%BA%93%E5%88%87%E6%8D%A2/</guid><description>实际上，一旦多个实例组成了哨兵集群，即使有哨兵实例出现故障挂掉了，其他哨兵还能继续协作完成主从库切换的工作，包括监控、选主、通知。
+在配置哨兵的信息时，我们只需要用到下面的这个配置项，设置主库的 IP 和端口，并没有配置其他哨兵的连接信息
+1 sentinel monitor &amp;lt;master-name&amp;gt; &amp;lt;ip&amp;gt; &amp;lt;redis-port&amp;gt; &amp;lt;quorum&amp;gt; 基于 pub/sub 机制的哨兵集群组成 哨兵实例之间可以相互发现，要归功于 Redis 提供的 pub/sub 机制，也就是发布 / 订阅机制.</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84%E4%B8%80%E4%B8%AA%E9%94%AE%E5%80%BC%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%BB%84%E6%88%90/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84%E4%B8%80%E4%B8%AA%E9%94%AE%E5%80%BC%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%BB%84%E6%88%90/</guid><description>如果自己设计一个键值数据库 SimpleKV
+开始构造 SimpleKV 时，首先就要考虑里面可以存什么样的数据，对数据可以做什么样的操作，也就是数据模型和操作接口。它们看似简单，实际上却是我们理解 Redis 经常被用于缓存、秒杀、分布式锁等场景的重要基础。
+可以存哪些数据 对于键值数据库而言，基本的数据模型是 key-value 模型.
+我们在对键值数据库进行选型时，一个重要的考虑因素是它支持的 value 类型.
+Memcached 支持的 value 类型仅为 String 类型.</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%BA%93/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%BA%93/</guid><description>AOF 和 RDB，如果 Redis 发生了宕机，它们可以分别通过回放日志和重新读入 RDB 文件的方式恢复数据，从而保证尽量少丢失数据，提升可靠性。
+不过，即使用了这两种方法，也依然存在服务不可用的问题。比如说，我们在实际使用时只运行了一个 Redis 实例，那么，如果这个实例宕机了，它在恢复期间，是无法服务新来的数据存取请求的
+Redis 具有高可靠性，又是什么意思呢？其实，这里有两层含义：
+一是数据尽量少丢失，
+二是服务尽量少中断
+AOF 和 RDB 保证了前者，而对于后者，Redis 的做法就是增加副本冗余量，将一份数据同时保存在多个实例上</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E9%AB%98%E6%80%A7%E8%83%BDIO%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%95%E7%BA%BF%E7%A8%8BRedis%E8%83%BD%E9%82%A3%E4%B9%88%E5%BF%AB/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%9F%BA%E7%A1%80/%E9%AB%98%E6%80%A7%E8%83%BDIO%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%95%E7%BA%BF%E7%A8%8BRedis%E8%83%BD%E9%82%A3%E4%B9%88%E5%BF%AB/</guid><description>Redis 是单线程，主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外提供键值存储服务的主要流程。
+但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。
+深入地学习下 Redis 的单线程设计机制以及多路复用机制</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/Codis-vs-Redis-Cluster/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/Codis-vs-Redis-Cluster/</guid><description>要开发一个图片存储系统，要求这个系统能快速地记录图片 ID 和图片在存储系统中保存时的 ID（可以直接叫作图片存储对象 ID）。同时，还要能够根据图片 ID 快速查找到图片存储对象 ID。因为图片数量巨大，所以我们就用 10 位数来表示图片 ID 和图片存储对象 ID。
+图片 ID 和图片存储对象 ID 正好一一对应，是典型的“键 - 单值”模式，String 类型提供的“一个键对应一个值的数据”的保存形式刚好契合。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/CPU%E7%BB%93%E6%9E%84%E4%B9%9F%E4%BC%9A%E5%BD%B1%E5%93%8DRedis%E7%9A%84%E6%80%A7%E8%83%BD/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/CPU%E7%BB%93%E6%9E%84%E4%B9%9F%E4%BC%9A%E5%BD%B1%E5%93%8DRedis%E7%9A%84%E6%80%A7%E8%83%BD/</guid><description>目前主流服务器的 CPU 架构，基于 CPU 多核架构多 CPU 架构优化 Redis 性能的方法
+主流的CPU架构 一个 CPU 处理器中一般有多个运行核心，我们把一个运行核心称为一个物理核，每个物理核都可以运行应用程序。每个物理核都拥有私有的一级缓存（Level 1 cache，简称 L1 cache），包括一级指令缓存和一级数据缓存，以及私有的二级缓存（Level 2 cache，简称 L2 cache）。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/GEO%E6%98%AF%E4%BB%80%E4%B9%88/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/GEO%E6%98%AF%E4%BB%80%E4%B9%88/</guid><description>我们学习了 Redis 的 5 大基本数据类型：String、List、Hash、Set 和 Sorted Set，它们可以满足大多数的数据存储需求，但是在面对海量数据统计时，它们的内存开销很大，而且对于一些特殊的场景，它们是无法支持的。所以，Redis 还提供了 3 种扩展数据类型，分别是 Bitmap、HyperLogLog 和 GEO。
+面向 LBS 应用的 GEO 数据类型 位置信息服务（Location-Based Service，LBS）的应用访问的数据是和人或物关联的一组经纬度信息，而且要能查询相邻的经纬度范围，GEO 就非常适合应用在 LBS服务的场景中.</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/Pika%E5%A6%82%E4%BD%95%E5%9F%BA%E4%BA%8ESSD%E5%AE%9E%E7%8E%B0%E5%A4%A7%E5%AE%B9%E9%87%8FRedis/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/Pika%E5%A6%82%E4%BD%95%E5%9F%BA%E4%BA%8ESSD%E5%AE%9E%E7%8E%B0%E5%A4%A7%E5%AE%B9%E9%87%8FRedis/</guid><description/></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/Redis-%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%B8%8E%E6%95%85%E9%9A%9C%E5%88%87%E6%8D%A2%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9D%91/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/Redis-%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%B8%8E%E6%95%85%E9%9A%9C%E5%88%87%E6%8D%A2%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9D%91/</guid><description>主从数据不一致 那为啥会出现这个坑呢？其实这是因为主从库间的命令复制是异步进行的。
+在主从库命令传播阶段，主库收到新的写命令后，会发送给从库。但是，主库并不会等到从库实际执行完命令后，再把结果返回给客户端，而是主库自己在本地执行完命令后，就会向客户端返回结果了。如果从库还没有执行主库同步过来的命令，主从库间的数据就不一致了。 那在什么情况下，从库会滞后执行同步命令呢？其实，这里主要有两个原因
+一方面，主从库间的网络可能会有传输延迟，所以从库不能及时地收到主库发送的命令，从库上执行同步命令的时间就会被延后。
+另一方面，即使从库及时收到了主库的命令，但是，也可能会因为正在处理其它复杂度高的命令（例如集合操作命令）而阻塞
+解决方法：
+首先，在硬件环境配置方面，我们要尽量保证主从库间的网络连接状况良好。
+我们还可以开发一个外部程序来监控主从库间的复制进度。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/String-%E7%9A%84%E5%B1%80%E9%99%90/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/String-%E7%9A%84%E5%B1%80%E9%99%90/</guid><description/></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6/</guid><description>事务是数据库的一个重要功能。所谓的事务，就是指对数据进行读写的一系列操作。事务在执行时，会提供专门的属性保证，包括原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）和持久性（Durability），也就是 ACID 属性。
+事务 ACID 属性的要求 原子性。原子性的要求很明确，就是一个事务中的多个操作必须都完成，或者都不完成
+一致性。指数据库中的数据在事务执行前后是一致的
+隔离性。它要求数据库在执行一个事务时，其它操作无法存取到正在执行事务访问的数据。
+持久性。数据库执行事务后，数据的修改要被持久化保存下来。当数据库重启后，数据的值需要是被修改后的值。
+Redis 如何实现事务 事务的执行过程包含三个步骤，Redis 提供了 MULTI、EXEC 两个命令来完成这三个步骤。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E4%BF%9D%E5%AD%98%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E4%BF%9D%E5%AD%98%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/</guid><description/></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%90%8E%E4%B8%BA%E5%95%A5%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E7%8E%87%E8%BF%98%E6%98%AF%E5%BE%88%E9%AB%98/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%90%8E%E4%B8%BA%E5%95%A5%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E7%8E%87%E8%BF%98%E6%98%AF%E5%BE%88%E9%AB%98/</guid><description>明明做了数据删除，数据量已经不大了，为什么使用 top 命令查看时，还会发现 Redis 占用了很多内存呢？
+这是因为，当数据删除后，Redis 释放的内存空间会由内存分配器管理，并不会立即返回给操作系统。所以，操作系统仍然会记录着给 Redis 分配了大量内存
+潜在的风险点：Redis 释放的内存空间可能并不是连续的，那么，这些不连续的内存空间很有可能处于一种闲置的状态。
+这就会导致一个问题：虽然有空闲空间，Redis 却无法用来保存数据，不仅会减少 Redis 能够实际保存的数据量，还会降低 Redis 运行机器的成本回报率。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</guid><description>上节课，我提到，在应对并发问题时，除了原子操作，Redis 客户端还可以通过加锁的方式，来控制并发写操作对共享数据的修改，从而保证数据的正确性。
+但是，Redis 属于分布式系统，当有多个客户端需要争抢锁时，我们必须要保证，这把锁不能是某个客户端本地的锁。
+在分布式系统中，当有多个客户端需要获取锁时，我们需要分布式锁。此时，锁是保存在一个共享存储系统中的，可以被多个客户端共享访问和获取。
+单机上的锁和分布式锁的联系与区别 对于在单机上运行的多线程程序来说，锁本身可以用一个变量表示。
+变量值为 0 时，表示没有线程获取锁；
+变量值为 1 时，表示已经有线程获取到锁了
+和单机上的锁类似，分布式锁同样可以用一个变量来实现，客户端加锁和释放锁的操作逻辑，也和单机上的加锁和释放锁操作逻辑一致：加锁时同样需要判断锁变量的值，根据锁变量值来判断能否加锁成功；释放锁时需要把锁变量值设置为 0，表明客户端不再持有锁，</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E5%BC%82%E6%AD%A5%E6%9C%BA%E5%88%B6%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E9%98%BB%E5%A1%9E/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E5%BC%82%E6%AD%A5%E6%9C%BA%E5%88%B6%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E9%98%BB%E5%A1%9E/</guid><description>影响 Redis 性能的 5 大方面的潜在因素：
+Redis 内部的阻塞式操作；
+CPU 核和 NUMA 架构的影响；
+Redis 关键系统配置；
+Redis 内存碎片；</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%97%81%E8%B7%AF%E7%BC%93%E5%AD%98Redis%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%97%81%E8%B7%AF%E7%BC%93%E5%AD%98Redis%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84/</guid><description>Redis 提供了高性能的数据存取功能，所以广泛应用在缓存场景中，既能有效地提升业务应用的响应速度，还可以避免把高并发大压力的请求发送到数据库层。
+们需要系统地掌握缓存的一系列内容：
+工作原理
+替换策略
+异常处理
+扩展机制
+具体来说，我们需要解决四个关键问题：
+Redis 缓存具体是怎么工作的？</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%97%A0%E9%94%81%E7%9A%84%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9CRedis%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E5%B9%B6%E5%8F%91%E8%AE%BF%E9%97%AE/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%97%A0%E9%94%81%E7%9A%84%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9CRedis%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E5%B9%B6%E5%8F%91%E8%AE%BF%E9%97%AE/</guid><description>为了保证并发访问的正确性，Redis 提供了两种方法，分别是加锁和原子操作。
+加锁是一种常用的方法，在读取数据前，客户端需要先获得锁，否则就无法进行操作。当一个客户端获得锁后，就会一直持有这把锁，直到客户端完成数据更新，才释放这把锁。
+一个是，如果加锁操作多，会降低系统的并发访问性能；
+第二个是，Redis 客户端要加锁时，需要用到分布式锁，而分布式锁实现复杂，需要用额外的存储系统来提供加解锁操作
+原子操作是另一种提供并发访问控制的方法
+原子操作是指执行过程保持原子性的操作，而且原子操作执行时并不需要再加锁，实现了无锁操作 并发访问中需要对啥进行控制？ 我们说的并发访问控制，是指对多个客户端访问操作同一份数据的过程进行控制，以保证任何一个客户端发送的操作在 Redis 实例上执行时具有互斥性？客户端 A 的访问操作在执行时，客户端 B 的操作不能执行，需要等到 A 的操作结束后，才能执行。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%9B%BF%E6%8D%A2%E7%AD%96%E7%95%A5%E7%BC%93%E5%AD%98%E6%BB%A1%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%9B%BF%E6%8D%A2%E7%AD%96%E7%95%A5%E7%BC%93%E5%AD%98%E6%BB%A1%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</guid><description>MySQL 中有 1TB 的数据，如果我们使用 Redis 把这 1TB 的数据都缓存起来，虽然应用都能在内存中访问数据了，但是，这样配置并不合理，因为性价比很低
+解决这个问题就涉及到缓存系统的一个重要机制，即**缓存数据的淘汰机制。**简单来说，数据淘汰机制包括两步：
+第一，根据一定的策略，筛选出对应用访问来说“不重要”的数据；
+第二，将这些数据从缓存中删除，为新来的数据腾出空间，
+设置多大的缓存合适 按照“八二原理”来设置缓存空间容量，也就是把缓存空间容量设置为总数据量的 20% 的话，就有可能拦截到 80% 的访问。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%B3%A2%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E5%BB%B6%E8%BF%9F%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E5%8F%98%E6%85%A2%E7%9A%84Redis/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%B3%A2%E5%8A%A8%E7%9A%84%E5%93%8D%E5%BA%94%E5%BB%B6%E8%BF%9F%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E5%8F%98%E6%85%A2%E7%9A%84Redis/</guid><description>Redis真的变慢了吗？ 一个最直接的方法，就是查看 Redis 的响应延迟。
+大部分时候，Redis 延迟很低，但是在某些时刻，有些 Redis 实例会出现很高的响应延迟，甚至能达到几秒到十几秒，不过持续时间不长，这也叫**延迟“毛刺”。**当你发现 Redis 命令的执行时间突然就增长到了几秒，基本就可以认定 Redis 变慢了 第二个方法了，也就是基于当前环境下的 Redis 基线性能做判断</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97Redis%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97Redis%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</guid><description>Redis 适合做消息队列？这个问题的背后，隐含着两方面的核心问题
+消息队列的消息存取需求是什么？
+Redis 如何实现消息队列的需求？
+消息队列的消息存取需求 消息队列存取消息的过程 在分布式系统中，当两个组件要基于消息队列进行通信时，
+一个组件会把要处理的数据以消息的形式传递给消息队列，然后，这个组件就可以继续执行其他操作了；
+远端的另一个组件从消息队列中把消息读取出来，再在本地进行处理。</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%86%B2%E5%8C%BA%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%83%BD%E5%BC%95%E5%8F%91%E6%83%A8%E6%A1%88%E7%9A%84%E5%9C%B0%E6%96%B9/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%86%B2%E5%8C%BA%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%83%BD%E5%BC%95%E5%8F%91%E6%83%A8%E6%A1%88%E7%9A%84%E5%9C%B0%E6%96%B9/</guid><description>缓冲区的功能其实很简单，主要就是用一块内存空间来暂时存放命令数据，以免出现因为数据和命令的处理速度慢于发送速度而导致的数据丢失和性能问题，
+但因为缓冲区的内存空间有限，如果往里面写入数据的速度持续地大于从里面读取数据的速度。当缓冲区占用的内存超出了设定的上限阈值时，就会出现缓冲区溢出。
+缓冲区在 Redis 中的一个主要应用场景，就是在客户端和服务器端之间进行通信时，
+用来暂存客户端发送的命令数据，
+暂存服务器端返回给客户端的数据结果。
+缓冲区的另一个主要应用场景，是在主从节点间进行数据同步时，用来暂存主节点接收的写命令和数据。
+客户端输入和输出缓冲区 为了避免客户端和服务器端的请求发送和处理速度不匹配，**服务器端给每个连接的客户端都设置了一个输入缓冲区和输出缓冲区，我们称之为客户端输入缓冲区和输出缓冲区，**输入缓冲区会先把客户端发送过来的命令暂存起来，Redis 主线程再从输入缓冲区中读取命令，进行处理。当 Redis 主线程处理完数据后，会把结果写入到输出缓冲区，再通过输出缓冲区返回给客户端，如下图所示</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%AD%98%E5%BC%82%E5%B8%B8%E7%BC%93%E5%AD%98%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%AD%98%E5%BC%82%E5%B8%B8%E7%BC%93%E5%AD%98%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/</guid><description>我们经常会遇到一些异常问题，概括来说有 4 个方面：
+缓存中的数据和数据库中的不一致；
+缓存雪崩；
+缓存击穿
+缓存穿透
+缓存和数据库的数据不一致是如何发生的？ 其实，这里的“一致性”包含了两种情况：
+缓存中有数据，那么，缓存的数据值需要和数据库中的值相同；</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%AD%98%E5%BC%82%E5%B8%B8%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E5%87%BB%E7%A9%BF%E7%A9%BF%E9%80%8F/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%AD%98%E5%BC%82%E5%B8%B8%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E5%87%BB%E7%A9%BF%E7%A9%BF%E9%80%8F/</guid><description>缓存雪崩 缓存雪崩是指大量的应用请求无法在 Redis 缓存中进行处理，紧接着，应用将大量请求发送到数据库层，导致数据库层的压力激增。
+存雪崩一般是由两个原因导致的，应对方案也有所不同：
+第一个原因是：缓存中有大量数据同时过期，导致大量请求无法得到处理。
+针对大量数据同时失效带来的缓存雪崩问题，我给你提供两种解决方案。
+首先，我们可以避免给大量的数据设置相同的过期时间。
+我们还可以通过服务降级，来应对缓存雪崩
+当业务应用访问的是非核心数据（例如电商商品属性）时，暂时停止从缓存中查询这些数据，而是直接返回预定义信息、空值或是错误信息</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%AD%98%E8%A2%AB%E6%B1%A1%E6%9F%93%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86-LFU/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E7%BC%93%E5%AD%98%E8%A2%AB%E6%B1%A1%E6%9F%93%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86-LFU/</guid><description>那什么是缓存污染呢？在一些场景下，有些数据被访问的次数非常少，甚至只会被访问一次。当这些数据服务完访问请求后，如果还继续留存在缓存中的话，就只会白白占用缓存空间。
+如何解决缓存污染问题 我们也能很容易想到解决方案，那就是得把不会再被访问的数据筛选出来并淘汰掉。
+LFU 缓存策略的优化。
+LFU 缓存策略是在 LRU 策略基础上，为每个数据增加了一个计数器，来统计这个数据的访问次数。当使用 LFU 策略筛选淘汰数据时，首先会根据数据的访问次数进行筛选，把访问次数最低的数据淘汰出缓存。如果两个数据的访问次数相同，LFU 策略再比较这两个数据的访问时效性，把距离上一次访问时间更久的数据淘汰出缓存。
+为了避免操作链表的开销，Redis 在实现 LRU 策略时使用了两个近似方法：
+Redis 是用 RedisObject 结构来保存数据的，RedisObject 结构中设置了一个 lru 字段，用来记录数据的访问时间戳；</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E8%BF%98%E5%8F%AF%E4%BB%A5%E5%AE%9A%E4%B9%89%E6%96%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%90%97/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E8%BF%98%E5%8F%AF%E4%BB%A5%E5%AE%9A%E4%B9%89%E6%96%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%90%97/</guid><description>RedisObject 包括元数据和指针。其中，元数据的一个功能就是用来区分不同的数据类型，指针用来指向具体的数据类型的值
+Redis 的基本对象结构 RedisObject 的内部组成包括了 type、encoding、lru 和 refcount 4 个元数据，以及 1 个*ptr指针
+type：表示值的类型，涵盖了我们前面学习的五大基本类型；
+encoding：是值的编码方式，用来表示 Redis 中实现各个基本类型的底层数据结构，例如 SDS、压缩列表、哈希表、跳表等；</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%85%B6%E9%9B%86%E5%90%88%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%AE%9E%E8%B7%B5/%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%85%B6%E9%9B%86%E5%90%88%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid><description>通常情况下，我们面临的用户数量以及访问量都是巨大的，所以，我们必须要选择能够非常高效地统计大量数据（例如亿级）的集合类型，要想选择合适的集合，我们就得了解常用的集合统计模式。四种统计模式
+聚合统计
+排序统计
+二值状态统计
+基数统计
+聚合统计 所谓的聚合统计，就是指统计多个集合元素的聚合结果，包括：
+统计多个集合的共有元素（交集统计）；</description></item><item><title/><link>https://quartz.jzhao.xyz/Redis/%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Redis/%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/</guid><description>#认识 Redis #什么是 Redis？ 我们直接看 Redis 官方是怎么介绍自己的。
+Redis 官方的介绍原版是英文的，我翻译成了中文后截图的，所以有些文字读起来会比较拗口，没关系，我会把里面比较重要的特性抽出来讲一下。
+Redis 是一种基于内存的数据库，对数据的读写操作都是在内存中完成，因此读写速度非常快，常用于缓存，消息队列、分布式锁等场景。
+Redis 提供了多种数据类型来支持不同的业务场景，比如 String(字符串)、Hash(哈希)、 List (列表)、Set(集合)、Zset(有序集合)、Bitmaps（位图）、HyperLogLog（基数统计）、GEO（地理信息）、Stream（流），并且对数据类型的操作都是原子性的，因为执行命令由单线程负责的，不存在并发竞争的问题。
+除此之外，Redis 还支持事务 、持久化、Lua 脚本、多种集群方案（主从复制模式、哨兵模式、切片机群模式）、发布/订阅模式，内存淘汰机制、过期删除机制等等。</description></item></channel></rss>

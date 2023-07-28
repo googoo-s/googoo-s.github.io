@@ -1,0 +1,448 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="字节流 InputStream（字节输入流） InputStream用于从源头（通常是文件）读取数据（字节信息）到内存中，java.io.InputStream抽象类是所有字节输入流的父类。
+InputStream 常用方法 ：
+  read() ：返回输入流中下一个字节的数据。返回的值介于 0 到 255 之间。如果未读取任何字节，则代码返回 -1 ，表示文件结束。
+  read(byte b[ ]) : 从输入流中读取一些字节存储到数组 b 中。如果数组 b 的长度为零，则不读取。如果没有可用字节读取，返回 -1。如果有可用字节读取，则最多读取的字节数最多等于 b."><meta property="og:title" content><meta property="og:description" content="字节流 InputStream（字节输入流） InputStream用于从源头（通常是文件）读取数据（字节信息）到内存中，java.io.InputStream抽象类是所有字节输入流的父类。
+InputStream 常用方法 ：
+  read() ：返回输入流中下一个字节的数据。返回的值介于 0 到 255 之间。如果未读取任何字节，则代码返回 -1 ，表示文件结束。
+  read(byte b[ ]) : 从输入流中读取一些字节存储到数组 b 中。如果数组 b 的长度为零，则不读取。如果没有可用字节读取，返回 -1。如果有可用字节读取，则最多读取的字节数最多等于 b."><meta property="og:type" content="website"><meta property="og:image" content="https://quartz.jzhao.xyz/icon.png"><meta property="og:url" content="https://quartz.jzhao.xyz/Java/IO/BIO/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="字节流 InputStream（字节输入流） InputStream用于从源头（通常是文件）读取数据（字节信息）到内存中，java.io.InputStream抽象类是所有字节输入流的父类。
+InputStream 常用方法 ：
+  read() ：返回输入流中下一个字节的数据。返回的值介于 0 到 255 之间。如果未读取任何字节，则代码返回 -1 ，表示文件结束。
+  read(byte b[ ]) : 从输入流中读取一些字节存储到数组 b 中。如果数组 b 的长度为零，则不读取。如果没有可用字节读取，返回 -1。如果有可用字节读取，则最多读取的字节数最多等于 b."><meta name=twitter:image content="https://quartz.jzhao.xyz/icon.png"><meta name=twitter:site content="_jzhao"><title>🪴 Quartz 3.3</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://quartz.jzhao.xyz//icon.png><link href=https://quartz.jzhao.xyz/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://quartz.jzhao.xyz/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://quartz.jzhao.xyz/js/darkmode.63d6a3e095d0bd2b935b62adec9dc11b.min.js></script>
+<script src=https://quartz.jzhao.xyz/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://quartz.jzhao.xyz/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://quartz.jzhao.xyz/",fetchData=Promise.all([fetch("https://quartz.jzhao.xyz/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://quartz.jzhao.xyz/indices/contentIndex.fd0b08e0fcf0fc58c8d873581bcb40dd.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://quartz.jzhao.xyz",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://quartz.jzhao.xyz",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/quartz.jzhao.xyz\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=quartz.jzhao.xyz src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://quartz.jzhao.xyz/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://quartz.jzhao.xyz/>🪴 Quartz 3.3</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=https://github.com/jackyzha0/quartz/tree/hugo/content/Java/IO/BIO.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#inputstream字节输入流>InputStream（字节输入流）</a></li><li><a href=#outputstream字节输出流>OutputStream（字节输出流）</a></li></ol><ol><li><a href=#reader字符输入流>Reader（字符输入流）</a></li><li><a href=#writer字符输出流>Writer（字符输出流）</a></li></ol><ol><li><a href=#bufferedinputstream字节缓冲输入流>BufferedInputStream（字节缓冲输入流）</a></li><li><a href=#bufferedoutputstream字节缓冲输出流>BufferedOutputStream（字节缓冲输出流）</a></li></ol></nav></details></aside><a href=#字节流><h1 id=字节流><span class=hanchor arialabel=Anchor># </span>字节流</h1></a><a href=#inputstream字节输入流><h2 id=inputstream字节输入流><span class=hanchor arialabel=Anchor># </span>InputStream（字节输入流）</h2></a><p><code>InputStream</code>用于从源头（通常是文件）读取数据（字节信息）到内存中，<code>java.io.InputStream</code>抽象类是所有字节输入流的父类。</p><p><code>InputStream</code> 常用方法 ：</p><ul><li><p><code>read()</code> ：返回输入流中下一个字节的数据。返回的值介于 0 到 255 之间。如果未读取任何字节，则代码返回 <code>-1</code> ，表示文件结束。</p></li><li><p><code>read(byte b[ ])</code> : 从输入流中读取一些字节存储到数组 <code>b</code> 中。如果数组 <code>b</code> 的长度为零，则不读取。如果没有可用字节读取，返回 <code>-1</code>。如果有可用字节读取，则最多读取的字节数最多等于 <code>b.length</code> ， 返回读取的字节数。这个方法等价于 <code>read(b, 0, b.length)</code>。</p></li><li><p><code>read(byte b[], int off, int len)</code> ：在<code>read(byte b[ ])</code> 方法的基础上增加了 <code>off</code> 参数（偏移量）和 <code>len</code> 参数（要读取的最大字节数）。</p></li><li><p><code>skip(long n)</code> ：忽略输入流中的 n 个字节 ,返回实际忽略的字节数。</p></li><li><p><code>available()</code> ：返回输入流中可以读取的字节数。</p></li><li><p><code>close()</code> ：关闭输入流释放相关的系统资源。</p></li></ul><p>从 Java 9 开始，<code>InputStream</code> 新增加了多个实用的方法：</p><ul><li><p><code>readAllBytes()</code> ：读取输入流中的所有字节，返回字节数组。</p></li><li><p><code>readNBytes(byte[] b, int off, int len)</code> ：阻塞直到读取 <code>len</code> 个字节。</p></li><li><p><code>transferTo(OutputStream out)</code> ： 将所有字节从一个输入流传递到一个输出流。</p></li></ul><p><code>FileInputStream</code> 是一个比较常用的字节输入流对象，可直接指定文件路径，可以直接读取单字节数据，也可以读取至字节数组中。</p><p><code>FileInputStream</code> 代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=k>try</span> <span class=o>(</span><span class=n>InputStream</span> <span class=n>fis</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;input.txt&#34;</span><span class=o>))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;Number of remaining bytes:&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=o>+</span> <span class=n>fis</span><span class=o>.</span><span class=na>available</span><span class=o>());</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>content</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>long</span> <span class=n>skip</span> <span class=o>=</span> <span class=n>fis</span><span class=o>.</span><span class=na>skip</span><span class=o>(</span><span class=n>2</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;The actual number of bytes skipped:&#34;</span> <span class=o>+</span> <span class=n>skip</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>(</span><span class=s>&#34;The content read from file:&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=o>((</span><span class=n>content</span> <span class=o>=</span> <span class=n>fis</span><span class=o>.</span><span class=na>read</span><span class=o>())</span> <span class=o>!=</span> <span class=o>-</span><span class=n>1</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>((</span><span class=kt>char</span><span class=o>)</span> <span class=n>content</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>input.txt</code> 文件内容：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-35.png width=auto alt></p><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>Number of remaining bytes:11
+</span></span><span class=line><span class=cl>The actual number of bytes skipped:2
+</span></span><span class=line><span class=cl>The content read from file:JavaGuide
+</span></span></code></pre></td></tr></table></div></div><p>不过，一般我们是不会直接单独使用 <code>FileInputStream</code> ，通常会配合 <code>BufferedInputStream</code>（字节缓冲输入流，后文会讲到）来使用。</p><p>像下面这段代码在我们的项目中就比较常见，我们通过 <code>readAllBytes()</code> 读取输入流所有字节并将其直接赋值给一个 <code>String</code> 对象。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// 新建一个 BufferedInputStream 对象
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>BufferedInputStream</span> <span class=n>bufferedInputStream</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedInputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;input.txt&#34;</span><span class=o>));</span>
+</span></span><span class=line><span class=cl><span class=c1>// 读取文件的内容并复制到 String 对象中
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>String</span> <span class=n>result</span> <span class=o>=</span> <span class=k>new</span> <span class=n>String</span><span class=o>(</span><span class=n>bufferedInputStream</span><span class=o>.</span><span class=na>readAllBytes</span><span class=o>());</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>result</span><span class=o>);</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>DataInputStream</code> 用于读取指定类型数据，不能单独使用，必须结合 <code>FileInputStream</code> 。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>ObjectInputStream</span> <span class=n>input</span> <span class=o>=</span> <span class=k>new</span> <span class=n>ObjectInputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;object.data&#34;</span><span class=o>));</span>
+</span></span><span class=line><span class=cl><span class=n>MyClass</span> <span class=n>object</span> <span class=o>=</span> <span class=o>(</span><span class=n>MyClass</span><span class=o>)</span> <span class=n>input</span><span class=o>.</span><span class=na>readObject</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=n>input</span><span class=o>.</span><span class=na>close</span><span class=o>();</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong><code>ObjectInputStream</code></strong> <strong>用于从输入流中读取 Java 对象（反序列化），****<code>ObjectOutputStream</code></strong> <strong>用于将对象写入到输出流(序列化)。</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>ObjectInputStream</span> <span class=n>input</span> <span class=o>=</span> <span class=k>new</span> <span class=n>ObjectInputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;object.data&#34;</span><span class=o>));</span>
+</span></span><span class=line><span class=cl><span class=n>MyClass</span> <span class=n>object</span> <span class=o>=</span> <span class=o>(</span><span class=n>MyClass</span><span class=o>)</span> <span class=n>input</span><span class=o>.</span><span class=na>readObject</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=n>input</span><span class=o>.</span><span class=na>close</span><span class=o>();</span>
+</span></span></code></pre></td></tr></table></div></div><p>另外，用于序列化和反序列化的类必须实现 <code>Serializable</code> 接口，对象中如果有属性不想被序列化，使用 <code>transient</code> 修饰。</p><a href=#outputstream字节输出流><h2 id=outputstream字节输出流><span class=hanchor arialabel=Anchor># </span>OutputStream（字节输出流）</h2></a><p><code>OutputStream</code>用于将数据（字节信息）写入到目的地（通常是文件），<code>java.io.OutputStream</code>抽象类是所有字节输出流的父类。</p><p><code>OutputStream</code> 常用方法 ：</p><ul><li><p><code>write(int b)</code> ：将特定字节写入输出流。</p></li><li><p><code>write(byte b[ ])</code> : 将数组<code>b</code> 写入到输出流，等价于 <code>write(b, 0, b.length)</code> 。</p></li><li><p><code>write(byte[] b, int off, int len)</code> : 在<code>write(byte b[ ])</code> 方法的基础上增加了 <code>off</code> 参数（偏移量）和 <code>len</code> 参数（要读取的最大字节数）。</p></li><li><p><code>flush()</code> ：刷新此输出流并强制写出所有缓冲的输出字节。</p></li><li><p><code>close()</code> ：关闭输出流释放相关的系统资源。</p></li></ul><p><code>FileOutputStream</code> 是最常用的字节输出流对象，可直接指定文件路径，可以直接输出单字节数据，也可以输出指定的字节数组。</p><p><code>FileOutputStream</code> 代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=k>try</span> <span class=o>(</span><span class=n>FileOutputStream</span> <span class=n>output</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;output.txt&#34;</span><span class=o>))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>byte</span><span class=o>[]</span> <span class=n>array</span> <span class=o>=</span> <span class=s>&#34;JavaGuide&#34;</span><span class=o>.</span><span class=na>getBytes</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>output</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=n>array</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>运行结果：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-35.png width=auto alt></p><p>类似于 <code>FileInputStream</code>，<code>FileOutputStream</code> 通常也会配合 <code>BufferedOutputStream</code>（字节缓冲输出流，后文会讲到）来使用。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>FileOutputStream</span> <span class=n>fileOutputStream</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;output.txt&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>BufferedOutputStream</span> <span class=n>bos</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedOutputStream</span><span class=o>(</span><span class=n>fileOutputStream</span><span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong><code>DataOutputStream</code></strong> 用于写入指定类型数据，不能单独使用，必须结合 <code>FileOutputStream</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// 输出流
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>FileOutputStream</span> <span class=n>fileOutputStream</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;out.txt&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>DataOutputStream</span> <span class=n>dataOutputStream</span> <span class=o>=</span> <span class=k>new</span> <span class=n>DataOutputStream</span><span class=o>(</span><span class=n>fileOutputStream</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=c1>// 输出任意数据类型
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>dataOutputStream</span><span class=o>.</span><span class=na>writeBoolean</span><span class=o>(</span><span class=kc>true</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>dataOutputStream</span><span class=o>.</span><span class=na>writeByte</span><span class=o>(</span><span class=n>1</span><span class=o>);</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>ObjectInputStream</code> 用于从输入流中读取 Java 对象（<code>ObjectInputStream</code>,反序列化），<code>ObjectOutputStream</code>将对象写入到输出流(<code>ObjectOutputStream</code>，序列化)。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>ObjectOutputStream</span> <span class=n>output</span> <span class=o>=</span> <span class=k>new</span> <span class=n>ObjectOutputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;file.txt&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=n>Person</span> <span class=n>person</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Person</span><span class=o>(</span><span class=s>&#34;Guide哥&#34;</span><span class=o>,</span> <span class=s>&#34;JavaGuide作者&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>output</span><span class=o>.</span><span class=na>writeObject</span><span class=o>(</span><span class=n>person</span><span class=o>);</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#字符流><h1 id=字符流><span class=hanchor arialabel=Anchor># </span>字符流</h1></a><p>不管是文件读写还是网络发送接收，信息的最小存储单元都是字节。 <strong>那为什么 I/O 流操作要分为字节流操作和字符流操作呢？</strong></p><p>个人认为主要有两点原因：</p><ul><li><p>字符流是由 Java 虚拟机将字节转换得到的**，这个过程还算是比较耗时**。</p></li><li><p>如果我们不知道编码类型就很容易出现乱码问题。</p></li></ul><p>乱码问题这个很容易就可以复现，我们只需要将上面提到的 <code>FileInputStream</code> 代码示例中的 <code>input.txt</code> 文件内容改为中文即可，原代码不需要改动。</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-34.png width=auto alt></p><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>Number</span> <span class=n>of</span> <span class=n>remaining</span> <span class=n>bytes</span><span class=o>:</span><span class=n>9</span>
+</span></span><span class=line><span class=cl><span class=n>The</span> <span class=n>actual</span> <span class=n>number</span> <span class=n>of</span> <span class=n>bytes</span> <span class=n>skipped</span><span class=o>:</span><span class=n>2</span>
+</span></span><span class=line><span class=cl><span class=n>The</span> <span class=n>content</span> <span class=n>read</span> <span class=n>from</span> <span class=n>file</span><span class=o>:</span><span class=err>§</span><span class=n>å</span><span class=err>®¶</span><span class=n>å</span><span class=err>¥½</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以很明显地看到读取出来的内容已经变成了乱码。</p><p>因此，I/O 流就干脆提供了一个直接操作字符的接口，方便我们平时对字符进行流操作。如果音频文件、图片等媒体文件用字节流比较好，如果涉及到字符的话使用字符流比较好。</p><p>字符流默认采用的是 <code>Unicode</code> 编码，我们可以通过构造方法自定义编码。顺便分享一下之前遇到的笔试题：常用字符编码所占字节数？<code>utf8</code> :英文占 1 字节，中文占 3 字节，<code>unicode</code>：任何字符都占 2 个字节，<code>gbk</code>：英文占 1 字节，中文占 2 字节。</p><a href=#reader字符输入流><h2 id=reader字符输入流><span class=hanchor arialabel=Anchor># </span>Reader（字符输入流）</h2></a><p><code>Reader</code>用于从源头（通常是文件）读取数据（字符信息）到内存中，<code>java.io.Reader</code>抽象类是所有字符输入流的父类。</p><p><code>Reader</code> 用于读取文本， <code>InputStream</code> 用于读取原始字节。</p><p><code>Reader</code> 常用方法 ：</p><ul><li><p><code>read()</code> : 从输入流读取一个字符。</p></li><li><p><code>read(char[] cbuf)</code> : 从输入流中读取一些字符，并将它们存储到字符数组 <code>cbuf</code>中，等价于 <code>read(cbuf, 0, cbuf.length)</code> 。</p></li><li><p><code>read(char[] cbuf, int off, int len)</code> ：在<code>read(char[] cbuf)</code> 方法的基础上增加了 <code>off</code> 参数（偏移量）和 <code>len</code> 参数（要读取的最大字符数）。</p></li><li><p><code>skip(long n)</code> ：忽略输入流中的 n 个字符 ,返回实际忽略的字符数。</p></li><li><p><code>close()</code> : 关闭输入流并释放相关的系统资源。</p></li></ul><p><code>InputStreamReader</code> 是字节流转换为字符流的桥梁，其子类 <code>FileReader</code> 是基于该基础上的封装，可以直接操作字符文件。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// 字节流转换为字符流的桥梁
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>public</span> <span class=kd>class</span> <span class=nc>InputStreamReader</span> <span class=kd>extends</span> <span class=n>Reader</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=c1>// 用于读取字符文件
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>public</span> <span class=kd>class</span> <span class=nc>FileReader</span> <span class=kd>extends</span> <span class=n>InputStreamReader</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>FileReader</code> 代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=k>try</span> <span class=o>(</span><span class=n>FileReader</span> <span class=n>fileReader</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileReader</span><span class=o>(</span><span class=s>&#34;input.txt&#34;</span><span class=o>);)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>content</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>long</span> <span class=n>skip</span> <span class=o>=</span> <span class=n>fileReader</span><span class=o>.</span><span class=na>skip</span><span class=o>(</span><span class=n>3</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;The actual number of bytes skipped:&#34;</span> <span class=o>+</span> <span class=n>skip</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>(</span><span class=s>&#34;The content read from file:&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=o>((</span><span class=n>content</span> <span class=o>=</span> <span class=n>fileReader</span><span class=o>.</span><span class=na>read</span><span class=o>())</span> <span class=o>!=</span> <span class=o>-</span><span class=n>1</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>((</span><span class=kt>char</span><span class=o>)</span> <span class=n>content</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>input.txt</code> 文件内容：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-34.png width=auto alt></p><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>The actual number of bytes skipped:3
+</span></span><span class=line><span class=cl>The content read from file:我是Guide。
+</span></span></code></pre></td></tr></table></div></div><a href=#writer字符输出流><h2 id=writer字符输出流><span class=hanchor arialabel=Anchor># </span>Writer（字符输出流）</h2></a><p><code>Writer</code>用于将数据（字符信息）写入到目的地（通常是文件），<code>java.io.Writer</code>抽象类是所有字符输出流的父类。</p><p><code>Writer</code> 常用方法 ：</p><ul><li><p><code>write(int c)</code> : 写入单个字符。</p></li><li><p><code>write(char[] cbuf)</code> ：写入字符数组 <code>cbuf</code>，等价于<code>write(cbuf, 0, cbuf.length)</code>。</p></li><li><p><code>write(char[] cbuf, int off, int len)</code> ：在<code>write(char[] cbuf)</code> 方法的基础上增加了 <code>off</code> 参数（偏移量）和 <code>len</code> 参数（要读取的最大字符数）。</p></li><li><p><code>write(String str)</code> ：写入字符串，等价于 <code>write(str, 0, str.length())</code> 。</p></li><li><p><code>write(String str, int off, int len)</code> ：在<code>write(String str)</code> 方法的基础上增加了 <code>off</code> 参数（偏移量）和 <code>len</code> 参数（要读取的最大字符数）。</p></li><li><p><code>append(CharSequence csq)</code> ：将指定的字符序列附加到指定的 <code>Writer</code> 对象并返回该 <code>Writer</code> 对象。</p></li><li><p><code>append(char c)</code> ：将指定的字符附加到指定的 <code>Writer</code> 对象并返回该 <code>Writer</code> 对象。</p></li><li><p><code>flush()</code> ：刷新此输出流并强制写出所有缓冲的输出字符。</p></li><li><p><code>close()</code>:关闭输出流释放相关的系统资源。</p></li></ul><p><code>OutputStreamWriter</code> 是字符流转换为字节流的桥梁，其子类 <code>FileWriter</code> 是基于该基础上的封装，可以直接将字符写入到文件。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// 字符流转换为字节流的桥梁
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>public</span> <span class=kd>class</span> <span class=nc>OutputStreamWriter</span> <span class=kd>extends</span> <span class=n>Writer</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=c1>// 用于写入字符到文件
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>public</span> <span class=kd>class</span> <span class=nc>FileWriter</span> <span class=kd>extends</span> <span class=n>OutputStreamWriter</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>FileWriter</code> 代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=k>try</span> <span class=o>(</span><span class=n>Writer</span> <span class=n>output</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileWriter</span><span class=o>(</span><span class=s>&#34;output.txt&#34;</span><span class=o>))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>output</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=s>&#34;你好，我是Guide。&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>输出结果：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-37.png width=auto alt></p><a href=#字节缓冲流><h1 id=字节缓冲流><span class=hanchor arialabel=Anchor># </span>字节缓冲流</h1></a><p>IO 操作是很消耗性能的，缓冲流将数据加载至缓冲区，一次性读取/写入多个字节，从而避免频繁的 IO 操作，提高流的传输效率。</p><p>字节缓冲流这里采用了装饰器模式来增强 <code>InputStream</code> 和<code>OutputStream</code>子类对象的功能。</p><p>举个例子，我们可以通过 <code>BufferedInputStream</code>（字节缓冲输入流）来增强 <code>FileInputStream</code> 的功能。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// 新建一个 BufferedInputStream 对象
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>BufferedInputStream</span> <span class=n>bufferedInputStream</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedInputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;input.txt&#34;</span><span class=o>));</span>
+</span></span></code></pre></td></tr></table></div></div><p>字节流和字节缓冲流的性能差别主要体现在我们使用两者的时候都是调用 <code>write(int b)</code> 和 <code>read()</code> 这两个一次只读取一个字节的方法的时候。由于字节缓冲流内部有缓冲区（字节数组），因此，字节缓冲流会先将读取到的字节存放在缓存区，大幅减少 IO 次数，提高读取效率。</p><p>我使用 <code>write(int b)</code> 和 <code>read()</code> 方法，分别通过字节流和字节缓冲流复制一个 <code>524.9 mb</code> 的 PDF 文件耗时对比如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>使用缓冲流复制PDF文件总耗时:15428 毫秒
+</span></span><span class=line><span class=cl>使用普通字节流复制PDF文件总耗时:2555062 毫秒
+</span></span></code></pre></td></tr></table></div></div><p>两者耗时差别非常大，缓冲流耗费的时间是字节流的 1/165。</p><p>测试代码如下:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=nd>@Test</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>copy_pdf_to_another_pdf_buffer_stream</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录开始时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>start</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span> <span class=o>(</span><span class=n>BufferedInputStream</span> <span class=n>bis</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedInputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统.pdf&#34;</span><span class=o>));</span>
+</span></span><span class=line><span class=cl>         <span class=n>BufferedOutputStream</span> <span class=n>bos</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedOutputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统-副本.pdf&#34;</span><span class=o>)))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>content</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=o>((</span><span class=n>content</span> <span class=o>=</span> <span class=n>bis</span><span class=o>.</span><span class=na>read</span><span class=o>())</span> <span class=o>!=</span> <span class=o>-</span><span class=n>1</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>bos</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=n>content</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录结束时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>end</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;使用缓冲流复制PDF文件总耗时:&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=n>end</span> <span class=o>-</span> <span class=n>start</span><span class=o>)</span> <span class=o>+</span> <span class=s>&#34; 毫秒&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nd>@Test</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>copy_pdf_to_another_pdf_stream</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录开始时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>start</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span> <span class=o>(</span><span class=n>FileInputStream</span> <span class=n>fis</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统.pdf&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>         <span class=n>FileOutputStream</span> <span class=n>fos</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统-副本.pdf&#34;</span><span class=o>))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>content</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=o>((</span><span class=n>content</span> <span class=o>=</span> <span class=n>fis</span><span class=o>.</span><span class=na>read</span><span class=o>())</span> <span class=o>!=</span> <span class=o>-</span><span class=n>1</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>fos</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=n>content</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录结束时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>end</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;使用普通流复制PDF文件总耗时:&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=n>end</span> <span class=o>-</span> <span class=n>start</span><span class=o>)</span> <span class=o>+</span> <span class=s>&#34; 毫秒&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;使用普通流复制PDF文件总耗时:&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=n>end</span> <span class=o>-</span> <span class=n>start</span><span class=o>)</span> <span class=o>+</span> <span class=s>&#34; 毫秒&#34;</span><span class=o>);}</span>
+</span></span></code></pre></td></tr></table></div></div><p>如果是调用 <code>read(byte b[])</code> 和 <code>write(byte b[], int off, int len)</code> 这两个写入一个字节数组的方法的话，只要字节数组的大小合适，两者的性能差距其实不大，基本可以忽略。</p><p>这次我们使用 <code>read(byte b[])</code> 和 <code>write(byte b[], int off, int len)</code> 方法，分别通过字节流和字节缓冲流复制一个 524.9 mb 的 PDF 文件耗时对比如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>使用缓冲流复制PDF文件总耗时:695 毫秒
+</span></span><span class=line><span class=cl>使用普通字节流复制PDF文件总耗时:989 毫秒
+</span></span></code></pre></td></tr></table></div></div><p>两者耗时差别不是很大，缓冲流的性能要略微好一点点。</p><p>测试代码如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=nd>@Test</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>copy_pdf_to_another_pdf_with_byte_array_buffer_stream</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录开始时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>start</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span> <span class=o>(</span><span class=n>BufferedInputStream</span> <span class=n>bis</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedInputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统.pdf&#34;</span><span class=o>));</span>
+</span></span><span class=line><span class=cl>         <span class=n>BufferedOutputStream</span> <span class=n>bos</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedOutputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统-副本.pdf&#34;</span><span class=o>)))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>len</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>        <span class=kt>byte</span><span class=o>[]</span> <span class=n>bytes</span> <span class=o>=</span> <span class=k>new</span> <span class=kt>byte</span><span class=o>[</span><span class=n>4</span> <span class=o>*</span> <span class=n>1024</span><span class=o>];</span>
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=o>((</span><span class=n>len</span> <span class=o>=</span> <span class=n>bis</span><span class=o>.</span><span class=na>read</span><span class=o>(</span><span class=n>bytes</span><span class=o>))</span> <span class=o>!=</span> <span class=o>-</span><span class=n>1</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>bos</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=n>bytes</span><span class=o>,</span> <span class=n>0</span><span class=o>,</span> <span class=n>len</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录结束时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>end</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;使用缓冲流复制PDF文件总耗时:&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=n>end</span> <span class=o>-</span> <span class=n>start</span><span class=o>)</span> <span class=o>+</span> <span class=s>&#34; 毫秒&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nd>@Test</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>copy_pdf_to_another_pdf_with_byte_array_stream</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录开始时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>start</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span> <span class=o>(</span><span class=n>FileInputStream</span> <span class=n>fis</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileInputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统.pdf&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>         <span class=n>FileOutputStream</span> <span class=n>fos</span> <span class=o>=</span> <span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;深入理解计算机操作系统-副本.pdf&#34;</span><span class=o>))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>len</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>        <span class=kt>byte</span><span class=o>[]</span> <span class=n>bytes</span> <span class=o>=</span> <span class=k>new</span> <span class=kt>byte</span><span class=o>[</span><span class=n>4</span> <span class=o>*</span> <span class=n>1024</span><span class=o>];</span>
+</span></span><span class=line><span class=cl>        <span class=k>while</span> <span class=o>((</span><span class=n>len</span> <span class=o>=</span> <span class=n>fis</span><span class=o>.</span><span class=na>read</span><span class=o>(</span><span class=n>bytes</span><span class=o>))</span> <span class=o>!=</span> <span class=o>-</span><span class=n>1</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>fos</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=n>bytes</span><span class=o>,</span> <span class=n>0</span><span class=o>,</span> <span class=n>len</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 记录结束时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>long</span> <span class=n>end</span> <span class=o>=</span> <span class=n>System</span><span class=o>.</span><span class=na>currentTimeMillis</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;使用普通流复制PDF文件总耗时:&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=n>end</span> <span class=o>-</span> <span class=n>start</span><span class=o>)</span> <span class=o>+</span> <span class=s>&#34; 毫秒&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#bufferedinputstream字节缓冲输入流><h2 id=bufferedinputstream字节缓冲输入流><span class=hanchor arialabel=Anchor># </span>BufferedInputStream（字节缓冲输入流）</h2></a><p><code>BufferedInputStream</code> 从源头（通常是文件）读取数据（字节信息）到内存的过程中不会一个字节一个字节的读取，而是会先将读取到的字节存放在缓存区，并从内部缓冲区中单独读取字节。这样大幅减少了 IO 次数，提高了读取效率。</p><p><code>BufferedInputStream</code> 内部维护了一个缓冲区，这个缓冲区实际就是一个字节数组，通过阅读 <code>BufferedInputStream</code> 源码即可得到这个结论。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span>
+</span></span><span class=line><span class=cl><span class=kd>class</span> <span class=nc>BufferedInputStream</span> <span class=kd>extends</span> <span class=n>FilterInputStream</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 内部缓冲区数组
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>protected</span> <span class=kd>volatile</span> <span class=kt>byte</span> <span class=n>buf</span><span class=o>[];</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 缓冲区的默认大小
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>private</span> <span class=kd>static</span> <span class=kt>int</span> <span class=n>DEFAULT_BUFFER_SIZE</span> <span class=o>=</span> <span class=n>8192</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 使用默认的缓冲区大小
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>public</span> <span class=nf>BufferedInputStream</span><span class=o>(</span><span class=n>InputStream</span> <span class=n>in</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>(</span><span class=n>in</span><span class=o>,</span> <span class=n>DEFAULT_BUFFER_SIZE</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 自定义缓冲区大小
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>public</span> <span class=nf>BufferedInputStream</span><span class=o>(</span><span class=n>InputStream</span> <span class=n>in</span><span class=o>,</span> <span class=kt>int</span> <span class=n>size</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>super</span><span class=o>(</span><span class=n>in</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=o>(</span><span class=n>size</span> <span class=o>&lt;=</span> <span class=n>0</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>throw</span> <span class=k>new</span> <span class=n>IllegalArgumentException</span><span class=o>(</span><span class=s>&#34;Buffer size &lt;= 0&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=n>buf</span> <span class=o>=</span> <span class=k>new</span> <span class=kt>byte</span><span class=o>[</span><span class=n>size</span><span class=o>];</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>缓冲区的大小默认为 <strong>8192</strong> 字节，当然了，你也可以通过 <code>BufferedInputStream(InputStream in, int size)</code> 这个构造方法来指定缓冲区的大小。</p><a href=#bufferedoutputstream字节缓冲输出流><h2 id=bufferedoutputstream字节缓冲输出流><span class=hanchor arialabel=Anchor># </span>BufferedOutputStream（字节缓冲输出流）</h2></a><p><code>BufferedOutputStream</code> 将数据（字节信息）写入到目的地（通常是文件）的过程中不会一个字节一个字节的写入，而是会先将要写入的字节存放在缓存区，并从内部缓冲区中单独写入字节。这样大幅减少了 IO 次数，提高了读取效率</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=k>try</span> <span class=o>(</span><span class=n>BufferedOutputStream</span> <span class=n>bos</span> <span class=o>=</span> <span class=k>new</span> <span class=n>BufferedOutputStream</span><span class=o>(</span><span class=k>new</span> <span class=n>FileOutputStream</span><span class=o>(</span><span class=s>&#34;output.txt&#34;</span><span class=o>)))</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>byte</span><span class=o>[]</span> <span class=n>array</span> <span class=o>=</span> <span class=s>&#34;JavaGuide&#34;</span><span class=o>.</span><span class=na>getBytes</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>bos</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=n>array</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>IOException</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>e</span><span class=o>.</span><span class=na>printStackTrace</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>类似于 <code>BufferedInputStream</code> ，<code>BufferedOutputStream</code> 内部也维护了一个缓冲区，并且，这个缓存区的大小也是 <strong>8192</strong> 字节。</p><a href=#字符缓冲流><h1 id=字符缓冲流><span class=hanchor arialabel=Anchor># </span>字符缓冲流</h1></a><p><code>BufferedReader</code> （字符缓冲输入流）和 <code>BufferedWriter</code>（字符缓冲输出流）类似于 <code>BufferedInputStream</code>（字节缓冲输入流）和<code>BufferedOutputStream</code>（字节缓冲输入流），内部都维护了一个字节数组作为缓冲区。不过，前者主要是用来操作字符信息。</p><a href=#打印流><h1 id=打印流><span class=hanchor arialabel=Anchor># </span>打印流</h1></a><p>下面这段代码大家经常使用吧？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>(</span><span class=s>&#34;Hello！&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;Hello！&#34;</span><span class=o>);</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>System.out</code> 实际是用于获取一个 <code>PrintStream</code> 对象，<code>print</code>方法实际调用的是 <code>PrintStream</code> 对象的 <code>write</code> 方法。</p><p><code>PrintStream</code> 属于字节打印流，与之对应的是 <code>PrintWriter</code> （字符打印流）。<code>PrintStream</code> 是 <code>OutputStream</code> 的子类，<code>PrintWriter</code> 是 <code>Writer</code> 的子类。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>(</span><span class=s>&#34;Hello！&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;Hello！&#34;</span><span class=o>);</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#随机访问流><h1 id=随机访问流><span class=hanchor arialabel=Anchor># </span>随机访问流</h1></a><p>这里要介绍的随机访问流指的是支持随意跳转到文件的任意位置进行读写的 <code>RandomAccessFile</code> 。</p><p><code>RandomAccessFile</code> 的构造方法如下，我们可以指定 <code>mode</code>（读写模式）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// openAndDelete 参数默认为 false 表示打开文件并且这个文件不会被删除
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>public</span> <span class=nf>RandomAccessFile</span><span class=o>(</span><span class=n>File</span> <span class=n>file</span><span class=o>,</span> <span class=n>String</span> <span class=n>mode</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>    <span class=kd>throws</span> <span class=n>FileNotFoundException</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>this</span><span class=o>(</span><span class=n>file</span><span class=o>,</span> <span class=n>mode</span><span class=o>,</span> <span class=kc>false</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=c1>// 私有方法
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>private</span> <span class=nf>RandomAccessFile</span><span class=o>(</span><span class=n>File</span> <span class=n>file</span><span class=o>,</span> <span class=n>String</span> <span class=n>mode</span><span class=o>,</span> <span class=kt>boolean</span> <span class=n>openAndDelete</span><span class=o>)</span>  <span class=kd>throws</span> <span class=n>FileNotFoundException</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// 省略大部分代码
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>读写模式主要有下面四种：</p><ul><li><p><code>r</code> : 只读模式。</p></li><li><p><code>rw</code>: 读写模式</p></li><li><p><code>rws</code>: 相对于 <code>rw</code>，<code>rws</code> 同步更新对“文件的内容”或“元数据”的修改到外部存储设备。</p></li><li><p><code>rwd</code> : 相对于 <code>rw</code>，<code>rwd</code> 同步更新对“文件的内容”的修改到外部存储设备。</p></li></ul><p>文件内容指的是文件中实际保存的数据，元数据则是用来描述文件属性比如文件的大小信息、创建和修改时间。</p><p><code>RandomAccessFile</code> 中有一个文件指针用来表示下一个将要被写入或者读取的字节所处的位置。我们可以通过 <code>RandomAccessFile</code> 的 <code>seek(long pos)</code> 方法来设置文件指针的偏移量（距文件开头 <code>pos</code> 个字节处）。如果想要获取文件指针当前的位置的话，可以使用 <code>getFilePointer()</code> 方法。</p><p><code>RandomAccessFile</code> 代码示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>RandomAccessFile</span> <span class=n>randomAccessFile</span> <span class=o>=</span> <span class=k>new</span> <span class=n>RandomAccessFile</span><span class=o>(</span><span class=k>new</span> <span class=n>File</span><span class=o>(</span><span class=s>&#34;input.txt&#34;</span><span class=o>),</span> <span class=s>&#34;rw&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;读取之前的偏移量：&#34;</span> <span class=o>+</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>getFilePointer</span><span class=o>()</span> <span class=o>+</span> <span class=s>&#34;,当前读取到的字符&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=kt>char</span><span class=o>)</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>read</span><span class=o>()</span> <span class=o>+</span> <span class=s>&#34;，读取之后的偏移量：&#34;</span> <span class=o>+</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>getFilePointer</span><span class=o>());</span>
+</span></span><span class=line><span class=cl><span class=c1>// 指针当前偏移量为 6
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>randomAccessFile</span><span class=o>.</span><span class=na>seek</span><span class=o>(</span><span class=n>6</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;读取之前的偏移量：&#34;</span> <span class=o>+</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>getFilePointer</span><span class=o>()</span> <span class=o>+</span> <span class=s>&#34;,当前读取到的字符&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=kt>char</span><span class=o>)</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>read</span><span class=o>()</span> <span class=o>+</span> <span class=s>&#34;，读取之后的偏移量：&#34;</span> <span class=o>+</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>getFilePointer</span><span class=o>());</span>
+</span></span><span class=line><span class=cl><span class=c1>// 从偏移量 7 的位置开始往后写入字节数据
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>randomAccessFile</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=k>new</span> <span class=kt>byte</span><span class=o>[]{</span><span class=sc>&#39;H&#39;</span><span class=o>,</span> <span class=sc>&#39;I&#39;</span><span class=o>,</span> <span class=sc>&#39;J&#39;</span><span class=o>,</span> <span class=sc>&#39;K&#39;</span><span class=o>});</span>
+</span></span><span class=line><span class=cl><span class=c1>// 指针当前偏移量为 0，回到起始位置
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>randomAccessFile</span><span class=o>.</span><span class=na>seek</span><span class=o>(</span><span class=n>0</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;读取之前的偏移量：&#34;</span> <span class=o>+</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>getFilePointer</span><span class=o>()</span> <span class=o>+</span> <span class=s>&#34;,当前读取到的字符&#34;</span> <span class=o>+</span> <span class=o>(</span><span class=kt>char</span><span class=o>)</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>read</span><span class=o>()</span> <span class=o>+</span> <span class=s>&#34;，读取之后的偏移量：&#34;</span> <span class=o>+</span> <span class=n>randomAccessFile</span><span class=o>.</span><span class=na>getFilePointer</span><span class=o>());</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>input.txt</code> 文件内容：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-36.png width=auto alt></p><p>输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>读取之前的偏移量：0,当前读取到的字符A，读取之后的偏移量：1
+</span></span><span class=line><span class=cl>读取之前的偏移量：6,当前读取到的字符G，读取之后的偏移量：7
+</span></span><span class=line><span class=cl>读取之前的偏移量：0,当前读取到的字符A，读取之后的偏移量：1
+</span></span></code></pre></td></tr></table></div></div><p><code>input.txt</code> 文件内容变为 <code>ABCDEFGHIJK</code> 。</p><p><code>RandomAccessFile</code> 的 <code>write</code> 方法在写入对象的时候如果对应的位置已经有数据的话，会将其覆盖掉。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>RandomAccessFile</span> <span class=n>randomAccessFile</span> <span class=o>=</span> <span class=k>new</span> <span class=n>RandomAccessFile</span><span class=o>(</span><span class=k>new</span> <span class=n>File</span><span class=o>(</span><span class=s>&#34;input.txt&#34;</span><span class=o>),</span> <span class=s>&#34;rw&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=n>randomAccessFile</span><span class=o>.</span><span class=na>write</span><span class=o>(</span><span class=k>new</span> <span class=kt>byte</span><span class=o>[]{</span><span class=sc>&#39;H&#39;</span><span class=o>,</span> <span class=sc>&#39;I&#39;</span><span class=o>,</span> <span class=sc>&#39;J&#39;</span><span class=o>,</span> <span class=sc>&#39;K&#39;</span><span class=o>});</span>
+</span></span></code></pre></td></tr></table></div></div><p>假设运行上面这段程序之前 <code>input.txt</code> 文件内容变为 <code>ABCD</code> ，运行之后则变为 <code>HIJK</code> 。</p><p><code>RandomAccessFile</code> 比较常见的一个应用就是实现大文件的 <strong>断点续传</strong> 。何谓断点续传？简单来说就是上传文件中途暂停或失败（比如遇到网络问题）之后，不需要重新上传，只需要上传那些未成功上传的文件分片即可。分片（先将文件切分成多个文件分片）上传是断点续传的基础。</p><p><code>RandomAccessFile</code> 可以帮助我们合并文件分片，示例代码如下：</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-39.png width=auto alt></p><p>我在
+<a href=https://javaguide.cn/zhuanlan/java-mian-shi-zhi-bei.html rel=noopener>《Java 面试指北》open in new window</a>中详细介绍了大文件的上传问题。</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-38.png width=auto alt></p><p><code>RandomAccessFile</code> 的实现依赖于 <code>FileDescriptor</code> (文件描述符) 和 <code>FileChannel</code> （内存映射文件）</p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://quartz.jzhao.xyz/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by Jacky Zhao using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://quartz.jzhao.xyz/>Home</a></li><li><a href=https://twitter.com/_jzhao>Twitter</a></li><li><a href=https://github.com/jackyzha0>GitHub</a></li></ul></footer></div></div></body></html>

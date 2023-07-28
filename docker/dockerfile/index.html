@@ -1,0 +1,880 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="Dockerfile 是用来描述文件的构成的文本文档，其中包含了用户可以在使用行调用以组合 Image 的所有命令，用户还可以使用 Docker build 实现连续执行多个命令行的自动构建。
+通过编写Dockerfile生磁镜像，可以为开发、测试团队提供基本一致的环境，从而提升开发、测试团队的效率，不用再为环境不统一而发愁，同时运维也能更加方便地管理我们的镜像。
+镜像的内部机制是什么 镜像就是一个打包文件，里面包含了应用程序还有它运行所依赖的环境，例如文件系统、环境变量、配置参数等等
+环境变量、配置参数这些东西还是比较简单的，随便用一个 manifest 清单就可以管理，真正麻烦的是文件系统。
+容器镜像的一个重大创新点：分层，术语叫“Layer”
+容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫**“Union FS 联合文件系统**”
+ 可以用命令 docker inspect 来查看镜像的分层信息，比如 nginx:alpine"><meta property="og:title" content><meta property="og:description" content="Dockerfile 是用来描述文件的构成的文本文档，其中包含了用户可以在使用行调用以组合 Image 的所有命令，用户还可以使用 Docker build 实现连续执行多个命令行的自动构建。
+通过编写Dockerfile生磁镜像，可以为开发、测试团队提供基本一致的环境，从而提升开发、测试团队的效率，不用再为环境不统一而发愁，同时运维也能更加方便地管理我们的镜像。
+镜像的内部机制是什么 镜像就是一个打包文件，里面包含了应用程序还有它运行所依赖的环境，例如文件系统、环境变量、配置参数等等
+环境变量、配置参数这些东西还是比较简单的，随便用一个 manifest 清单就可以管理，真正麻烦的是文件系统。
+容器镜像的一个重大创新点：分层，术语叫“Layer”
+容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫**“Union FS 联合文件系统**”
+ 可以用命令 docker inspect 来查看镜像的分层信息，比如 nginx:alpine"><meta property="og:type" content="website"><meta property="og:image" content="https://quartz.jzhao.xyz/icon.png"><meta property="og:url" content="https://quartz.jzhao.xyz/docker/dockerfile/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="Dockerfile 是用来描述文件的构成的文本文档，其中包含了用户可以在使用行调用以组合 Image 的所有命令，用户还可以使用 Docker build 实现连续执行多个命令行的自动构建。
+通过编写Dockerfile生磁镜像，可以为开发、测试团队提供基本一致的环境，从而提升开发、测试团队的效率，不用再为环境不统一而发愁，同时运维也能更加方便地管理我们的镜像。
+镜像的内部机制是什么 镜像就是一个打包文件，里面包含了应用程序还有它运行所依赖的环境，例如文件系统、环境变量、配置参数等等
+环境变量、配置参数这些东西还是比较简单的，随便用一个 manifest 清单就可以管理，真正麻烦的是文件系统。
+容器镜像的一个重大创新点：分层，术语叫“Layer”
+容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫**“Union FS 联合文件系统**”
+ 可以用命令 docker inspect 来查看镜像的分层信息，比如 nginx:alpine"><meta name=twitter:image content="https://quartz.jzhao.xyz/icon.png"><meta name=twitter:site content="_jzhao"><title>🪴 Quartz 3.3</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://quartz.jzhao.xyz//icon.png><link href=https://quartz.jzhao.xyz/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://quartz.jzhao.xyz/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://quartz.jzhao.xyz/js/darkmode.63d6a3e095d0bd2b935b62adec9dc11b.min.js></script>
+<script src=https://quartz.jzhao.xyz/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://quartz.jzhao.xyz/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://quartz.jzhao.xyz/",fetchData=Promise.all([fetch("https://quartz.jzhao.xyz/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://quartz.jzhao.xyz/indices/contentIndex.fd0b08e0fcf0fc58c8d873581bcb40dd.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://quartz.jzhao.xyz",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://quartz.jzhao.xyz",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/quartz.jzhao.xyz\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=quartz.jzhao.xyz src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://quartz.jzhao.xyz/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://quartz.jzhao.xyz/>🪴 Quartz 3.3</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=https://github.com/jackyzha0/quartz/tree/hugo/content/docker/dockerfile.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#编写dockerfile>编写DockerFile</a></li><li><a href=#使用多阶段构建>使用多阶段构建</a></li><li><a href=#单文件构建>单文件构建</a></li><li><a href=#多文件构建>多文件构建</a><ol><li><a href=#dockerfilebuild>Dockerfile.build</a></li><li><a href=#dockerfilerun>Dockerfile.run</a></li><li><a href=#dockerfilesh>Dockerfile.sh</a></li></ol></li><li><a href=#多阶段构建>多阶段构建</a></li></ol><ol><li><a href=#java-应用容器化>Java 应用容器化</a><ol><li><a href=#启动jar包构建方式>启动Jar包构建方式</a></li><li><a href=#spring-boot-插件的构建方式>Spring Boot 插件的构建方式</a></li></ol></li><li><a href=#go-应用容器化>Go 应用容器化</a></li><li><a href=#nodejs-应用容器化>Node.js 应用容器化</a></li><li><a href=#vue-容器化>Vue 容器化</a><ol><li></li></ol></li></ol><ol><li><a href=#初始化>初始化</a></li><li><a href=#构建多平台镜像>构建多平台镜像</a><ol><li><a href=#我们先看第一个构建阶段>我们先看第一个构建阶段。</a></li><li><a href=#第二个构建阶段比较简单>第二个构建阶段比较简单，</a></li></ol></li></ol><ol><li><a href=#从构建golang-镜像开始>从构建Golang 镜像开始</a></li><li><a href=#替换基础镜像>替换基础镜像</a></li><li><a href=#重新思考dockerfile>重新思考Dockerfile</a><ol><li><a href=#可以使用多阶段构建>可以使用多阶段构建</a></li></ol></li><li><a href=#进一步压缩>进一步压缩</a></li><li><a href=#极限压缩--scratch>极限压缩&ndash;scratch</a></li><li><a href=#复用构建缓存>复用构建缓存</a></li></ol><ol><li><a href=#通用镜像>通用镜像</a><ol><li><a href=#ubuntudebian>Ubuntu/Debian</a></li><li><a href=#alpine>Alpine</a></li></ol></li><li><a href=#专用镜像>专用镜像</a><ol><li><a href=#golang>Golang</a></li><li><a href=#java>Java</a></li></ol></li><li><a href=#其他解释型语言>其他解释型语言</a></li></ol></nav></details></aside><p>Dockerfile 是用来描述文件的构成的文本文档，其中包含了用户可以在使用行调用以组合 Image 的所有命令，用户还可以使用 Docker build 实现连续执行多个命令行的自动构建。</p><p>通过编写Dockerfile生磁镜像，可以为开发、测试团队提供基本一致的环境，从而提升开发、测试团队的效率，不用再为环境不统一而发愁，同时运维也能更加方便地管理我们的镜像。</p><a href=#镜像的内部机制是什么><h1 id=镜像的内部机制是什么><span class=hanchor arialabel=Anchor># </span>镜像的内部机制是什么</h1></a><p>镜像就是一个打包文件，里面包含了应用程序还有它运行所依赖的环境，例如文件系统、环境变量、配置参数等等</p><p>环境变量、配置参数这些东西还是比较简单的，随便用一个 manifest 清单就可以管理，真正<strong>麻烦的是文件系统。</strong></p><p>容器镜像的一个重大创新点：<strong>分层，术语叫“Layer”</strong></p><p>容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫**“Union FS 联合文件系统**”</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-573.png width=auto alt></p><p>可以用命令 docker inspect 来查看镜像的分层信息，比如 nginx:alpine</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>docker</span> <span class=nx>inspect</span> <span class=nx>nginx</span><span class=p>:</span><span class=nx>alpine</span>
+</span></span></code></pre></td></tr></table></div></div><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-574.png width=auto alt></p><a href=#dockerfile-是什么><h1 id=dockerfile-是什么><span class=hanchor arialabel=Anchor># </span>Dockerfile 是什么</h1></a><p>dockerfile 非常普通，它就是一个纯文本，里面记录了一系列的<strong>构建指令，比如选择基础镜像、拷贝文件、运行脚本等等</strong>，<strong>每个指令都会生成一个 Layer</strong>，而 Docker 顺序执行这个文件里的所有步骤，最后就会创建出一个新的镜像出来。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>#</span> <span class=nx>Dockerfile</span><span class=p>.</span><span class=nx>busybox</span>
+</span></span><span class=line><span class=cl><span class=nx>FROM</span> <span class=nx>busybox</span>                  <span class=err>#</span> <span class=nx>选择基础镜像</span>
+</span></span><span class=line><span class=cl><span class=nx>CMD</span> <span class=nx>echo</span> <span class=s>&#34;hello world&#34;</span>        <span class=err>#</span> <span class=nx>启动容器时默认运行的命令</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><p>第一条指令是 FROM，所有的 Dockerfile 都要从它开始，表示选择构建使用的基础镜像，相当于“打地基”，这里我们使用的是 busybox。</p></li><li><p>第二条指令是 CMD，它指定 docker run 启动容器时默认运行的命令，这里我们使用了 echo 命令，输出“hello world”字符串。</p></li></ul><p>可以用docker build ,通过Dockerfile 来创建镜像</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>docker</span> <span class=nx>build</span> <span class=o>-</span><span class=nx>f</span> <span class=nx>Dockerfile</span><span class=p>.</span><span class=nx>busybox</span> <span class=p>.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>Sending</span> <span class=nx>build</span> <span class=nx>context</span> <span class=nx>to</span> <span class=nx>Docker</span> <span class=nx>daemon</span>   <span class=mf>7.68</span><span class=nx>kB</span>
+</span></span><span class=line><span class=cl><span class=nx>Step</span> <span class=mi>1</span><span class=o>/</span><span class=mi>2</span> <span class=p>:</span> <span class=nx>FROM</span> <span class=nx>busybox</span>
+</span></span><span class=line><span class=cl> <span class=o>---</span><span class=p>&gt;</span> <span class=nx>d38589532d97</span>
+</span></span><span class=line><span class=cl><span class=nx>Step</span> <span class=mi>2</span><span class=o>/</span><span class=mi>2</span> <span class=p>:</span> <span class=nx>CMD</span> <span class=nx>echo</span> <span class=s>&#34;hello world&#34;</span>
+</span></span><span class=line><span class=cl> <span class=o>---</span><span class=p>&gt;</span> <span class=nx>Running</span> <span class=nx>in</span> <span class=nx>c5a762edd1c8</span>
+</span></span><span class=line><span class=cl><span class=nx>Removing</span> <span class=nx>intermediate</span> <span class=nx>container</span> <span class=nx>c5a762edd1c8</span>
+</span></span><span class=line><span class=cl> <span class=o>---</span><span class=p>&gt;</span> <span class=nx>b61882f42db7</span>
+</span></span><span class=line><span class=cl><span class=nx>Successfully</span> <span class=nx>built</span> <span class=nx>b61882f42db7</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#怎样编写正确高效的-dockerfile><h1 id=怎样编写正确高效的-dockerfile><span class=hanchor arialabel=Anchor># </span>怎样编写正确、高效的 Dockerfile</h1></a><ul><li><p>先因为构建镜像的<strong>第一条指令必须是 FROM</strong>，所以基础镜像的选择非常关键。如果关注的是镜像的安全和大小，那么一般会选择 <strong>Alpine</strong></p></li><li><p>本机上开发测试时会产生一些源码、配置等文件，需要打包进镜像里，这时可以使用 <strong>COPY</strong> 命令，它的用法和 Linux 的 cp 差不多，不过拷贝的源文件必须是“<strong>构建上下文”路径里的</strong></p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>COPY</span> <span class=p>.</span><span class=o>/</span><span class=nx>a</span><span class=p>.</span><span class=nx>txt</span>  <span class=o>/</span><span class=nx>tmp</span><span class=o>/</span><span class=nx>a</span><span class=p>.</span><span class=nx>txt</span>    <span class=err>#</span> <span class=nx>把构建上下文里的a</span><span class=p>.</span><span class=nx>txt拷贝到镜像的</span><span class=o>/</span><span class=nx>tmp目录</span>
+</span></span><span class=line><span class=cl><span class=nx>COPY</span> <span class=o>/</span><span class=nx>etc</span><span class=o>/</span><span class=nx>hosts</span>  <span class=o>/</span><span class=nx>tmp</span>       <span class=err>#</span> <span class=nx>错误</span><span class=err>！</span><span class=nx>不能使用构建上下文之外的文件</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><p><strong>RUN</strong> ，它可以执行任意的 Shell 命令，比如更新系统、安装应用、下载文件、创建目录、编译程序等等，实现任意的镜像构建步骤</p><ul><li>RUN 通常会是 Dockerfile 里最复杂的指令，会包含很多的 Shell 命令，但 Dockerfile 里一条指令只能是一行，所以有的 RUN 指令会在每行的末尾使用续行符 \，命令之间也会用 && 来连接</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>RUN</span> <span class=nx>apt</span><span class=o>-</span><span class=nx>get</span> <span class=nx>update</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>apt</span><span class=o>-</span><span class=nx>get</span> <span class=nx>install</span> <span class=o>-</span><span class=nx>y</span> \
+</span></span><span class=line><span class=cl>        <span class=nx>build</span><span class=o>-</span><span class=nx>essential</span> \
+</span></span><span class=line><span class=cl>        <span class=nx>curl</span> \
+</span></span><span class=line><span class=cl>        <span class=nx>make</span> \
+</span></span><span class=line><span class=cl>        <span class=nx>unzip</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>cd</span> <span class=o>/</span><span class=nx>tmp</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>curl</span> <span class=o>-</span><span class=nx>fSL</span> <span class=nx>xxx</span><span class=p>.</span><span class=nx>tar</span><span class=p>.</span><span class=nx>gz</span> <span class=o>-</span><span class=nx>o</span> <span class=nx>xxx</span><span class=p>.</span><span class=nx>tar</span><span class=p>.</span><span class=nx>gz</span>\
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>tar</span> <span class=nx>xzf</span> <span class=nx>xxx</span><span class=p>.</span><span class=nx>tar</span><span class=p>.</span><span class=nx>gz</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>cd</span> <span class=nx>xxx</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=p>.</span><span class=o>/</span><span class=nx>config</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>make</span> \
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=nx>make</span> <span class=nx>clean</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>把这些 Shell 命令集中到一个脚本文件里，用 COPY 命令拷贝进去再用 RUN 来执行：</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>COPY</span> <span class=nx>setup</span><span class=p>.</span><span class=nx>sh</span>  <span class=o>/</span><span class=nx>tmp</span><span class=o>/</span>                <span class=err>#</span> <span class=nx>拷贝脚本到</span><span class=o>/</span><span class=nx>tmp目录</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>RUN</span> <span class=nx>cd</span> <span class=o>/</span><span class=nx>tmp</span> <span class=o>&amp;&amp;</span> <span class=nx>chmod</span> <span class=o>+</span><span class=nx>x</span> <span class=nx>setup</span><span class=p>.</span><span class=nx>sh</span> <span class=err>\</span>  <span class=err>#</span> <span class=nx>添加执行权限</span>
+</span></span><span class=line><span class=cl>    <span class=o>&amp;&amp;</span> <span class=p>.</span><span class=o>/</span><span class=nx>setup</span><span class=p>.</span><span class=nx>sh</span> <span class=o>&amp;&amp;</span> <span class=nx>rm</span> <span class=nx>setup</span><span class=p>.</span><span class=nx>sh</span>    <span class=err>#</span> <span class=nx>运行脚本然后再删除</span>
+</span></span></code></pre></td></tr></table></div></div></li><li><p>变量，可以用来实现参数化运行,<strong>ARG 和 ENV</strong>。</p><ul><li><p>ARG 创建的变量只在镜像构建过程中可见，容器运行时不可见</p></li><li><p>ENV 创建的变量不仅能够在构建镜像的过程中使用，在容器运行时也能够以环境变量的形式被应用程序使用。</p></li></ul></li><li><p><strong>EXPOSE</strong>，它用来声明容器对外服务的端口号，对现在基于 Node.js、Tomcat、Nginx、Go 等开发的微服务系统来说非常有用：</p></li></ul><a href=#docker-build-是怎么工作的><h1 id=docker-build-是怎么工作的><span class=hanchor arialabel=Anchor># </span>docker build 是怎么工作的</h1></a><p>“docker”是一个简单的客户端，真正的镜像构建工作是由服务器端的“Docker daemon”来完成的，所以“docker”客户端就只能把“构建上下文”目录打包上传（显示信息 Sending build context to Docker daemon ），所以尽量不要在“构建上下文”中存放多余的文件。</p><a href=#dockerfile语法><h1 id=dockerfile语法><span class=hanchor arialabel=Anchor># </span>Dockerfile语法</h1></a><p>Dockerfile的语法非常简单，常用的只有11个：</p><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>FROM</td><td>基于那个镜像来实现</td></tr><tr><td>MAINTAINER</td><td>镜像的创建者</td></tr><tr><td>ENV</td><td>声明环境变量</td></tr><tr><td>RUN</td><td>执行的命令</td></tr><tr><td>ADD</td><td>添加宿主机文件到容器中，有需要解压的文件会自动解压</td></tr><tr><td>COPY</td><td>添加宿主机文件到容器</td></tr><tr><td>WORKDIR</td><td>工作目录，你可以理解为后续所有的命令都将以此为基准路径</td></tr><tr><td>EXPOSE</td><td>容器类应用可使用的端口</td></tr><tr><td>CMD</td><td>容器启动后所执行的程序，如果执行docker run 后面跟启动命令会被覆盖掉</td></tr><tr><td>ENTRYPOINT</td><td>和CMD功能相同，但是docker run 不会覆盖如果需要覆盖可以增加参数-entrypoint来覆盖</td></tr><tr><td>VOLUME</td><td>Volume 将宿主机的目录挂载到容器里面</td></tr></tbody></table><p>例子</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>python</span><span class=p>:</span><span class=mi>3</span><span class=p>.</span><span class=mi>8</span><span class=o>-</span><span class=n>slim</span><span class=o>-</span><span class=n>buster</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=k>update</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=n>y</span><span class=w> </span><span class=n>procps</span><span class=w> </span><span class=n>vim</span><span class=w> </span><span class=n>apache2</span><span class=o>-</span><span class=n>utils</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>rm</span><span class=w> </span><span class=o>-</span><span class=n>rf</span><span class=w> </span><span class=o>/</span><span class=n>var</span><span class=o>/</span><span class=n>lib</span><span class=o>/</span><span class=n>apt</span><span class=o>/</span><span class=n>lists</span><span class=cm>/*
+</span></span></span><span class=line><span class=cl><span class=cm>
+</span></span></span><span class=line><span class=cl><span class=cm>WORKDIR /app
+</span></span></span><span class=line><span class=cl><span class=cm>
+</span></span></span><span class=line><span class=cl><span class=cm>COPY requirements.txt requirements.txt
+</span></span></span><span class=line><span class=cl><span class=cm>RUN pip3 install -r requirements.txt
+</span></span></span><span class=line><span class=cl><span class=cm>
+</span></span></span><span class=line><span class=cl><span class=cm>COPY . .
+</span></span></span><span class=line><span class=cl><span class=cm>
+</span></span></span><span class=line><span class=cl><span class=cm>CMD [ &#34;python3&#34;, &#34;-m&#34; , &#34;flask&#34;, &#34;run&#34;, &#34;--host=0.0.0.0&#34;]
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>第一行以 syntax 开头的是解析器注释，它与 Docker 构建镜像的工具 buildkit 相关，在一般情况，我都建议你使用 docker/dockerfile:1，它代表始终指向最新的语法版本。</p></li><li><p>FROM 命令，表示使用官方仓库的 python:3.8-slim-buster 镜像作为基础镜像。在我们熟悉的编程方法中，你可以理解为从该镜像继承。这个镜像已经安装了 Python3 和 Pip3 等所有的 Python 相关的工具和包，我们可以直接使用。</p></li><li><p>RUN 的含义是在镜像内运行指定的命令，这里我们为镜像安装了一些必要的工具。</p></li><li><p>WORKDIR 的含义是镜像的工作目录，你可以理解为后续所有的命令都将以此为基准路径。这样，我们就可以在后续的命令中使用相对路径而不是完整路径了。</p></li><li><p>COPY 的含义是将本地的文件或目录复制到镜像内指定的位置。第一个参数代表本地文件或目录，第二个参数代表要复制到镜像内的位置。例如，第七行 COPY 表示，将本地当前目录下的 requirements.txt 文件复制到镜像工作目录 /app 中，文件命名同样为 requirements.txt。</p></li><li><p>第十行 RUN 的含义是在镜像里运行 pip3 安装 Python 依赖。请注意，这些依赖将会被安装在镜像里而不是本地。</p></li><li><p>接下来，第十二行又出现了一个 COPY 命令，它的含义是将当前目录所有的源代码复制到镜像的工作目录 /app 下，复制目录的语法和我们之前提到的复制文件是类似的。</p></li><li><p>最后一行 CMD 的含义是镜像的启动命令。在一个 Dockerfile 中，只能有一个 CMD 命令，如果有多个，那么只有最后一个 CMD 命令会起作用。例如，我们希望在镜像被运行时启动 Python Flask Web 服务器，并监听在特定主机上。CMD 的第一个参数 python3 是我们希望运行的可执行命令，后面的参数表示运行 python3 命令所需要的参数。</p></li></ul><a href=#编写dockerfile><h2 id=编写dockerfile><span class=hanchor arialabel=Anchor># </span>编写DockerFile</h2></a><ul><li><p>Dockerfile文件不宜过长，层级越多最终制作出来的镜像也就越大。</p></li><li><p>构建出来的镜像不要包含不需要的内容，如日志、安装临时文件等。</p></li><li><p>尽量使用运行时的基础镜像，不需要将构建时的过程也放到运行时的Dockerfile里。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>FROM ubuntu:16.04
+</span></span><span class=line><span class=cl>RUN apt-get update
+</span></span><span class=line><span class=cl>RUN apt-get install -y apt-utils libjpeg-dev \     
+</span></span><span class=line><span class=cl>python-pip
+</span></span><span class=line><span class=cl>RUN pip install --upgrade pip
+</span></span><span class=line><span class=cl>RUN easy_install -U setuptools
+</span></span><span class=line><span class=cl>RUN apt-get clean
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=mi>16</span><span class=p>.</span><span class=mi>04</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=k>update</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=n>y</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=n>utils</span><span class=w> </span><span class=err>\</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>libjpeg</span><span class=o>-</span><span class=n>dev</span><span class=w> </span><span class=n>python</span><span class=o>-</span><span class=n>pip</span><span class=w> </span><span class=err>\</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>           </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>pip</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=c1>--upgrade pip \
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=w>      </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>easy_install</span><span class=w> </span><span class=o>-</span><span class=n>U</span><span class=w> </span><span class=n>setuptools</span><span class=w> </span><span class=err>\</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=n>clean</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>第一个Dockerfile的好处是：当正在执行的过程某一层出错，对其进行修正后再次Build，前面已经执行完成的层不会再次执行。这样能大大减少下次Build的时间，而它的问题就是会因层级变多了而使镜像占用的空间也变大。</p></li><li><p>第二个Dockerfile把所有的组件全部在一层解决，这样做能一定程度上减少镜像的占用空间，但在制作基础镜像的时候若其中某个组编译出错，修正后再次Build就相当于重头再来了，前面编译好的组件在一个层里，得全部都重新编译一遍，比较消耗时间</p></li></ul><a href=#使用多阶段构建><h2 id=使用多阶段构建><span class=hanchor arialabel=Anchor># </span>使用多阶段构建</h2></a><p>Docker在升级到Docker 17.05之后就能支持多阶构建了，为了使镜像更加小巧，我们采用多阶构建的方式来打包镜像</p><a href=#单文件构建><h2 id=单文件构建><span class=hanchor arialabel=Anchor># </span>单文件构建</h2></a><p>在多阶构建出来之前使用单个文件进行构建，单文件就是将所有的构建过程（包括项目的依赖、编译、测试、打包过程）全部包含在一个Dockerfile中之下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>11</span><span class=p>.</span><span class=mi>4</span><span class=o>-</span><span class=n>alpine3</span><span class=p>.</span><span class=mi>8</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=n>build</span><span class=o>-</span><span class=n>env</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GO111MODULE</span><span class=o>=</span><span class=k>off</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GO15VENDOREXPERIMENT</span><span class=o>=</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>BUILDPATH</span><span class=o>=</span><span class=n>github</span><span class=p>.</span><span class=n>com</span><span class=o>/</span><span class=n>lattecake</span><span class=o>/</span><span class=n>hello</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>mkdir</span><span class=w> </span><span class=o>-</span><span class=n>p</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>BUILDPATH</span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>BUILDPATH</span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>BUILDPATH</span><span class=err>}</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>CGO_ENABLED</span><span class=o>=</span><span class=mi>0</span><span class=w> </span><span class=n>GOOS</span><span class=o>=</span><span class=n>linux</span><span class=w> </span><span class=n>GOARCH</span><span class=o>=</span><span class=n>amd64</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=err>–</span><span class=n>v</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>hello</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这样做会带来一些问题</p><ul><li><p>Dockerfile文件会特别长，当需要的东西越来越多的时候可维护性指数级将会下降；</p></li><li><p>镜像层次过多，镜像的体积会逐步增大，部署也会变得越来越慢；</p></li><li><p>代码存在泄漏风险</p></li></ul><a href=#多文件构建><h2 id=多文件构建><span class=hanchor arialabel=Anchor># </span>多文件构建</h2></a><p>多文件构建，其实就是使用多个Dockerfile，然后通过脚本将它们进行组合。假设有三个文件分别是：Dockerfile.run、Dockerfile.build、build.sh。</p><ul><li><p>Dockerfile.run就是运行时程序所必须需要的一些组件的Dockerfile，它包含了最精简的库；</p></li><li><p>Dockerfile.build只是用来构建，构建完就没用了；</p></li><li><p>build.sh的功能就是将Dockerfile.run和Dockerfile.build进行组成，把Dockerfile.build构建好的东西拿出来，然后再执行Dockerfile.run，算是一个调度的角色。</p></li></ul><a href=#dockerfilebuild><h3 id=dockerfilebuild><span class=hanchor arialabel=Anchor># </span>Dockerfile.build</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>11</span><span class=p>.</span><span class=mi>4</span><span class=o>-</span><span class=n>alpine3</span><span class=p>.</span><span class=mi>8</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=n>build</span><span class=o>-</span><span class=n>env</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GO111MODULE</span><span class=o>=</span><span class=k>off</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GO15VENDOREXPERIMENT</span><span class=o>=</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>BUILDPATH</span><span class=o>=</span><span class=n>github</span><span class=p>.</span><span class=n>com</span><span class=o>/</span><span class=n>lattecake</span><span class=o>/</span><span class=n>hello</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>mkdir</span><span class=w> </span><span class=o>-</span><span class=n>p</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>BUILDPATH</span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>BUILDPATH</span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>BUILDPATH</span><span class=err>}</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>CGO_ENABLED</span><span class=o>=</span><span class=mi>0</span><span class=w> </span><span class=n>GOOS</span><span class=o>=</span><span class=n>linux</span><span class=w> </span><span class=n>GOARCH</span><span class=o>=</span><span class=n>amd64</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=err>–</span><span class=n>v</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#dockerfilerun><h3 id=dockerfilerun><span class=hanchor arialabel=Anchor># </span>Dockerfile.run</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>alpine</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>apk</span><span class=w> </span><span class=err>–</span><span class=k>no</span><span class=o>-</span><span class=k>cache</span><span class=w> </span><span class=k>add</span><span class=w> </span><span class=n>ca</span><span class=o>-</span><span class=n>certificates</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>root</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>ADD</span><span class=w> </span><span class=n>hello</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;./hello&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#dockerfilesh><h3 id=dockerfilesh><span class=hanchor arialabel=Anchor># </span>Dockerfile.sh</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#!/</span><span class=n>bin</span><span class=o>/</span><span class=n>sh</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>docker</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>t</span><span class=w> </span><span class=err>–</span><span class=n>rm</span><span class=w> </span><span class=n>hello</span><span class=p>:</span><span class=n>build</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=o>-</span><span class=n>f</span><span class=w> </span><span class=n>Dockerfile</span><span class=p>.</span><span class=n>build</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>docker</span><span class=w> </span><span class=k>create</span><span class=w> </span><span class=err>–</span><span class=n>name</span><span class=w> </span><span class=k>extract</span><span class=w> </span><span class=n>hello</span><span class=p>:</span><span class=n>build</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>docker</span><span class=w> </span><span class=n>cp</span><span class=w> </span><span class=k>extract</span><span class=p>:</span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>hello</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>hello</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>docker</span><span class=w> </span><span class=n>rm</span><span class=w> </span><span class=o>-</span><span class=n>f</span><span class=w> </span><span class=k>extract</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>docker</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=err>–</span><span class=k>no</span><span class=o>-</span><span class=k>cache</span><span class=w> </span><span class=o>-</span><span class=n>t</span><span class=w> </span><span class=err>–</span><span class=n>rm</span><span class=w> </span><span class=n>hello</span><span class=p>:</span><span class=n>run</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=o>-</span><span class=n>f</span><span class=w> </span><span class=n>Dockerfile</span><span class=p>.</span><span class=n>run</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>rm</span><span class=w> </span><span class=o>-</span><span class=n>rf</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>hello</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>多文件构建大大减小了镜像的占用空间，但它有三个文件需要管理，维护成本也更高一些。</p><a href=#多阶段构建><h2 id=多阶段构建><span class=hanchor arialabel=Anchor># </span>多阶段构建</h2></a><p>完成多阶段构建我们只需要在Dockerfile中多次使用FORM声明，每次FROM指令可以使用不同的基础镜像，并且每次FROM指令都会开始新的构建，我们可以选择将一个阶段的构建结果复制到另一个阶段，在最终的镜像中只会留下最后一次构建的结果</p><p>在Dockerfile里可以使用as来为某一阶段取一个别名”build-env”：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>11</span><span class=p>.</span><span class=mi>2</span><span class=o>-</span><span class=n>alpine3</span><span class=p>.</span><span class=mi>8</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=n>build</span><span class=o>-</span><span class=n>env</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>然后从上一阶段的镜像中复制文件，也可以复制任意镜像中的文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>COPY</span><span class=w> </span><span class=err>–</span><span class=k>from</span><span class=o>=</span><span class=n>build</span><span class=o>-</span><span class=n>env</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>hello</span><span class=w> </span><span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>hello</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>看个例子</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>11</span><span class=p>.</span><span class=mi>4</span><span class=o>-</span><span class=n>alpine3</span><span class=p>.</span><span class=mi>8</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=n>build</span><span class=o>-</span><span class=n>env</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GO111MODULE</span><span class=o>=</span><span class=k>off</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GO15VENDOREXPERIMENT</span><span class=o>=</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>GITPATH</span><span class=o>=</span><span class=n>github</span><span class=p>.</span><span class=n>com</span><span class=o>/</span><span class=n>lattecake</span><span class=o>/</span><span class=n>hello</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>mkdir</span><span class=w> </span><span class=o>-</span><span class=n>p</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>GITPATH</span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>GITPATH</span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=o>/</span><span class=k>go</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=err>${</span><span class=n>GITPATH</span><span class=err>}</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>CGO_ENABLED</span><span class=o>=</span><span class=mi>0</span><span class=w> </span><span class=n>GOOS</span><span class=o>=</span><span class=n>linux</span><span class=w> </span><span class=n>GOARCH</span><span class=o>=</span><span class=n>amd64</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=n>v</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>alpine</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>apk</span><span class=w> </span><span class=err>–</span><span class=k>no</span><span class=o>-</span><span class=k>cache</span><span class=w> </span><span class=k>add</span><span class=w> </span><span class=n>ca</span><span class=o>-</span><span class=n>certificates</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=build-env /go/bin/hello /root/hello
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>root</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/root/hello&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#为不同语言构建镜像><h1 id=为不同语言构建镜像><span class=hanchor arialabel=Anchor># </span>为不同语言构建镜像</h1></a><a href=#java-应用容器化><h2 id=java-应用容器化><span class=hanchor arialabel=Anchor># </span>Java 应用容器化</h2></a><p>常见的 Java 应用启动方式有两种，这也就意味着镜像构建方式也有两种。</p><ul><li><p>一种是将应用打包成 Jar 包，在镜像内直接启动应用 Jar 包来构建镜像。</p></li><li><p>另一种是在容器里通过 Spring Boot 插件直接启动应用</p></li></ul><a href=#启动jar包构建方式><h3 id=启动jar包构建方式><span class=hanchor arialabel=Anchor># </span>启动Jar包构建方式</h3></a><p>有应用</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=n>gitops</span><span class=o>/</span><span class=n>docker</span><span class=o>/</span><span class=mi>13</span><span class=o>/</span><span class=n>spring</span><span class=o>-</span><span class=n>boot</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>ls</span><span class=w> </span><span class=o>-</span><span class=n>al</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>total</span><span class=w> </span><span class=mi>80</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>drwxr</span><span class=o>-</span><span class=n>xr</span><span class=o>-</span><span class=n>x</span><span class=w>  </span><span class=mi>12</span><span class=w> </span><span class=n>weiwang</span><span class=w>  </span><span class=n>staff</span><span class=w>    </span><span class=mi>384</span><span class=w> </span><span class=mi>10</span><span class=w>  </span><span class=mi>5</span><span class=w> </span><span class=mi>11</span><span class=p>:</span><span class=mi>17</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>drwxr</span><span class=o>-</span><span class=n>xr</span><span class=o>-</span><span class=n>x</span><span class=w>   </span><span class=mi>4</span><span class=w> </span><span class=n>weiwang</span><span class=w>  </span><span class=n>staff</span><span class=w>    </span><span class=mi>128</span><span class=w> </span><span class=mi>10</span><span class=w>  </span><span class=mi>5</span><span class=w> </span><span class=mi>11</span><span class=p>:</span><span class=mi>17</span><span class=w> </span><span class=p>..</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff      6 10  5 10:30 .dockerignore
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    374 10  5 11:05 Dockerfile
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>drwxr</span><span class=o>-</span><span class=n>xr</span><span class=o>-</span><span class=n>x</span><span class=w>   </span><span class=mi>4</span><span class=w> </span><span class=n>weiwang</span><span class=w>  </span><span class=n>staff</span><span class=w>    </span><span class=mi>128</span><span class=w> </span><span class=mi>10</span><span class=w>  </span><span class=mi>5</span><span class=w> </span><span class=mi>11</span><span class=p>:</span><span class=mi>17</span><span class=w> </span><span class=n>src</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>......</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>src 目录下的 src/main/java/com/example/demo/DemoApplication.java</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>rc</span><span class=w> </span><span class=err>目录下的</span><span class=w> </span><span class=n>src</span><span class=o>/</span><span class=n>main</span><span class=o>/</span><span class=n>java</span><span class=o>/</span><span class=n>com</span><span class=o>/</span><span class=n>example</span><span class=o>/</span><span class=n>demo</span><span class=o>/</span><span class=n>DemoApplication</span><span class=p>.</span><span class=n>java</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>它代表了 Spring Boot + Maven 的典型组合，只要符合这两种技术选型，你都可以直接参考这里的例子来容器化你的业务应用。</p><p>是构建镜像的核心内容 Dockerfile 文件</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>eclipse</span><span class=o>-</span><span class=n>temurin</span><span class=p>:</span><span class=mi>17</span><span class=o>-</span><span class=n>jdk</span><span class=o>-</span><span class=n>jammy</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=n>mvn</span><span class=o>/</span><span class=w> </span><span class=p>.</span><span class=n>mvn</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=n>mvnw</span><span class=w> </span><span class=n>pom</span><span class=p>.</span><span class=n>xml</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>mvnw</span><span class=w> </span><span class=n>dependency</span><span class=p>:</span><span class=k>go</span><span class=o>-</span><span class=n>offline</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>src</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>src</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>mvnw</span><span class=w> </span><span class=n>clean</span><span class=w> </span><span class=n>install</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>eclipse</span><span class=o>-</span><span class=n>temurin</span><span class=p>:</span><span class=mi>17</span><span class=o>-</span><span class=n>jre</span><span class=o>-</span><span class=n>jammy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>EXPOSE</span><span class=w> </span><span class=mi>8080</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=builder /opt/app/target/*.jar /opt/app/*.jar
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;java&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;-jar&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;/opt/app/*.jar&#34;</span><span class=w> </span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>第一阶段的构建，也就是从第 3 行到第 9 行。第 3 行 FROM 表示把 eclipse-temurin:17-jdk-jammy 作为 build 阶段的基础镜像，然后使用 WORKDIR 关键字指定了工作目录为 /opt/app，后续的文件操作都会在这个工作目录下展开。</p></li><li><p>接下来，第 5 和第 6 行通过 COPY 关键字将 .mvn 目录和 mvnw、pom.xml 文件复制到了工作目录下，<strong>第 7 行通过 RUN 关键字运行 ./mvnw dependency:go-offline 来安装依赖</strong>。然后，第 8 行将 src 目录复制到了镜像中，第 9 行使用 RUN 关键字执行 ./mvnw clean install 进行编译。</p></li><li><p>第 12 行到 16 行是第二个构建阶段。第 12 行表示使用 eclipse-temurin:17-jre-jammy 作为基础镜像，第 13 行同样指定了工作目录为 /opt/app，第 14 行的 EXPOSE 关键字之前我们有提到过，它是一个备注功能，并不是要暴露真实容器端口的意思</p></li><li><p>第 15 行的 COPY 语句比较复杂，它指的是从 builder 阶段也就是将第一个阶段位于 /opt/app/target/ 目录下所有的 .jar 文件都拷贝到当前构建阶段镜像的 /opt/app/ 目录下。第 16 行使用 CMD 关键字定义了启动命令，也就是通过 java -jar 的方式启动应用。</p></li><li><p>最后，.dockerignore 的功能和我们熟悉的 .gitignore 文件功能类似，它指的是在构建过程中需要忽略的文件或目录，合理的文件忽略策略将有助于提高构建镜像的速度</p></li></ul><a href=#spring-boot-插件的构建方式><h3 id=spring-boot-插件的构建方式><span class=hanchor arialabel=Anchor># </span>Spring Boot 插件的构建方式</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>eclipse</span><span class=o>-</span><span class=n>temurin</span><span class=p>:</span><span class=mi>17</span><span class=o>-</span><span class=n>jdk</span><span class=o>-</span><span class=n>jammy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=n>mvn</span><span class=o>/</span><span class=w> </span><span class=p>.</span><span class=n>mvn</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=n>mvnw</span><span class=w> </span><span class=n>pom</span><span class=p>.</span><span class=n>xml</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>mvnw</span><span class=w> </span><span class=n>dependency</span><span class=p>:</span><span class=n>resolve</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=n>src</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>src</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;./mvnw&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;spring-boot:run&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>相比较 Jar 的启动方式，Spring Boot 插件的启动方式显得更加简单。在构建过程中，我们实际上还用了一个小技巧：<strong>第 7 和第 8 行代表单独复制了依赖清单文件 pom.xml 而不是复制整个根目录，</strong></p><p>在这个 Dockerfile 文件中有两条关键的命令，<strong>一个 mvnw dependency:resolve 用于安装依赖，另一个 mvnw spring-boot:run 命令用来启动应用。</strong></p><p>接下来，我们使用 docker build 命令构建镜像，这里要注意增加 -f 参数指定新的 Dockerfile 文件</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>t</span><span class=w> </span><span class=n>spring</span><span class=o>-</span><span class=n>boot</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=o>-</span><span class=n>f</span><span class=w> </span><span class=n>Dockerfile</span><span class=o>-</span><span class=n>Boot</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#go-应用容器化><h2 id=go-应用容器化><span class=hanchor arialabel=Anchor># </span>Go 应用容器化</h2></a><p>以 Echo 框架为例，我提前编写好了一个简单的示例应用</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=n>gitops</span><span class=o>/</span><span class=n>docker</span><span class=o>/</span><span class=mi>13</span><span class=o>/</span><span class=n>golang</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>ls</span><span class=w> </span><span class=o>-</span><span class=n>al</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff   292 10  5 14:16 Dockerfile
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff   599 10  5 14:12 go.mod
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff  2825 10  5 14:12 go.sum
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff   235 10  5 14:13 main.go
+</span></span></span></code></pre></td></tr></table></div></div><p>main.go</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>package</span><span class=w> </span><span class=n>main</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>import</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;net/http&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;github.com/labstack/echo/v4&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>func</span><span class=w> </span><span class=n>main</span><span class=p>()</span><span class=w> </span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>e</span><span class=w> </span><span class=p>:</span><span class=o>=</span><span class=w> </span><span class=n>echo</span><span class=p>.</span><span class=k>New</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>e</span><span class=p>.</span><span class=k>GET</span><span class=p>(</span><span class=s2>&#34;/hello&#34;</span><span class=p>,</span><span class=w> </span><span class=n>func</span><span class=p>(</span><span class=k>c</span><span class=w> </span><span class=n>echo</span><span class=p>.</span><span class=n>Context</span><span class=p>)</span><span class=w> </span><span class=n>error</span><span class=w> </span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=k>c</span><span class=p>.</span><span class=n>String</span><span class=p>(</span><span class=n>http</span><span class=p>.</span><span class=n>StatusOK</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;Hello World Golang&#34;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=err>}</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>e</span><span class=p>.</span><span class=n>Logger</span><span class=p>.</span><span class=n>Fatal</span><span class=p>(</span><span class=n>e</span><span class=p>.</span><span class=k>Start</span><span class=p>(</span><span class=s2>&#34;:8080&#34;</span><span class=p>))</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>Dockerfile</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=builder /opt/app/example /opt/app/example
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>EXPOSE</span><span class=w> </span><span class=mi>8080</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>第一个构建阶段是以 golang:1.17 为基础镜像，然后我们执行 go build 命令编译并输出可执行文件，将其命名为 example。</p></li><li><p>第二个构建阶段是以 ubuntu:latest 为基础镜像，第 9 行通过 COPY 关键字将第一个阶段构建的 example 可执行文件复制到镜像的 /opt/app/ 目录下，最后，使用 CMD 来运行 example 启动应用。</p></li></ul><a href=#nodejs-应用容器化><h2 id=nodejs-应用容器化><span class=hanchor arialabel=Anchor># </span>Node.js 应用容器化</h2></a><p>以 Express.js 框架为例，我已经提前编写好了一个简单示例，在将示例应用克隆到本地后，你可以进入 docker/13/node 目录并查看</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=n>gitops</span><span class=o>/</span><span class=n>docker</span><span class=o>/</span><span class=mi>13</span><span class=o>/</span><span class=n>node</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>ls</span><span class=w> </span><span class=o>-</span><span class=n>al</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff     12 10  5 16:45 .dockerignore
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    589 10  5 16:39 Dockerfile
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    230 10  5 16:44 app.js
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>drwxr</span><span class=o>-</span><span class=n>xr</span><span class=o>-</span><span class=n>x</span><span class=w>  </span><span class=mi>60</span><span class=w> </span><span class=n>weiwang</span><span class=w>  </span><span class=n>staff</span><span class=w>   </span><span class=mi>1920</span><span class=w> </span><span class=mi>10</span><span class=w>  </span><span class=mi>5</span><span class=w> </span><span class=mi>16</span><span class=p>:</span><span class=mi>26</span><span class=w> </span><span class=n>node_modules</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff  39326 10  5 16:26 package-lock.json
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    251 10  5 16:26 package.json
+</span></span></span></code></pre></td></tr></table></div></div><p>app.js 是示例应用的主体文件，包含一个 /hello 接口。当我们通过 Get 请求访问时，会返回“Hello World Node.js”字符串</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>const</span><span class=w> </span><span class=n>express</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>require</span><span class=p>(</span><span class=s1>&#39;express&#39;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>const</span><span class=w> </span><span class=n>app</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>express</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>const</span><span class=w> </span><span class=n>port</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>3000</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>app</span><span class=p>.</span><span class=k>get</span><span class=p>(</span><span class=s1>&#39;/hello&#39;</span><span class=p>,</span><span class=w> </span><span class=p>(</span><span class=n>req</span><span class=p>,</span><span class=w> </span><span class=n>res</span><span class=p>)</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>res</span><span class=p>.</span><span class=n>send</span><span class=p>(</span><span class=s1>&#39;Hello World Node.js&#39;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>}</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>app</span><span class=p>.</span><span class=k>listen</span><span class=p>(</span><span class=n>port</span><span class=p>,</span><span class=w> </span><span class=p>()</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>console</span><span class=p>.</span><span class=n>log</span><span class=p>(</span><span class=o>`</span><span class=n>Example</span><span class=w> </span><span class=n>app</span><span class=w> </span><span class=n>listening</span><span class=w> </span><span class=k>on</span><span class=w> </span><span class=n>port</span><span class=w> </span><span class=err>${</span><span class=n>port</span><span class=err>}</span><span class=o>`</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>}</span><span class=p>)</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>Dockerfile</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>node</span><span class=p>:</span><span class=n>latest</span><span class=w> </span><span class=k>AS</span><span class=w> </span><span class=n>build</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>sed</span><span class=w> </span><span class=o>-</span><span class=n>i</span><span class=w> </span><span class=s2>&#34;s@http://\(deb\|security\).debian.org@https://mirrors.aliyun.com@g&#34;</span><span class=w> </span><span class=o>/</span><span class=n>etc</span><span class=o>/</span><span class=n>apt</span><span class=o>/</span><span class=n>sources</span><span class=p>.</span><span class=n>list</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=k>update</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>apt</span><span class=o>-</span><span class=k>get</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=n>y</span><span class=w> </span><span class=n>dumb</span><span class=o>-</span><span class=n>init</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=n>package</span><span class=o>*</span><span class=p>.</span><span class=n>json</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>npm</span><span class=w> </span><span class=n>ci</span><span class=w> </span><span class=c1>--only=production
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>node</span><span class=p>:</span><span class=mi>16</span><span class=p>.</span><span class=mi>17</span><span class=p>.</span><span class=mi>0</span><span class=o>-</span><span class=n>bullseye</span><span class=o>-</span><span class=n>slim</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>NODE_ENV</span><span class=w> </span><span class=n>production</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=build /usr/bin/dumb-init /usr/bin/dumb-init
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>USER</span><span class=w> </span><span class=n>node</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>src</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--chown=node:node --from=build /usr/src/app/node_modules /usr/src/app/node_modules
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>COPY</span><span class=w> </span><span class=c1>--chown=node:node . /usr/src/app
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;dumb-init&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;node&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;app.js&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#vue-容器化><h2 id=vue-容器化><span class=hanchor arialabel=Anchor># </span>Vue 容器化</h2></a><a href=#http-server-构建方式><h4 id=http-server-构建方式><span class=hanchor arialabel=Anchor># </span>Http-server 构建方式</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=n>gitops</span><span class=o>/</span><span class=n>docker</span><span class=o>/</span><span class=mi>13</span><span class=o>/</span><span class=n>vue</span><span class=o>/</span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>ls</span><span class=w> </span><span class=o>-</span><span class=n>al</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff     12 10  5 17:26 .dockerignore
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    172 10  5 17:27 Dockerfile
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff      0 10  5 17:34 Dockerfile-Nginx
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    631 10  5 17:23 README.md
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--   1 weiwang  staff    337 10  5 17:23 index.html
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>......</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>node</span><span class=p>:</span><span class=n>lts</span><span class=o>-</span><span class=n>alpine</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>npm</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=k>g</span><span class=w> </span><span class=n>http</span><span class=o>-</span><span class=n>server</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=n>package</span><span class=o>*</span><span class=p>.</span><span class=n>json</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>npm</span><span class=w> </span><span class=n>install</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>npm</span><span class=w> </span><span class=n>run</span><span class=w> </span><span class=n>build</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>EXPOSE</span><span class=w> </span><span class=mi>8080</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;http-server&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;dist&#34;</span><span class=w> </span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#nginx-构建方式><h4 id=nginx-构建方式><span class=hanchor arialabel=Anchor># </span>Nginx 构建方式</h4></a><ul><li><p>在上面的例子中，我们使用 http-server 来对外提供服务，这在开发和测试场景，或者是在小型的使用场景中是完全可以的。</p></li><li><p>不过，在正式的生产环境中，我推荐你把 Nginx 作为反向代理服务器来对外提供服务，它也是性能最好、使用最广泛和稳定性最高的一种方案。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>node</span><span class=p>:</span><span class=n>lts</span><span class=o>-</span><span class=n>alpine</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>build</span><span class=o>-</span><span class=n>stage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=n>package</span><span class=o>*</span><span class=p>.</span><span class=n>json</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>npm</span><span class=w> </span><span class=n>install</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>npm</span><span class=w> </span><span class=n>run</span><span class=w> </span><span class=n>build</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>nginx</span><span class=p>:</span><span class=k>stable</span><span class=o>-</span><span class=n>alpine</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>production</span><span class=o>-</span><span class=n>stage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=build-stage /app/dist /usr/share/nginx/html
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>EXPOSE</span><span class=w> </span><span class=mi>80</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;nginx&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;-g&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;daemon off;&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>第一阶段的构建过程和我们在上面提到的 http-server 的构建方式非常类似，它是以 node:lts-alpine 为基础镜像，同时复制 package.json 和 package-lock.json 并安装依赖，然后再复制项目源码并且执行 npm run build 来构建项目，生成 dist 目录</p></li><li><p>第二个阶段的构建过程则是引入了一个新的 nginx:stable-alpine 镜像作为运行镜像，还将第一阶段构建的 dist 目录复制到了第二阶段的 /usr/share/nginx/html 目录中。这个目录是 Nginx 默认的网页目录，默认情况下，Nginx 将使用该目录的内容作为静态资源。最后第 13 行以前台的方式启动 Nginx。</p></li></ul><a href=#构建多平台镜像--buildx><h1 id=构建多平台镜像--buildx><span class=hanchor arialabel=Anchor># </span>构建多平台镜像&ndash;buildx</h1></a><p>上面的案例，<strong>我们都是通过在本地执行 docker build 命令来构建镜像，然后在本地通过 docker run 命令来执行的。实际上，在构建镜像时，Docker 会默认构建本机对应平台的镜像</strong>，例如常见的 AMD64 平台，这在大多数情况是适用的。</p><p>但是，当我们使用不同平台的设备尝试启动这个镜像时，可能会遇到下面的问题。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WARNING</span><span class=p>:</span><span class=w> </span><span class=n>The</span><span class=w> </span><span class=n>requested</span><span class=w> </span><span class=n>image</span><span class=s1>&#39;s platform (linux/arm64/v8) does not match the detected host platform (linux/amd64) and no specific platform was requested
+</span></span></span></code></pre></td></tr></table></div></div><p>产生这个问题的原因是，构建和运行设备的 CPU 平台存在差异。在实际项目中，最典型的例子是构建镜像的计算机是 AMD64 架构，但运行镜像的机器是 ARM64。</p><p>那么，怎么才能真正实现跨平台的“<strong>一次构建，到处运行</strong>”目标呢？Docker 为我们提供了构建多平台镜像的方法：<strong>buildx。</strong></p><a href=#初始化><h2 id=初始化><span class=hanchor arialabel=Anchor># </span>初始化</h2></a><p>要使用 Buildx，首先需要创建构建器，你可以使用 docker buildx create 命令来创建它，并将其命名为 mybuilder</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>buildx</span><span class=w> </span><span class=k>create</span><span class=w> </span><span class=c1>--name mybuilder
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>builder</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>然后，将 mybuilder 设置为默认的构建器。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>buildx</span><span class=w> </span><span class=n>use</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>接下来，初始化构建器，这一步主要是启动 buildkit 容器。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=err>$</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>buildx</span><span class=w> </span><span class=n>inspect</span><span class=w> </span><span class=c1>--bootstrap
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>[</span><span class=o>+</span><span class=p>]</span><span class=w> </span><span class=n>Building</span><span class=w> </span><span class=mi>19</span><span class=p>.</span><span class=mi>1</span><span class=n>s</span><span class=w> </span><span class=p>(</span><span class=mi>1</span><span class=o>/</span><span class=mi>1</span><span class=p>)</span><span class=w> </span><span class=n>FINISHED</span><span class=w>                                                                                                                                                                        
+</span></span></span><span class=line><span class=cl><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>[</span><span class=n>internal</span><span class=p>]</span><span class=w> </span><span class=n>booting</span><span class=w> </span><span class=n>buildkit</span><span class=w>                                                                                                                                                                    </span><span class=mi>19</span><span class=p>.</span><span class=mi>1</span><span class=n>s</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=n>pulling</span><span class=w> </span><span class=n>image</span><span class=w> </span><span class=n>moby</span><span class=o>/</span><span class=n>buildkit</span><span class=p>:</span><span class=n>buildx</span><span class=o>-</span><span class=k>stable</span><span class=o>-</span><span class=mi>1</span><span class=w>                                                                                                                                                 </span><span class=mi>18</span><span class=p>.</span><span class=mi>3</span><span class=n>s</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=n>creating</span><span class=w> </span><span class=n>container</span><span class=w> </span><span class=n>buildx_buildkit_mybuilder0</span><span class=w>                                                                                                                                                </span><span class=mi>0</span><span class=p>.</span><span class=mi>8</span><span class=n>s</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Name</span><span class=p>:</span><span class=w>   </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Driver</span><span class=p>:</span><span class=w> </span><span class=n>docker</span><span class=o>-</span><span class=n>container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Nodes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Name</span><span class=p>:</span><span class=w>      </span><span class=n>mybuilder0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Endpoint</span><span class=p>:</span><span class=w>  </span><span class=n>unix</span><span class=p>:</span><span class=o>///</span><span class=n>var</span><span class=o>/</span><span class=n>run</span><span class=o>/</span><span class=n>docker</span><span class=p>.</span><span class=n>sock</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Status</span><span class=p>:</span><span class=w>    </span><span class=n>running</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Buildkit</span><span class=p>:</span><span class=w>  </span><span class=n>v0</span><span class=p>.</span><span class=mi>10</span><span class=p>.</span><span class=mi>4</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Platforms</span><span class=p>:</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>amd64</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>amd64</span><span class=o>/</span><span class=n>v2</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>amd64</span><span class=o>/</span><span class=n>v3</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>arm64</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>riscv64</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>ppc64le</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>s390x</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=mi>386</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>mips64le</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>mips64</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>arm</span><span class=o>/</span><span class=n>v7</span><span class=p>,</span><span class=w> </span><span class=n>linux</span><span class=o>/</span><span class=n>arm</span><span class=o>/</span><span class=n>v6</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#构建多平台镜像><h2 id=构建多平台镜像><span class=hanchor arialabel=Anchor># </span>构建多平台镜像</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=n>gitops</span><span class=o>/</span><span class=n>docker</span><span class=o>/</span><span class=mi>13</span><span class=o>/</span><span class=n>multi</span><span class=o>-</span><span class=n>arch</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>ls</span><span class=w> </span><span class=o>-</span><span class=n>al</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff   439 10  5 23:49 Dockerfile
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff  1075 10  5 18:34 go.mod
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff  6962 10  5 18:34 go.sum
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>-</span><span class=n>rw</span><span class=o>-</span><span class=n>r</span><span class=c1>--r--  1 weiwang  staff   397 10  5 18:39 main.go
+</span></span></span></code></pre></td></tr></table></div></div><p>main.go 是示例应用的主体文件，我们启动一个 HTTP 服务器，访问根路径可以返回 Runtime 包的一些内置变量。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>package</span><span class=w> </span><span class=n>main</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>import</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;net/http&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;runtime&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;github.com/gin-gonic/gin&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>var</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>r</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>gin</span><span class=p>.</span><span class=k>Default</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>func</span><span class=w> </span><span class=n>main</span><span class=p>()</span><span class=w> </span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>r</span><span class=p>.</span><span class=k>GET</span><span class=p>(</span><span class=s2>&#34;/&#34;</span><span class=p>,</span><span class=w> </span><span class=n>indexHandler</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>r</span><span class=p>.</span><span class=n>Run</span><span class=p>(</span><span class=s2>&#34;:8080&#34;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>func</span><span class=w> </span><span class=n>indexHandler</span><span class=p>(</span><span class=k>c</span><span class=w> </span><span class=o>*</span><span class=n>gin</span><span class=p>.</span><span class=n>Context</span><span class=p>)</span><span class=w> </span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>var</span><span class=w> </span><span class=n>osinfo</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>map</span><span class=p>[</span><span class=n>string</span><span class=p>]</span><span class=n>string</span><span class=err>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=s2>&#34;arch&#34;</span><span class=p>:</span><span class=w>    </span><span class=n>runtime</span><span class=p>.</span><span class=n>GOARCH</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=s2>&#34;os&#34;</span><span class=p>:</span><span class=w>      </span><span class=n>runtime</span><span class=p>.</span><span class=n>GOOS</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=s2>&#34;version&#34;</span><span class=p>:</span><span class=w> </span><span class=n>runtime</span><span class=p>.</span><span class=k>Version</span><span class=p>(),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=err>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>c</span><span class=p>.</span><span class=n>JSON</span><span class=p>(</span><span class=n>http</span><span class=p>.</span><span class=n>StatusOK</span><span class=p>,</span><span class=w> </span><span class=n>osinfo</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>Dockerfile</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=c1>--platform=$BUILDPLATFORM golang:1.18 as build
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>ARG</span><span class=w> </span><span class=n>TARGETOS</span><span class=w> </span><span class=n>TARGETARCH</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=k>go</span><span class=p>.</span><span class=o>*</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=k>mod</span><span class=w> </span><span class=n>download</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=c1>--mount=type=cache,target=/root/.cache/go-build \
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>GOOS</span><span class=o>=</span><span class=err>$</span><span class=n>TARGETOS</span><span class=w> </span><span class=n>GOARCH</span><span class=o>=</span><span class=err>$</span><span class=n>TARGETARCH</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=o>/</span><span class=n>example</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=build /opt/app/example ./example
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#我们先看第一个构建阶段><h3 id=我们先看第一个构建阶段><span class=hanchor arialabel=Anchor># </span>我们先看第一个构建阶段。</h3></a><ul><li><p>第 2 行 FROM 基础镜像增加了一个 &ndash;platform=$BUILDPLATFORM 参数，它代表“强制使用不同平台的基础镜像”，例如 Linux/amd64。在没有该参数配置的情况下，Docker 默认会使用构建平台（本机）对应架构的基础镜像。</p></li><li><p>第 3 行 ARG 声明了使用两个内置变量 TARGETOS 和 TARGETARCH，TARGETOS 代表系统，例如 Linux，TARGETARCH 则代表平台，例如 Amd64。这两个参数将会在 Golang 交叉编译时生成对应平台的二进制文件。</p></li><li><p>第 4 行 WORKDIR 声明了工作目录。</p></li><li><p>第 5 行的意思是通过 COPY 将 go.mod 和 go.sum 拷贝到镜像中，并在</p></li><li><p>第 6 行使用 RUN 来运行 go mod download 下载依赖。这样，在这两个文件不变的前提下，Docker 将使用构建缓存来加快构建速度。</p></li><li><p>在下载完依赖之后，我们通过第 7 行把所有源码文件复制到镜像内。</p></li><li><p>第 8 行有两个含义，首先， &ndash;mount=type=cache,target=/root/.cache/go-build 的目的是告诉 Docker 使用 Golang 构建缓存，加快镜像构建的速度。接下来，GOOS=TARGETOSGOARCH=TARGETARCH go build -o /opt/app/example . 代表的含义是 Golang 交叉编译。注意，TARGETOS和TARGETARCH 是我们提到的内置变量，在具体构建镜像的时候，Docker 会帮我们填充进去。</p></li></ul><a href=#第二个构建阶段比较简单><h3 id=第二个构建阶段比较简单><span class=hanchor arialabel=Anchor># </span>第二个构建阶段比较简单，</h3></a><p>主要是使用 ubuntu:latest 基础镜像，将第一个构建阶段生成的二进制文件复制到镜像内，然后指定镜像的启动命令。</p><p>接下来，我们就可以开始构建多平台镜像了。</p><p>在开始构建之前，先执行 docker login 登录到 DockerHub。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=err>在开始构建之前，先执行</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>login</span><span class=w> </span><span class=err>登录到</span><span class=w> </span><span class=n>DockerHub</span><span class=err>。</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>接下来，使用 docker buildx build 一次性构建多平台镜像</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>buildx</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=c1>--platform linux/amd64,linux/arm64 -t lyzhang1999/multi-arch:latest --push  .
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>我们使用 &ndash;platform 参数指定了两个平台：Linux/amd64 和 Linux/arm64，同时 -t 参数指定了镜像的 Tag，而 &ndash;push 参数则代表构建完成后直接将镜像推送到 DockerHub。</p></li><li><p>还记得我们在 Dockerfile 第 2 行增加的 &ndash;platform=$BUILDPLATFORM 参数吗？当执行这条命令时，Docker 会分别使用 Amd64 和 Arm64 两个平台的 golang:1.18 镜像，并且在对应的镜像内执行编译过程。</p></li></ul><a href=#压缩镜像体积><h1 id=压缩镜像体积><span class=hanchor arialabel=Anchor># </span>压缩镜像体积</h1></a><a href=#从构建golang-镜像开始><h2 id=从构建golang-镜像开始><span class=hanchor arialabel=Anchor># </span>从构建Golang 镜像开始</h2></a><p>对于大多数 Docker 初学者来说，首要目标是能够成功构建镜像，所以，大部分人在最开始编写的 Dockerfile 的时候都以“能用”作为首要目标，内容和 Golang 应用中的 Dockerfile-1 文件类似。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>docker</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>t</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=w> </span><span class=o>-</span><span class=n>f</span><span class=w> </span><span class=n>Dockerfile</span><span class=o>-</span><span class=mi>1</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>个 Dockerfile 构建的镜像大小非常惊人，Golang 示例程序使用 go build 命令编译后，二进制可执行文件大约 6M 左右，但容器化之后，镜像达到 900M</p><a href=#替换基础镜像><h2 id=替换基础镜像><span class=hanchor arialabel=Anchor># </span>替换基础镜像</h2></a><p>我们构建的 Golang 镜像的大小很大程度是由引入的基础镜像的大小决定的，在这种情况下，替换基础镜像是一个快速并且非常有效的办法。例如，将 Golang:1.17 基础镜像替换为 golang:1.17-alpine 版本</p><p>一般来说，<strong>Alpine 版本的镜像相比较普通镜像来说删除了一些非必需的系统应用，所以镜像体积更小</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=o>-</span><span class=n>alpine</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#重新思考dockerfile><h2 id=重新思考dockerfile><span class=hanchor arialabel=Anchor># </span>重新思考Dockerfile</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=o>-</span><span class=n>alpine</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>从这段 Dockerfile 可以看出，我们在容器内运行了 go build -o example，这条命令将会编译生成二进制的可执行文件，由于编译的过程中需要 Golang 编译工具的支持，所以我们必须要使用 Golang 镜像作为基础镜像，这是导致镜像体积过大的直接原因。</p><a href=#可以使用多阶段构建><h3 id=可以使用多阶段构建><span class=hanchor arialabel=Anchor># </span>可以使用多阶段构建</h3></a><p>阶段构建的本质其实就是将镜像构建过程拆分成编译过程和运行过程。第一个阶段对应编译的过程，负责生成可执行文件；第二个阶段对应运行过程，也就是拷贝第一阶段的二进制可执行文件，并为程序提供运行环境，最终镜像也就是第二阶段生成的镜像如下图所示</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-157.png width=auto alt></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>1</span><span class=p>:</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=n>golang</span><span class=w> </span><span class=nb>binary</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>2</span><span class=p>:</span><span class=w> </span><span class=k>copy</span><span class=w> </span><span class=nb>binary</span><span class=w> </span><span class=k>from</span><span class=w> </span><span class=n>step1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=builder /opt/app/example ./example
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#进一步压缩><h2 id=进一步压缩><span class=hanchor arialabel=Anchor># </span>进一步压缩</h2></a><p>当我们使用多阶段构建时，最终生成的镜像大小其实取决于第二阶段引用的镜像大小，它在上面的例子中对应的是 ubuntu:latest 镜像大小。</p><p>要进一步缩小体积，我们可以继续使用其他更小的镜像作为第二阶段的运行镜像，这就要说到 <strong>Alpine</strong> 了。</p><p>Alpine 镜像是专门为容器化定制的 Linux 发行版，它的最大特点是体积非常小。将第二阶段构建的镜像替换为 Alpine 镜像</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>1</span><span class=p>:</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=n>golang</span><span class=w> </span><span class=nb>binary</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>CGO_ENABLED</span><span class=o>=</span><span class=mi>0</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>2</span><span class=p>:</span><span class=w> </span><span class=k>copy</span><span class=w> </span><span class=nb>binary</span><span class=w> </span><span class=k>from</span><span class=w> </span><span class=n>step1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>alpine</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=builder /opt/app/example ./example
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>由于 Alpine 镜像并没有 glibc，所以我们在编译可执行文件时指定了 CGO_ENABLED=0，这意味着我们禁用了 CGO，这样程序才能在 Alpine 镜像中运行。</p><p>不过，由于 Alpine 镜像和常规 Linux 发行版存在一些差异，作为初学者，<strong>我并不推荐你在生产环境下把 Alpine 镜像作为业务的运行镜像</strong></p><a href=#极限压缩--scratch><h2 id=极限压缩--scratch><span class=hanchor arialabel=Anchor># </span>极限压缩&ndash;scratch</h2></a><p>把第二个阶段的镜像替换为一个“空镜像”，这个空镜像称为 scratch 镜像</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> </span><span class=o>#</span><span class=w> </span><span class=n>syntax</span><span class=o>=</span><span class=n>docker</span><span class=o>/</span><span class=n>dockerfile</span><span class=p>:</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>1</span><span class=p>:</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=n>golang</span><span class=w> </span><span class=nb>binary</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>CGO_ENABLED</span><span class=o>=</span><span class=mi>0</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>2</span><span class=p>:</span><span class=w> </span><span class=k>copy</span><span class=w> </span><span class=nb>binary</span><span class=w> </span><span class=k>from</span><span class=w> </span><span class=n>step1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>scratch</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=builder /opt/app/example ./example
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;/opt/app/example&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>注意，由于 scratch 镜像不包含任何内容，所以我们在编译 Golang 可执行文件的时候禁用了 CGO，这样才能让编译出来的程序在 scratch 镜像中运行。</p><p>scratch 镜像是一个空白镜像，甚至连 shell 都没有，所以我们也无法进入容器查看文件或进行调试。在生产环境中，如果对安全有极高的要求，你可以考虑把 scratch 作为程序的运行镜像。</p><a href=#复用构建缓存><h2 id=复用构建缓存><span class=hanchor arialabel=Anchor># </span>复用构建缓存</h2></a><p>上面的 Dockerfile 还可以做进一步的优化，我还想再插播一个知识点。</p><ul><li><p>比如，在第一阶段的构建过程中，我们先是用 COPY . . 的方式拷贝了源码，又进行了编译，这会产生一个缺点，那就是如果只是源码变了，但依赖并没有变，Docker 将无法复用依赖的镜像层缓存。在实际构建过程中，你会发现 Docker 每次都会重新下载 Golang 依赖。</p></li><li><p>这就引出了另外一个构建镜像的小技巧：<strong>尽量使用 Docker 构建缓存。</strong></p></li></ul><p>要使用 Golang 依赖的缓存，最简单的办法是：先复制依赖文件，再下载依赖，最后再复制源码进行编译。基于这种思路，我们可以将第一阶段的构建修改如下。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=n>Step</span><span class=w> </span><span class=mi>1</span><span class=p>:</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=n>golang</span><span class=w> </span><span class=nb>binary</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=k>go</span><span class=p>.</span><span class=o>*</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=k>mod</span><span class=w> </span><span class=n>download</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#基础镜像的选择><h1 id=基础镜像的选择><span class=hanchor arialabel=Anchor># </span>基础镜像的选择</h1></a><p>镜像并不是从头开始构建的，我们会基于一个基础镜像来构建，这个基础镜像包含编译工具和运行环境，它负责构建和运行我们的业务代码。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>第一阶段</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>第二节阶段</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>为什么我们在第一个阶段使用 golang:1.17 而不是 ubuntu:latest 呢？这是因为 golang:1.17 包含 Golang 的构建工具，这是 ubuntu:latest 所没有的。为了不需要手动在 Dockerfile 中安装 Golang，我们引用了语言的专用镜像。</p><p>我将<strong>镜像类型归纳为了通用镜像和专用镜像</strong>。在这个例子中，ubuntu:latest 是一种通用镜像，golang:1.17 则是一种专用镜像</p><a href=#通用镜像><h2 id=通用镜像><span class=hanchor arialabel=Anchor># </span>通用镜像</h2></a><p><strong>你可以把通用镜像理解成 Linux 发行版，他们是一个全新安装的 Linux 系统，除了系统工具以外，不包含任何特定语言的编译和运行环境</strong></p><ul><li><p>使用通用镜像构建符合业务特定要求的镜像，例如特定的工具链和依赖，特定的构建环境和安全工具等。</p></li><li><p>单纯作为业务的运行环境，常见于多阶段构建</p></li></ul><p>除了 ubuntu:latest 以外，你还可以选择其他的通用镜像</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-159.png width=auto alt></p><a href=#ubuntudebian><h3 id=ubuntudebian><span class=hanchor arialabel=Anchor># </span>Ubuntu/Debian</h3></a><p>Ubuntu 和 Debian 是综合能力非常强的 Linux 发行版，非常适合作为通用镜像使用，它们主要的优点如下。</p><ul><li><p>支持的软件包众多</p></li><li><p>。镜像体积较小。</p></li><li><p>用户数量大，社区活跃，容易及时发现和修复安全问题。</p></li><li><p>相比较 Alpine 具有更通用的 C 语言标准库 glibc。</p></li><li><p>文档和教程丰富。</p></li></ul><a href=#alpine><h3 id=alpine><span class=hanchor arialabel=Anchor># </span>Alpine</h3></a><p>我们再来看另一种通用镜像 Alpine。在很长的时间里，Alpine 发行版并没有受到太多的关注。直到 Docker 时代，大家为了追求更小的镜像体积才开始大量使用 Alpine 镜像</p><ul><li><p>快速的包安装体验。</p></li><li><p>极小的镜像体积。</p></li><li><p>只包含少量的系统级程序，安全性更高。</p></li><li><p>更轻量的初始化系统 OpenRC。</p></li></ul><a href=#专用镜像><h2 id=专用镜像><span class=hanchor arialabel=Anchor># </span>专用镜像</h2></a><p><strong>专用镜像提供了特定语言的编译和运行环境</strong>，绝大多数语言都有 Docker 官方维护的专用镜像。在实际工作中，专用镜像一般有下面两种使用场景</p><ul><li><p>作为解释型语言的运行镜像使用，例如 python:latest、php:8.1-fpm-buster 等。</p></li><li><p>作为编译型语言多阶段构建中编译阶段的基础镜像使用，例如 golang:latest。</p></li></ul><a href=#golang><h3 id=golang><span class=hanchor arialabel=Anchor># </span>Golang</h3></a><p>对于编译型语言，我推荐你使用多阶段构建的方法将构建环境和运行镜像区分开，包括 C 语言。当构建 Golang 业务镜像时，我们就需要选择合适的第一阶段镜像（构建镜像）和第二阶段镜像（运行镜像）。</p><p>我介绍了如何通过多阶段构建来打包 Docker 镜像，我使用了 golang:1.17 作为构建镜像，ubuntu:latest 作为运行镜像。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>builder</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>第一阶段</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>......</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>第二阶段</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>......</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=c1>--from=builder /opt/app/example /opt/app/example
+</span></span></span></code></pre></td></tr></table></div></div><p>实际上，在选择第一阶段和第二阶段的镜像时，还有其他的组合。例如，你还可以使用 Alpine 镜像。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>golang</span><span class=p>:</span><span class=mi>1</span><span class=p>.</span><span class=mi>17</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>第一阶段</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=k>go</span><span class=w> </span><span class=n>build</span><span class=w> </span><span class=o>-</span><span class=n>o</span><span class=w> </span><span class=n>example</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>alpine</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>第二阶段</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这里需要注意，我们运行镜像时，会得到错误信息。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>exec</span><span class=w> </span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>app</span><span class=o>/</span><span class=n>example</span><span class=p>:</span><span class=w> </span><span class=k>no</span><span class=w> </span><span class=n>such</span><span class=w> </span><span class=n>file</span><span class=w> </span><span class=k>or</span><span class=w> </span><span class=n>directory</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这是因为 golang:1.17 镜像的 C 语言标准库是 glibc，而 alpine:latest 使用的是 musl。</p><p>在第一阶段 Golang 的构建过程中，虽然我们编译生成了二进制可执行文件，但这个二进制文件并不是“纯静态”的。在默认条件下，CGO 将被开启，这意味着当程序内包含底层是由 C 语言库实现的功能时，二进制可执行文件仍然需要依赖外部的动态链接库。所以，在第二阶段的 Alpine 镜像中，自然找不到第一阶段的外部动态链接库，这就会导致抛出“no such file or directory”的异常。</p><p>我们有两种方法解决这个问题。</p><ul><li><p>禁用 CGO，也就是在多阶段构建的编译过程中指定 CGO_ENABLED=0，达到“纯静态”编译的效果，然后，你就可以使用任意的通用镜像来运行了。</p></li><li><p>在第一阶段和第二阶段同时使用 Alpine 版本的镜像，例如第一阶段使用 golang:alpine，第二阶段使用 alpine:latest 镜像。</p></li></ul><a href=#java><h3 id=java><span class=hanchor arialabel=Anchor># </span>Java</h3></a><p>我同样推荐你使用多阶段构建来将编译和运行镜像区分开。和 Golang 不同的是，J**ava 程序需要 JVM 的支持才能运行。**所以，<strong>在编译阶段，我们需要 JDK 工具提供完整的编译环境；而在运行阶段，我们只需要 JRE 即可</strong>。</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-158.png width=auto alt></p><a href=#其他解释型语言><h2 id=其他解释型语言><span class=hanchor arialabel=Anchor># </span>其他解释型语言</h2></a><p>常见的解释型语言有 Python、Node、PHP 和 Ruby，和编译型语言不同，它不需要编译阶段，所以多阶段构建自然也就失去了价值。</p><ul><li><p>在一些情况下，<strong>如果你确信你的业务程序不依赖于外部的 C 代码库，那么你可以考虑使用专用镜像的 Alpine 版本作为基础镜像</strong>，</p></li><li><p><strong>但是，在大多数情况下，我们是很难确定的</strong>。所以，对于解释型语言，我并不推荐你使用专用镜像的 Alpine 版本作为基础镜像</p></li></ul><p>实际上，除了 Alpine 版本以外，大多数专用镜像都会提供 Slim 版本，Slim 版本大都基于 Ubuntu、Debian 或 CentOS 等标准 Linux 发行版构建，并且删除了一些不必要的系统应用，体积也相对较小，非常适合作为首选镜像</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-160.png width=auto alt></p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://quartz.jzhao.xyz/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by Jacky Zhao using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://quartz.jzhao.xyz/>Home</a></li><li><a href=https://twitter.com/_jzhao>Twitter</a></li><li><a href=https://github.com/jackyzha0>GitHub</a></li></ul></footer></div></div></body></html>

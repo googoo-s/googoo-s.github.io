@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>overview/Java/IO on</title><link>https://quartz.jzhao.xyz/tags/overview/Java/IO/</link><description>Recent content in overview/Java/IO on</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quartz.jzhao.xyz/tags/overview/Java/IO/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://quartz.jzhao.xyz/Java/IO/Java-IO-overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Java/IO/Java-IO-overview/</guid><description>Java 中的 IO 流分为几种？ 流按照不同的特点，有很多种划分方式
+按照流的流向分，可以分为 输入流 和 输出流 ；
+按照操作单元划分，可以划分为 字节流 和 字符流 ；
+按照流的角色划分为 节点流 和 处理流</description></item></channel></rss>

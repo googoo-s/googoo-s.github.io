@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IO on</title><link>https://quartz.jzhao.xyz/tags/IO/</link><description>Recent content in IO on</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quartz.jzhao.xyz/tags/IO/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://quartz.jzhao.xyz/Java/IO/IO%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Java/IO/IO%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3/</guid><description>何为 I/O? I/O（Input/Outpu） 即输入／输出 。
+我们先从计算机结构的角度来解读一下 I/O。
+根据冯.诺依曼结构，计算机结构分为 5 大部分：运算器、控制器、存储器、输入设备、输出设备。
+从计算机结构的视角来看的话， I/O 描述了计算机系统与外部设备之间通信的过程。
+我们再先从应用程序的角度来解读一下 I/O。
+为了保证操作系统的稳定性和安全性，一个进程的地址空间划分为 用户空间（User space） 和 内核空间（Kernel space ） 。</description></item></channel></rss>

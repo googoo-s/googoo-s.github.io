@@ -1,0 +1,1105 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="docker compose 文档
+Compose 是用于定义和运行多容器 Docker 应用程序的工具。通过 Compose，您可以使用 YML 文件来配置应用程序需要的所有服务。然后，使用一个命令，就可以从 YML 文件配置中创建并启动所有服务。
+Compose 使用的三个步骤：
+  使用 Dockerfile 定义应用程序的环境。"><meta property="og:title" content><meta property="og:description" content="docker compose 文档
+Compose 是用于定义和运行多容器 Docker 应用程序的工具。通过 Compose，您可以使用 YML 文件来配置应用程序需要的所有服务。然后，使用一个命令，就可以从 YML 文件配置中创建并启动所有服务。
+Compose 使用的三个步骤：
+  使用 Dockerfile 定义应用程序的环境。"><meta property="og:type" content="website"><meta property="og:image" content="https://quartz.jzhao.xyz/icon.png"><meta property="og:url" content="https://quartz.jzhao.xyz/docker/docker-compose/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="docker compose 文档
+Compose 是用于定义和运行多容器 Docker 应用程序的工具。通过 Compose，您可以使用 YML 文件来配置应用程序需要的所有服务。然后，使用一个命令，就可以从 YML 文件配置中创建并启动所有服务。
+Compose 使用的三个步骤：
+  使用 Dockerfile 定义应用程序的环境。"><meta name=twitter:image content="https://quartz.jzhao.xyz/icon.png"><meta name=twitter:site content="_jzhao"><title>🪴 Quartz 3.3</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://quartz.jzhao.xyz//icon.png><link href=https://quartz.jzhao.xyz/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://quartz.jzhao.xyz/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://quartz.jzhao.xyz/js/darkmode.63d6a3e095d0bd2b935b62adec9dc11b.min.js></script>
+<script src=https://quartz.jzhao.xyz/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://quartz.jzhao.xyz/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://quartz.jzhao.xyz/",fetchData=Promise.all([fetch("https://quartz.jzhao.xyz/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://quartz.jzhao.xyz/indices/contentIndex.fd0b08e0fcf0fc58c8d873581bcb40dd.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://quartz.jzhao.xyz",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://quartz.jzhao.xyz",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/quartz.jzhao.xyz\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=quartz.jzhao.xyz src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://quartz.jzhao.xyz/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://quartz.jzhao.xyz/>🪴 Quartz 3.3</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=https://github.com/jackyzha0/quartz/tree/hugo/content/docker/docker%20compose.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#准备>准备</a></li><li><a href=#dockerfile>Dockerfile</a></li><li><a href=#docker-composeyml>docker-compose.yml</a></li></ol><ol><li><a href=#docker-composeyml的配置>docker-compose.yml的配置</a></li><li><a href=#version>version</a></li><li><a href=#build>build</a></li><li><a href=#network>network</a><ol><li><a href=#一级networks还有如下这些配置>一级networks还有如下这些配置：</a></li></ol></li><li><a href=#cap_add-cap_drop>cap_add, cap_drop</a></li><li><a href=#cgroup_parent>cgroup_parent</a></li><li><a href=#command>command</a></li><li><a href=#configs>configs</a></li><li><a href=#container_name>container_name</a></li><li><a href=#credential_spec>credential_spec</a></li><li><a href=#depends_on>depends_on</a></li><li><a href=#deploy>deploy</a></li><li><a href=#devices>devices</a></li><li><a href=#dns>dns</a></li><li><a href=#dns_search>dns_search</a></li><li><a href=#entrypoint>entrypoint</a></li><li><a href=#env_file>env_file</a></li><li><a href=#environment>environment</a></li><li><a href=#expose>expose</a></li><li><a href=#external_links>external_links</a></li><li><a href=#extra_hosts>extra_hosts</a></li><li><a href=#healthcheck>healthcheck</a></li><li><a href=#image>image</a></li><li><a href=#init>init</a></li><li><a href=#isolation>isolation</a></li><li><a href=#labels>labels</a></li><li><a href=#links>links</a></li><li><a href=#logging>logging</a></li><li><a href=#network_mode>network_mode</a></li><li><a href=#pid>pid</a></li><li><a href=#ports>ports</a></li><li><a href=#profiles>profiles</a></li><li><a href=#restart>restart</a></li><li><a href=#secrets>secrets</a></li><li><a href=#security_opt>security_opt</a></li><li><a href=#stop_grace_period>stop_grace_period</a></li><li><a href=#stop_signal>stop_signal</a></li><li><a href=#sysctls>sysctls</a></li><li><a href=#tmpfs>tmpfs</a></li><li><a href=#ulimits>ulimits</a></li><li><a href=#userns_mode>userns_mode</a></li><li><a href=#volumes>volumes</a><ol><li></li></ol></li><li><a href=#变量置换>变量置换</a></li></ol></nav></details></aside><p><a href=https://docs.docker.com/compose/ rel=noopener>docker compose 文档</a></p><p>Compose 是用于定义和运行多容器 Docker 应用程序的工具。通过 Compose，您可以使用 YML 文件来配置应用程序需要的所有服务。然后，使用一个命令，就可以从 YML 文件配置中创建并启动所有服务。</p><p>Compose 使用的三个步骤：</p><ul><li><p>使用 Dockerfile 定义应用程序的环境。</p></li><li><p>使用 docker-compose.yml 定义构成应用程序的服务，这样它们可以在隔离环境中一起运行。</p></li><li><p>最后，执行 docker-compose up 命令来启动并运行整个应用程序。</p></li></ul><a href=#使用><h1 id=使用><span class=hanchor arialabel=Anchor># </span>使用</h1></a><a href=#准备><h2 id=准备><span class=hanchor arialabel=Anchor># </span>准备</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=err>$</span><span class=w> </span><span class=n>mkdir</span><span class=w> </span><span class=n>composetest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=err>$</span><span class=w> </span><span class=n>cd</span><span class=w> </span><span class=n>composetest</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>在测试目录中创建一个名为 app.py 的文件，并复制粘贴以下内容：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>import</span><span class=w> </span><span class=n>time</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>import</span><span class=w> </span><span class=n>redis</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>from</span><span class=w> </span><span class=n>flask</span><span class=w> </span><span class=n>import</span><span class=w> </span><span class=n>Flask</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>app</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Flask</span><span class=p>(</span><span class=n>__name__</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>cache</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>redis</span><span class=p>.</span><span class=n>Redis</span><span class=p>(</span><span class=k>host</span><span class=o>=</span><span class=s1>&#39;redis&#39;</span><span class=p>,</span><span class=w> </span><span class=n>port</span><span class=o>=</span><span class=mi>6379</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>def</span><span class=w> </span><span class=n>get_hit_count</span><span class=p>():</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>retries</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>5</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>while</span><span class=w> </span><span class=k>True</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>try</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>return</span><span class=w> </span><span class=k>cache</span><span class=p>.</span><span class=n>incr</span><span class=p>(</span><span class=s1>&#39;hits&#39;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>except</span><span class=w> </span><span class=n>redis</span><span class=p>.</span><span class=n>exceptions</span><span class=p>.</span><span class=n>ConnectionError</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=n>exc</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>if</span><span class=w> </span><span class=n>retries</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=mi>0</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>raise</span><span class=w> </span><span class=n>exc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>retries</span><span class=w> </span><span class=o>-=</span><span class=w> </span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>time</span><span class=p>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>0</span><span class=p>.</span><span class=mi>5</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>@</span><span class=n>app</span><span class=p>.</span><span class=n>route</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>def</span><span class=w> </span><span class=n>hello</span><span class=p>():</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>count</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>get_hit_count</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>return</span><span class=w> </span><span class=s1>&#39;Hello World! I have been seen {} times.\n&#39;</span><span class=p>.</span><span class=n>format</span><span class=p>(</span><span class=k>count</span><span class=p>)</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>在此示例中，redis 是应用程序网络上的 redis 容器的主机名，该主机使用的端口为 6379。</p><p>在 composetest 目录中创建另一个名为 <strong>requirements.txt</strong> 的文件，内容如下：</p><a href=#dockerfile><h2 id=dockerfile><span class=hanchor arialabel=Anchor># </span>Dockerfile</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>FROM</span><span class=w> </span><span class=n>python</span><span class=p>:</span><span class=mi>3</span><span class=p>.</span><span class=mi>7</span><span class=o>-</span><span class=n>alpine</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>WORKDIR</span><span class=w> </span><span class=o>/</span><span class=n>code</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>FLASK_APP</span><span class=w> </span><span class=n>app</span><span class=p>.</span><span class=n>py</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>FLASK_RUN_HOST</span><span class=w> </span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>apk</span><span class=w> </span><span class=k>add</span><span class=w> </span><span class=c1>--no-cache gcc musl-dev linux-headers
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>COPY</span><span class=w> </span><span class=n>requirements</span><span class=p>.</span><span class=n>txt</span><span class=w> </span><span class=n>requirements</span><span class=p>.</span><span class=n>txt</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>pip</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=n>r</span><span class=w> </span><span class=n>requirements</span><span class=p>.</span><span class=n>txt</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>COPY</span><span class=w> </span><span class=p>.</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>CMD</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;flask&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;run&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p><strong>FROM python:3.7-alpine</strong>: 从 Python 3.7 映像开始构建镜像。</p></li><li><p><strong>WORKDIR /code</strong>: 将工作目录设置为 /code。</p></li><li><p>设置 flask 命令使用的环境变量。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>ENV</span><span class=w> </span><span class=n>FLASK_APP</span><span class=w> </span><span class=n>app</span><span class=p>.</span><span class=n>py</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ENV</span><span class=w> </span><span class=n>FLASK_RUN_HOST</span><span class=w> </span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p><strong>RUN apk add &ndash;no-cache gcc musl-dev linux-headers</strong>: 安装 gcc，以便诸如 MarkupSafe 和 SQLAlchemy 之类的 Python 包可以编译加速。</p></li><li><p>复制 requirements.txt 并安装 Python 依赖项。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>COPY</span><span class=w> </span><span class=n>requirements</span><span class=p>.</span><span class=n>txt</span><span class=w> </span><span class=n>requirements</span><span class=p>.</span><span class=n>txt</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>RUN</span><span class=w> </span><span class=n>pip</span><span class=w> </span><span class=n>install</span><span class=w> </span><span class=o>-</span><span class=n>r</span><span class=w> </span><span class=n>requirements</span><span class=p>.</span><span class=n>txt</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p><strong>COPY . .</strong>: 将 . 项目中的当前目录复制到 . 镜像中的工作目录。</p></li><li><p><strong>CMD [&ldquo;flask&rdquo;, &ldquo;run&rdquo;]</strong>: 容器提供默认的执行命令为：flask run</p></li></ul><a href=#docker-composeyml><h2 id=docker-composeyml><span class=hanchor arialabel=Anchor># </span>docker-compose.yml</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>yaml</span><span class=w> </span><span class=err>配置</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;3&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>web</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;5000:5000&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>redis</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;redis:alpine&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p><strong>web</strong>：该 web 服务使用从 Dockerfile 当前目录中构建的镜像。然后，它将容器和主机绑定到暴露的端口 5000。此示例服务使用 Flask Web 服务器的默认端口 5000 。</p></li><li><p><strong>redis</strong>：该 redis 服务使用 Docker Hub 的公共 Redis 映像。</p></li></ul><a href=#多个配置文件><h1 id=多个配置文件><span class=hanchor arialabel=Anchor># </span>多个配置文件</h1></a><p>我们可以为同一个项目配置多个compose文件，使用多个 Compose 文件使您能够针对不同的环境或不同的工作流程自定义 Compose 应用程序。</p><p>默认情况下，Compose 读取两个文件，<code>docker-compose.yml</code>和一个可选的<code>docker-compose.override.yml</code>文件。</p><ul><li><p><code>docker-compose.yml</code>包含您的基本配置。</p></li><li><p><code>docker-compose.override.yml</code> 文件，顾名思义，就是包含现有服务或全新服务的配置覆盖。</p></li></ul><p>如果在两个文件中都定义了服务，Compose 会使用 override 进行合并配置。</p><p>要使用多个覆盖文件或具有不同名称的覆盖文件，您可以使用该<code>-f</code>选项来指定文件列表。Compose 按照在命令行中指定的顺序合并文件。</p><p>当您使用多个配置文件时，您必须确保文件中的所有路径都相对于基本 Compose 文件（ 指定的第一个 Compose 文件<code>-f</code>）</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+</span></span></code></pre></td></tr></table></div></div><a href=#docker-composeyml的配置><h2 id=docker-composeyml的配置><span class=hanchor arialabel=Anchor># </span>docker-compose.yml的配置</h2></a><a href=#version><h2 id=version><span class=hanchor arialabel=Anchor># </span>version</h2></a><p>版本信息，定义关乎于docker的兼容性，Compose 文件格式有3个版本,分别为1, 2.x 和 3.x</p><a href=#build><h2 id=build><span class=hanchor arialabel=Anchor># </span>build</h2></a><p>指定构建镜像的 dockerfile 的上下文路径，</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  webapp:
+</span></span><span class=line><span class=cl>    build: ./dir #指定路径
+</span></span></code></pre></td></tr></table></div></div><p>或者详细配置对象。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.9&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>webapp</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>context</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>dir</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>dockerfile</span><span class=p>:</span><span class=w> </span><span class=n>Dockerfile</span><span class=o>-</span><span class=n>alternate</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>args</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>buildno</span><span class=p>:</span><span class=w> </span><span class=mi>1</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>context 上下文路径，可以是文件路径，也可以是到链接到 git 仓库的 url。当是相对路径时，它被解释为相对于 Compose 文件的位置。</p></li><li><p>dockerfile 指定构建镜像的 Dockerfile 文件名</p></li><li><p>args 构建参数，只能在构建过程中访问的环境变量</p></li><li><p>cache_from 缓存解析镜像列表</p></li><li><p>labels 设置构建镜像的元数据</p></li><li><p>network 设置网络容器连接，<code>none</code> 表示在构建期间禁用网络</p></li><li><p>shm_size 设置<code>/dev/shm</code>此构建容器的分区大小</p></li><li><p>target 多阶段构建，可以指定构建哪一层</p></li></ul><a href=#network><h2 id=network><span class=hanchor arialabel=Anchor># </span>network</h2></a><p>默认情况下，<strong>Compose为您的应用程序设置单个网络。services 服务的每个容器都加入默认网络，并且可以被该网络上的其他容器访问。</strong></p><p>您的应用程序网络的名称基于“项目名称”，也就是其所在目录的名称。您可以使用 &ndash;project-name 命令行选项 或 COMPOSE_PROJECT_NAME 环境变量覆盖项目名称。</p><p>假设您的应用程序是在一个名为<code>myapp</code>目录下，<code>docker-compose.yml</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.9&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>web</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;8000:8000&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>db</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>postgres</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;8001:5432&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>运行<code>docker-compose up</code>，会发生以下情况</p><ol><li><p>创建了一个名为 myapp_default 的网络。</p></li><li><p>把<code>web</code>加入网络。</p></li><li><p>把<code>db</code>加入网络。</p></li></ol><p>上面例子还有一个注意点就是端口号，注意区分<code>HOST_PORT</code>和<code>CONTAINER_PORT</code>，以上面的db为例：</p><ul><li><p><code>8001</code> 是宿主机的端口</p></li><li><p><code>5432</code>（postgres的默认端口） 是容器的端口</p></li></ul><p>当容器之间通讯时 ， 是通过 <code>CONTAINER_PORT</code> 来连接的。</p><p>我们可以通过设置一级配置network自定义网络，创建更复杂的网络选项，也可以用来连接已经存在的网络（不是通过compose创建的）</p><p>每个<code>service</code> 配置下也可以指定<code>networks</code>配置，来指定一级配置的网络</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>proxy</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>proxy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>frontend</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>app</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>frontend</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>backend</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>db</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>postgres</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>backend</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>#</span><span class=w> </span><span class=err>一级配置</span><span class=n>networks</span><span class=w> </span><span class=err>创建了自定义的网络</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>frontend</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>#</span><span class=w> </span><span class=n>Use</span><span class=w> </span><span class=n>a</span><span class=w> </span><span class=n>custom</span><span class=w> </span><span class=n>driver</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=n>custom</span><span class=o>-</span><span class=n>driver</span><span class=o>-</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>backend</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>#</span><span class=w> </span><span class=n>Use</span><span class=w> </span><span class=n>a</span><span class=w> </span><span class=n>custom</span><span class=w> </span><span class=n>driver</span><span class=w> </span><span class=n>which</span><span class=w> </span><span class=n>takes</span><span class=w> </span><span class=n>special</span><span class=w> </span><span class=k>options</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=n>custom</span><span class=o>-</span><span class=n>driver</span><span class=o>-</span><span class=mi>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>driver_opts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>foo</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>bar</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;2&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>一级配置<code>networks</code> 创建了自定义的网络 。这里配置了两个<code>frontend</code>和<code>backend</code> ，且自定义了网络类型。</p><p>每一个services下，<code>proxy</code> , <code>app</code> , <code>db</code>都定义了<code>networks</code>配置。</p><ol><li><p><code>proxy</code> 只加入到 <code>frontend</code>网络。</p></li><li><p><code>db</code> 只加入到<code>backend</code>网络。</p></li><li><p><code>app</code>同时加入到 <code>frontend</code>和<code>backend</code> 。</p></li><li><p><code>db</code>和<code>proxy</code>不能通讯，因为不在一个网络中。</p></li><li><p><code>app</code>和两个都能通讯，因为<code>app</code>在两个网络中都有配置。</p></li><li><p><code>db</code>和<code>proxy</code>要通讯，只能通过<code>app</code>这个应用来连接。</p></li></ol><p>同一网络上的其他容器可以使用服务名称或别名来连接到其他服务的容器</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>some</span><span class=o>-</span><span class=n>service</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=k>some</span><span class=o>-</span><span class=n>network</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>aliases</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=o>-</span><span class=w> </span><span class=n>alias1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=o>-</span><span class=w> </span><span class=n>alias3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>other</span><span class=o>-</span><span class=n>network</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>aliases</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=o>-</span><span class=w> </span><span class=n>alias2</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>加入网络时，还可以指定容器的静态 IP 地址</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  app:
+</span></span><span class=line><span class=cl>    image: nginx:alpine
+</span></span><span class=line><span class=cl>    networks:
+</span></span><span class=line><span class=cl>      app_net:
+</span></span><span class=line><span class=cl>        ipv4_address: 172.16.238.10
+</span></span><span class=line><span class=cl>        ipv6_address: 2001:3984:3989::10
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>networks:
+</span></span><span class=line><span class=cl>  app_net:
+</span></span><span class=line><span class=cl>    ipam:
+</span></span><span class=line><span class=cl>      driver: default
+</span></span><span class=line><span class=cl>      config:
+</span></span><span class=line><span class=cl>        - subnet: &#34;172.16.238.0/24&#34;
+</span></span><span class=line><span class=cl>        - subnet: &#34;2001:3984:3989::/64&#34;
+</span></span></code></pre></td></tr></table></div></div><a href=#一级networks还有如下这些配置><h3 id=一级networks还有如下这些配置><span class=hanchor arialabel=Anchor># </span>一级networks还有如下这些配置：</h3></a><ul><li>driver 指定该网络应使用哪个驱动程序。默认使用<code>bridge</code>单个主机上的网络，overlay代表跨多个节点的网络群</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=k>overlay</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>host or none 使用主机的网络堆栈，或者不使用网络。相当于<code>docker run --net=host</code>或<code>docker run --net=none</code>。仅在使用<code>docker stack</code>命令时使用。如果您使用该<code>docker-compose</code>命令，请改用 network_mode。</p></li><li><p>driver_opts 将选项列表指定为键值对以传递给此网络的驱动程序</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>driver_opts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>foo</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;bar&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>baz</span><span class=p>:</span><span class=w> </span><span class=mi>1</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li>attachable 仅在<code>driver</code>设置为 <code>overlay</code>时可用。如果设置为<code>true</code>，那么除了服务之外，独立容器也可以连接到此网络。</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>mynet1</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=k>overlay</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>attachable</span><span class=p>:</span><span class=w> </span><span class=k>true</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>enable_ipv6 在此网络上启用 IPv6 网络。</p></li><li><p>ipam 自定义 IPAM （IP地址管理）配置。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>ipam</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=k>default</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>config</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=n>subnet</span><span class=p>:</span><span class=w> </span><span class=mi>172</span><span class=p>.</span><span class=mi>28</span><span class=p>.</span><span class=mi>0</span><span class=p>.</span><span class=mi>0</span><span class=o>/</span><span class=mi>16</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><p>internal 默认情况下，Docker 会将桥接网络连接到它提供外部连接。如果要创建外部隔离的覆盖网络，可以将此选项设置为true。</p></li><li><p>labels 添加元数据</p></li><li><p>external如果设置为<code>true</code>，则指定此网络是在 Compose 之外创建的。<code>docker-compose up</code>不会尝试创建它，如果它不存在，则会引发错误。在下面的例子中，<code>proxy</code>是通往外界的门户。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.9&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>proxy</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>proxy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>outside</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=k>default</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>app</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>build</span><span class=p>:</span><span class=w> </span><span class=p>.</span><span class=o>/</span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=k>default</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>outside</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>external</span><span class=p>:</span><span class=w> </span><span class=k>true</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li>name为此网络设置自定义名称。</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.9&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>network1</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>name</span><span class=p>:</span><span class=w> </span><span class=n>my</span><span class=o>-</span><span class=n>app</span><span class=o>-</span><span class=n>net</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#cap_add-cap_drop><h2 id=cap_add-cap_drop><span class=hanchor arialabel=Anchor># </span>cap_add, cap_drop</h2></a><p>添加或删除容器拥有的宿主机的内核功能。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>cap_add:
+</span></span><span class=line><span class=cl>  - ALL # 开启全部权限
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>cap_drop:
+</span></span><span class=line><span class=cl>  - SYS_PTRACE # 关闭 ptrace权限
+</span></span></code></pre></td></tr></table></div></div><a href=#cgroup_parent><h2 id=cgroup_parent><span class=hanchor arialabel=Anchor># </span>cgroup_parent</h2></a><p>为容器指定父 cgroup 组，意味着将继承该组的资源限制。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>cgroup_parent: m-executor-abcd
+</span></span></code></pre></td></tr></table></div></div><a href=#command><h2 id=command><span class=hanchor arialabel=Anchor># </span>command</h2></a><p>覆盖容器启动后默认执行的命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>command: bundle exec thin -p 3000
+</span></span><span class=line><span class=cl>command: [&#34;bundle&#34;, &#34;exec&#34;, &#34;thin&#34;, &#34;-p&#34;, &#34;3000&#34;]
+</span></span></code></pre></td></tr></table></div></div><a href=#configs><h2 id=configs><span class=hanchor arialabel=Anchor># </span>configs</h2></a><p>为每个服务赋予相应的configs访问权限</p><ul><li>简短语法，指定配置名称即可。以下示例授予<code>redis</code>服务访问<code>my_config</code>和<code>my_other_config</code>configs 的权限。</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  redis:
+</span></span><span class=line><span class=cl>    image: redis:latest
+</span></span><span class=line><span class=cl>    deploy:
+</span></span><span class=line><span class=cl>      replicas: 1
+</span></span><span class=line><span class=cl>    configs:
+</span></span><span class=line><span class=cl>      - my_config
+</span></span><span class=line><span class=cl>      - my_other_config
+</span></span><span class=line><span class=cl>configs:
+</span></span><span class=line><span class=cl>  my_config:
+</span></span><span class=line><span class=cl>    file: ./my_config.txt
+</span></span><span class=line><span class=cl>  my_other_config:
+</span></span><span class=line><span class=cl>    external: true
+</span></span></code></pre></td></tr></table></div></div><ul><li><p>长语法</p><ul><li><p><code>source</code>：配置名称</p></li><li><p><code>target</code>：要挂载文件的路径和名称</p></li><li><p><code>uid</code>和<code>gid</code>：容器的数字 UID 或 GID</p></li><li><p><code>mode</code>：挂载在服务的任务容器中的文件的权限，以八进制表示。例如，<code>0444</code> 代表可读。</p></li><li><p>以下示例在容器内设置configs名称为<code>my_config ，路径为redis_config</code>，将模式设置为<code>0440</code>（组可读）并将用户和组设置为<code>103</code>。该<code>redis</code>服务无权访问<code>my_other_config</code>配置。</p></li></ul></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>version: <span class=s2>&#34;3.9&#34;</span>
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  redis:
+</span></span><span class=line><span class=cl>    image: redis:latest
+</span></span><span class=line><span class=cl>    deploy:
+</span></span><span class=line><span class=cl>      replicas: <span class=m>1</span>
+</span></span><span class=line><span class=cl>    configs:
+</span></span><span class=line><span class=cl>      - source: my_config
+</span></span><span class=line><span class=cl>        target: /redis_config
+</span></span><span class=line><span class=cl>        uid: <span class=s1>&#39;103&#39;</span>
+</span></span><span class=line><span class=cl>        gid: <span class=s1>&#39;103&#39;</span>
+</span></span><span class=line><span class=cl>        mode: <span class=m>0440</span>
+</span></span><span class=line><span class=cl>configs:
+</span></span><span class=line><span class=cl>  my_config:
+</span></span><span class=line><span class=cl>    file: ./my_config.txt
+</span></span><span class=line><span class=cl>  my_other_config:
+</span></span><span class=line><span class=cl>    external: <span class=nb>true</span>
+</span></span></code></pre></td></tr></table></div></div><p>一级<code>configs</code>详细配置：</p><ul><li><p><code>file</code>: 使用指定路径中的文件内容创建配置。</p></li><li><p><code>external</code>: 如果设置为 true，则指定此配置已经创建。Docker 不会尝试创建它，如果它不存在， 会报错<code>config not found</code>。</p></li><li><p><code>name</code>: Docker 中配置对象的名称。此字段可用于引用包含特殊字符的配置。</p></li><li><p><code>driver</code>和<code>driver_opts</code>：自定义驱动程序的名称，以及作为键/值对传递的特定于驱动程序的选项。</p></li><li><p><code>template_driver</code>：要使用的模板驱动程序的名称，它控制是否以及如何将配置负载作为模板。如果未设置驱动程序，则不使用模板。当前支持的唯一驱动程序是<code>golang</code>，它使用<code>golang</code>。</p></li></ul><p>在下面例子中，<code>my_first_config</code>是通过confif_data文件内容创建的（就像 <code>&lt;stack_name>_my_first_config)</code>部署堆栈时一样，并且<code>my_second_config</code>已经创建过。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>configs:
+</span></span><span class=line><span class=cl>  my_first_config:
+</span></span><span class=line><span class=cl>    file: ./config_data
+</span></span><span class=line><span class=cl>  my_second_config:
+</span></span><span class=line><span class=cl>    external: true 
+</span></span></code></pre></td></tr></table></div></div><p>当 Docker 中的配置名称与服务中存在的名称不同时，可以使用name进行配置。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>configs:
+</span></span><span class=line><span class=cl>  my_first_config:
+</span></span><span class=line><span class=cl>    file: ./config_data
+</span></span><span class=line><span class=cl>  my_second_config:
+</span></span><span class=line><span class=cl>    external:
+</span></span><span class=line><span class=cl>      name: redis_config
+</span></span></code></pre></td></tr></table></div></div><a href=#container_name><h2 id=container_name><span class=hanchor arialabel=Anchor># </span>container_name</h2></a><p>指定自定义容器名称，而不是生成的默认名称。由于 Docker 容器名称必须是唯一的，因此如果您指定了自定义名称，则不能将服务扩展到 1 个以上的容器。</p><a href=#credential_spec><h2 id=credential_spec><span class=hanchor arialabel=Anchor># </span>credential_spec</h2></a><p>为托管服务帐户配置凭据规范。此选项仅用于使用 Windows 容器的服务。在<code>credential_spec</code>上的配置列表格式为<code>file://&lt;filename></code>或<code>registry://&lt;value-name></code></p><a href=#depends_on><h2 id=depends_on><span class=hanchor arialabel=Anchor># </span>depends_on</h2></a><p>表示服务之间的依赖关系。服务依赖会导致以下行为：</p><ul><li><p><code>docker-compose up</code>按依赖顺序启动服务。在下面的例子中，<code>db</code>和<code>redis</code>在 <code>web</code>之前启动。</p></li><li><p><code>docker-compose up SERVICE</code>自动包含<code>SERVICE</code>的依赖项。在下面的示例中，<code>docker-compose up web</code>还创建并启动<code>db</code>和<code>redis</code>。</p></li><li><p><code>docker-compose stop</code>按依赖顺序停止服务。在以下示例中，<code>web</code>在<code>db</code>和<code>redis</code>之前停止。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>version: <span class=s2>&#34;3.9&#34;</span>
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  web:
+</span></span><span class=line><span class=cl>    build: .
+</span></span><span class=line><span class=cl>    depends_on:
+</span></span><span class=line><span class=cl>      - db
+</span></span><span class=line><span class=cl>      - redis
+</span></span><span class=line><span class=cl>  redis:
+</span></span><span class=line><span class=cl>    image: redis
+</span></span><span class=line><span class=cl>  db:
+</span></span><span class=line><span class=cl>    image: postgres
+</span></span></code></pre></td></tr></table></div></div><a href=#deploy><h2 id=deploy><span class=hanchor arialabel=Anchor># </span>deploy</h2></a><p>指定与服务的部署和运行有关的配置。只在 swarm 模式下才会有用。</p><ul><li><p>endpoint_mode 访问集群服务的方式。</p><ul><li><p>vip ：Docker 集群服务一个对外的虚拟 ip。所有的请求都会通过这个虚拟 ip 到达集群服务内部的机器。</p></li><li><p>dnsrr ：DNS 轮询（DNSRR）。所有的请求会自动轮询获取到集群 ip 列表中的一个 ip 地址。</p></li></ul></li><li><p>labels 在服务上设置标签。可以用容器上的 labels（跟 deploy 同级的配置） 覆盖 deploy 下的 labels。</p></li><li><p>mode 指定服务提供的模式</p><ul><li><p>global：全局服务，服务将部署至集群的每个节点。</p></li><li><p>replicated：复制服务，复制指定服务到集群的机器上。</p></li></ul></li></ul><p>下图中黄色的方块是 replicated 模式的运行情况，灰色方块是 global 模式的运行情况。</p><p><img src=https://quartz.jzhao.xyz//statistic/asynccode-214.png width=auto alt></p><ul><li><p>placement 指定约束和首选项的位置</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>version: <span class=s2>&#34;3.9&#34;</span>
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  db:
+</span></span><span class=line><span class=cl>    image: postgres
+</span></span><span class=line><span class=cl>    deploy:
+</span></span><span class=line><span class=cl>      placement:
+</span></span><span class=line><span class=cl>        constraints:
+</span></span><span class=line><span class=cl>          - <span class=s2>&#34;node.role==manager&#34;</span>
+</span></span><span class=line><span class=cl>          - <span class=s2>&#34;engine.labels.operatingsystem==ubuntu 18.04&#34;</span>
+</span></span><span class=line><span class=cl>        preferences:
+</span></span><span class=line><span class=cl>          - spread: node.labels.zone
+</span></span></code></pre></td></tr></table></div></div><ul><li>您可以通过定义约束表达式来限制可以安排任务的节点集。约束表达式可以使用匹配(<code>==</code>) 或排除(<code>!=</code>) 规则。多个约束查找可以使用 AND 匹配。约束可以匹配节点或 Docker 引擎标签，如下所示：</li></ul></li></ul><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>节点属性</td><td>匹配</td><td>例子</td></tr><tr><td>node.id</td><td>节点 ID</td><td>node.id==2ivku8v2gvtg4</td></tr><tr><td>node.hostname</td><td>节点主机名</td><td>node.hostname!=node-2</td></tr><tr><td>node.role</td><td>节点角色 ( manager/ worker)</td><td>node.role==manager</td></tr><tr><td>node.platform.os</td><td>节点操作系统</td><td>node.platform.os==windows</td></tr><tr><td>node.platform.arch</td><td>节点架构</td><td>node.platform.arch==x86_64</td></tr><tr><td>node.labels</td><td>用户定义的节点标签</td><td>node.labels.security==high</td></tr><tr><td>engine.labels</td><td>Docker 引擎的标签</td><td>engine.labels.operatingsystem==ubuntu-14.04</td></tr></tbody></table><ul><li><p>max_replicas_per_node 如果服务是<code>replicated</code>（默认值），则限制任何时间在节点上运行的副本数</p></li><li><p>replicas 如果服务是<code>replicated</code>（默认值），指定在任何给定时间应运行的容器数量。</p></li><li><p>resources 配置资源约束。在下面示例中，<code>redis</code>服务被限制为使用不超过 50M 的内存和<code>0.50</code>（单核的 50%）可用处理时间 (CPU)，并保留<code>20M</code>内存和<code>0.25</code>CPU 时间（始终可用）。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  redis:
+</span></span><span class=line><span class=cl>    image: redis:alpine
+</span></span><span class=line><span class=cl>    deploy:
+</span></span><span class=line><span class=cl>      resources:
+</span></span><span class=line><span class=cl>        limits:
+</span></span><span class=line><span class=cl>          cpus: &#39;0.50&#39;
+</span></span><span class=line><span class=cl>          memory: 50M
+</span></span><span class=line><span class=cl>        reservations:
+</span></span><span class=line><span class=cl>          cpus: &#39;0.25&#39;
+</span></span><span class=line><span class=cl>          memory: 20M
+</span></span></code></pre></td></tr></table></div></div><ul><li><p>restart_policy 配置是否以及如何在退出时重新启动容器。替换<code>[restart](https://link.zhihu.com/?target=https%3A//docs.docker.com/compose/compose-file/compose-file-v2/%23orig-resources)</code></p><ul><li><p>condition: none, on-failure 或 any (默认: any) 之一。</p></li><li><p>delay：重新启动尝试之间等待的时间（默认值：5s）。</p></li><li><p>max_attempts：在放弃之前尝试重新启动容器的次数（默认值：永不放弃）。如果在配置的窗口（window）内重新启动未成功，则此尝试不计入配置max_attempts值。例如，如果 max_attempts 设置为“2”，并且第一次尝试重启失败，则可能会尝试两次以上的重启。</p></li><li><p>window：在决定重启是否成功之前等待多长时间（默认值：立即重启）。</p></li></ul></li><li><p>rollback_config 在更新失败的情况下应如何回滚服务。</p><ul><li><p><code>parallelism</code>：一次回滚的容器数量。如果设置为 0，则所有容器同时回滚。</p></li><li><p><code>delay</code>：每个容器组回滚之间等待的时间（默认为 0 秒）。</p></li><li><p><code>failure_action</code>: 如果回滚失败怎么办。<code>continue</code>或者<code>pause</code>（默认<code>pause</code>）</p></li><li><p><code>monitor</code>：每次任务更新后监控失败的持续时间<code>(ns|us|ms|s|m|h)</code>（默认 5s）注意：设置为 0 将使用默认 5s。</p></li><li><p><code>max_failure_ratio</code>：回滚期间允许的故障率（默认为 0）。</p></li><li><p><code>order</code>：回滚期间的操作顺序。<code>stop-first</code>（旧任务在开始新任务之前停止），或<code>start-first</code>（首先启动新任务，并且正在运行的任务短暂重叠）（默认<code>stop-first</code>）。</p></li></ul></li></ul><p>update_config 配置应如何更新服务。用于配置滚动更新。</p><ol><li><p><code>parallelism</code>：一次更新的容器数量。</p></li><li><p><code>delay</code>：更新一组容器之间的等待时间。</p></li><li><p><code>failure_action</code>: 如果更新失败怎么办。<code>continue</code>，<code>rollback</code>或者<code>pause</code> （默认：<code>pause</code>）。</p></li><li><p><code>monitor</code>：每次任务更新后监控失败的持续时间<code>(ns|us|ms|s|m|h)</code>（默认 5s）注意：设置为 0 将使用默认 5s。</p></li><li><p><code>max_failure_ratio</code>：更新期间可容忍的故障率。</p></li><li><p><code>order</code>：更新期间的操作顺序。<code>stop-first</code>（旧任务在开始新任务之前停止），或<code>start-first</code>（新任务首先启动，并且正在运行的任务短暂重叠）（默认<code>stop-first</code>）</p></li></ol><a href=#devices><h2 id=devices><span class=hanchor arialabel=Anchor># </span>devices</h2></a><p>设备映射列表。使用与<code>--device</code>docker 客户端创建选项格式相同。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>devices:
+</span></span><span class=line><span class=cl>  - &#34;/dev/ttyUSB0:/dev/ttyUSB0&#34;
+</span></span></code></pre></td></tr></table></div></div><a href=#dns><h2 id=dns><span class=hanchor arialabel=Anchor># </span>dns</h2></a><p>自定义 DNS 服务器。可以是单个值或列表。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>dns: 8.8.8.8
+</span></span><span class=line><span class=cl>dns:
+</span></span><span class=line><span class=cl>  - 8.8.8.8
+</span></span><span class=line><span class=cl>  - 9.9.9.9
+</span></span></code></pre></td></tr></table></div></div><a href=#dns_search><h2 id=dns_search><span class=hanchor arialabel=Anchor># </span>dns_search</h2></a><p>自定义 DNS 搜索域。可以是单个值或列表。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>dns_search: example.com
+</span></span><span class=line><span class=cl>dns_search:
+</span></span><span class=line><span class=cl>  - dc1.example.com
+</span></span><span class=line><span class=cl>  - dc2.example.com
+</span></span></code></pre></td></tr></table></div></div><a href=#entrypoint><h2 id=entrypoint><span class=hanchor arialabel=Anchor># </span>entrypoint</h2></a><p>在 Dockerfile 中有一个指令叫做<code>ENTRYPOINT</code>指令，用于运行程序。在<code>docker-compose.yml</code>中可以定义覆盖 Dockerfile 中定义的 entrypoint：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>entrypoint: /code/entrypoint.sh
+</span></span><span class=line><span class=cl>entrypoint: [&#34;php&#34;, &#34;-d&#34;, &#34;memory_limit=-1&#34;, &#34;vendor/bin/phpunit&#34;]
+</span></span></code></pre></td></tr></table></div></div><p>也可以是以下格式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>entrypoint</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=n>php</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=o>-</span><span class=n>d</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=n>zend_extension</span><span class=o>=/</span><span class=n>usr</span><span class=o>/</span><span class=k>local</span><span class=o>/</span><span class=n>lib</span><span class=o>/</span><span class=n>php</span><span class=o>/</span><span class=n>extensions</span><span class=o>/</span><span class=k>no</span><span class=o>-</span><span class=n>debug</span><span class=o>-</span><span class=n>non</span><span class=o>-</span><span class=n>zts</span><span class=o>-</span><span class=mi>20100525</span><span class=o>/</span><span class=n>xdebug</span><span class=p>.</span><span class=n>so</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=o>-</span><span class=n>d</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=n>memory_limit</span><span class=o>=-</span><span class=mi>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=o>-</span><span class=w> </span><span class=n>vendor</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>phpunit</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#env_file><h2 id=env_file><span class=hanchor arialabel=Anchor># </span>env_file</h2></a><p>从文件添加环境变量。可以是单个值或列表。</p><p>如果您使用指定了 Compose 文件<code>docker-compose -f FILE</code>，则其中的路径 <code>env_file</code>相对于该文件所在的目录。</p><p>environment 声明的环境变量会覆盖这些值——即使这些值是空的或未定义的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>env_file: .env
+</span></span><span class=line><span class=cl>env_file:
+</span></span><span class=line><span class=cl>  - ./common.env
+</span></span><span class=line><span class=cl>  - ./apps/web.env
+</span></span><span class=line><span class=cl>  - /opt/runtime_opts.env
+</span></span></code></pre></td></tr></table></div></div><a href=#environment><h2 id=environment><span class=hanchor arialabel=Anchor># </span>environment</h2></a><p>添加环境变量。您可以使用数组或字典。任何布尔值（true、false、yes、no）都需要用引号括起来，以确保它们不会被 YML 解析器转换为 True 或 False。</p><p>一般 arg 标签的变量仅用在构建过程中。而<code>environment</code>和 Dockerfile 中的<code>ENV</code>指令一样会把变量一直保存在镜像、容器中，类似<code>docker run -e</code>的效果</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>environment:
+</span></span><span class=line><span class=cl>  RACK_ENV: development
+</span></span><span class=line><span class=cl>  SHOW: &#39;true&#39;
+</span></span><span class=line><span class=cl>  SESSION_SECRET:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>environment:
+</span></span><span class=line><span class=cl>  - RACK_ENV=development
+</span></span><span class=line><span class=cl>  - SHOW=true
+</span></span><span class=line><span class=cl>  - SESSION_SECRET
+</span></span></code></pre></td></tr></table></div></div><a href=#expose><h2 id=expose><span class=hanchor arialabel=Anchor># </span>expose</h2></a><p>暴露端口，但不映射到宿主机，只被连接的服务访问。这个标签与 Dockerfile 中的<code>EXPOSE</code>指令一样，用于指定暴露的端口，但是只是作为一种参考，实际上<code>docker-compose.yml</code>的端口映射还得<code>ports</code>这样的标签。</p><a href=#external_links><h2 id=external_links><span class=hanchor arialabel=Anchor># </span>external_links</h2></a><p>链接到 docker-compose.yml 外部的容器，甚至 并非 Compose 项目文件管理的容器。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>external_links:
+</span></span><span class=line><span class=cl>  - redis_1
+</span></span><span class=line><span class=cl>  - project_db_1:mysql
+</span></span><span class=line><span class=cl>  - project_db_1:postgresql
+</span></span></code></pre></td></tr></table></div></div><a href=#extra_hosts><h2 id=extra_hosts><span class=hanchor arialabel=Anchor># </span>extra_hosts</h2></a><p>添加主机名映射。类似 docker client &ndash;add-host。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>extra_hosts:
+</span></span><span class=line><span class=cl>  - &#34;somehost:162.242.195.82&#34;
+</span></span><span class=line><span class=cl>  - &#34;otherhost:50.31.209.229&#34;
+</span></span></code></pre></td></tr></table></div></div><p>会往<code>/etc/hosts</code>文件中添加一些记录，启动之后查看容器内部 hosts可以看到：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>162.242.195.82  somehost
+</span></span><span class=line><span class=cl>50.31.209.229   otherhost
+</span></span></code></pre></td></tr></table></div></div><a href=#healthcheck><h2 id=healthcheck><span class=hanchor arialabel=Anchor># </span>healthcheck</h2></a><p>配置运行的检查以确定此服务的容器是否“健康”。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>healthcheck:
+</span></span><span class=line><span class=cl>  test: [&#34;CMD&#34;, &#34;curl&#34;, &#34;-f&#34;, &#34;http://localhost&#34;]
+</span></span><span class=line><span class=cl>  interval: 1m30s
+</span></span><span class=line><span class=cl>  timeout: 10s
+</span></span><span class=line><span class=cl>  retries: 3
+</span></span><span class=line><span class=cl>  start_period: 40s
+</span></span></code></pre></td></tr></table></div></div><p><code>interval</code>，<code>timeout 和 start_period</code>都是持续时间。<code>test</code>必须是字符串或列表。如果是列表，则第一项必须是<code>NONE</code>,<code>CMD</code>或<code>CMD-SHELL</code>。如果是字符串，则相当于指定<code>CMD-SHELL</code>后跟该字符串。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=o>#</span><span class=w> </span><span class=n>Hit</span><span class=w> </span><span class=n>the</span><span class=w> </span><span class=k>local</span><span class=w> </span><span class=n>web</span><span class=w> </span><span class=n>app</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>test</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;CMD&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;curl&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;-f&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;http://localhost&#34;</span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>test</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;CMD-SHELL&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;curl -f http://localhost || exit 1&#34;</span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>test</span><span class=p>:</span><span class=w> </span><span class=n>curl</span><span class=w> </span><span class=o>-</span><span class=n>f</span><span class=w> </span><span class=n>https</span><span class=p>:</span><span class=o>//</span><span class=n>localhost</span><span class=w> </span><span class=o>||</span><span class=w> </span><span class=n>exit</span><span class=w> </span><span class=mi>1</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>如果需要禁用镜像的所有检查项目，可以使用<code>disable:true</code>，相当于<code>test:["NONE"]</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>healthcheck:
+</span></span><span class=line><span class=cl>  disable: true 
+</span></span></code></pre></td></tr></table></div></div><a href=#image><h2 id=image><span class=hanchor arialabel=Anchor># </span>image</h2></a><p>从指定的镜像中启动容器，可以是存储仓库、标签以及镜像 ID</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>redis</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>ubuntu</span><span class=p>:</span><span class=mi>14</span><span class=p>.</span><span class=mi>04</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>tutum</span><span class=o>/</span><span class=n>influxdb</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>example</span><span class=o>-</span><span class=n>registry</span><span class=p>.</span><span class=n>com</span><span class=p>:</span><span class=mi>4000</span><span class=o>/</span><span class=n>postgresql</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>a4bc65fd</span><span class=w> </span><span class=o>#</span><span class=w> </span><span class=err>镜像</span><span class=n>id</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#init><h2 id=init><span class=hanchor arialabel=Anchor># </span>init</h2></a><p>在容器内运行一个 init 来转发信号和取得进程。将此选项设置<code>true</code>为服务启用此功能。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  web:
+</span></span><span class=line><span class=cl>    image: alpine:latest
+</span></span><span class=line><span class=cl>    init: true
+</span></span></code></pre></td></tr></table></div></div><a href=#isolation><h2 id=isolation><span class=hanchor arialabel=Anchor># </span>isolation</h2></a><p>指定容器的隔离技术。在 Linux 上，唯一支持的值是<code>default</code>。在 Windows 上，可接受的值为<code>default</code>、<code>process</code>和<code>hyperv</code>。</p><a href=#labels><h2 id=labels><span class=hanchor arialabel=Anchor># </span>labels</h2></a><p>使用 Docker 标签将元数据添加到容器，可以使用数组或字典。与 Dockerfile 中的<code>LABELS</code>类似：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>labels:
+</span></span><span class=line><span class=cl>  - &#34;com.example.description=Accounting webapp&#34;
+</span></span><span class=line><span class=cl>  - &#34;com.example.department=Finance&#34;
+</span></span><span class=line><span class=cl>  - &#34;com.example.label-with-empty-value&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>labels:
+</span></span><span class=line><span class=cl>  com.example.description: &#34;Accounting webapp&#34;
+</span></span><span class=line><span class=cl>  com.example.department: &#34;Finance&#34;
+</span></span><span class=line><span class=cl>  com.example.label-with-empty-value: &#34;&#34;
+</span></span></code></pre></td></tr></table></div></div><a href=#links><h2 id=links><span class=hanchor arialabel=Anchor># </span>links</h2></a><p>链接到另一个服务中的容器。指定服务名称和链接别名 (<code>"SERVICE:ALIAS"</code>)，或仅指定服务名称。</p><p>它们不需要启用服务进行通信 - 默认情况下，任何服务都可以以该服务的名称访问任何其他服务。在以下示例中，<code>web</code>可以访问<code>db，并且设置别名为database</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  web:
+</span></span><span class=line><span class=cl>    build: .
+</span></span><span class=line><span class=cl>    links:
+</span></span><span class=line><span class=cl>      - &#34;db:database&#34;
+</span></span><span class=line><span class=cl>  db:
+</span></span><span class=line><span class=cl>    image: postgres
+</span></span></code></pre></td></tr></table></div></div><a href=#logging><h2 id=logging><span class=hanchor arialabel=Anchor># </span>logging</h2></a><p>日志记录配置。</p><p>driver：指定服务容器的日志记录驱动程序，默认值为json-file。有以下三个选项</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;json-file&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;syslog&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;none&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>仅在 json-file 驱动程序下，可以使用以下参数，限制日志得数量和大小</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  some-service:
+</span></span><span class=line><span class=cl>    image: some-service
+</span></span><span class=line><span class=cl>    logging:
+</span></span><span class=line><span class=cl>      driver: &#34;json-file&#34;
+</span></span><span class=line><span class=cl>      options:
+</span></span><span class=line><span class=cl>        max-size: &#34;200k&#34;
+</span></span><span class=line><span class=cl>        max-file: &#34;10&#34;
+</span></span><span class=line><span class=cl>network_mode
+</span></span></code></pre></td></tr></table></div></div><p>当达到文件限制上限，会自动删除旧得文件。</p><p>syslog 驱动程序下，可以使用 syslog-address 指定日志接收地址</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=n>logging</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=n>syslog</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>options</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>syslog</span><span class=o>-</span><span class=n>address</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;tcp://192.168.0.42:123&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#network_mode><h2 id=network_mode><span class=hanchor arialabel=Anchor># </span>network_mode</h2></a><p>网络模式。使用与 docker 客户端<code>--network</code>相同，可以使用特殊形式<code>service:[service name]</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>network_mode: <span class=s2>&#34;bridge&#34;</span>
+</span></span><span class=line><span class=cl>network_mode: <span class=s2>&#34;host&#34;</span>
+</span></span><span class=line><span class=cl>network_mode: <span class=s2>&#34;none&#34;</span>
+</span></span><span class=line><span class=cl>network_mode: <span class=s2>&#34;service:[service name]&#34;</span>
+</span></span><span class=line><span class=cl>network_mode: <span class=s2>&#34;container:[container name/id]&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#pid><h2 id=pid><span class=hanchor arialabel=Anchor># </span>pid</h2></a><p>将 PID 模式设置为主机 PID 模式。这会在容器和主机操作系统之间共享 PID 地址空间。使用此标志启动的容器可以访问和操作裸机命名空间中的其他容器，反之亦然。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>pid: &#34;host&#34;
+</span></span></code></pre></td></tr></table></div></div><a href=#ports><h2 id=ports><span class=hanchor arialabel=Anchor># </span>ports</h2></a><p>暴露端口。</p><p>简短语法</p><p>共有三种写法：</p><ul><li><p>指定两个端口 ( <code>HOST:CONTAINER</code>)</p></li><li><p>仅指定容器端口（为主机端口选择了一个临时主机端口）。</p></li><li><p>指定要绑定到两个端口的主机 IP 地址（默认为 0.0.0.0，表示所有接口）：( <code>IPADDR:HOSTPORT:CONTAINERPORT</code>)。如果 HOSTPORT 为空（例如<code>127.0.0.1::80</code>），则会选择一个临时端口来绑定到主机上。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>ports:
+</span></span><span class=line><span class=cl>  - &#34;3000&#34;
+</span></span><span class=line><span class=cl>  - &#34;3000-3005&#34;
+</span></span><span class=line><span class=cl>  - &#34;8000:8000&#34;
+</span></span><span class=line><span class=cl>  - &#34;9090-9091:8080-8081&#34;
+</span></span><span class=line><span class=cl>  - &#34;49100:22&#34;
+</span></span><span class=line><span class=cl>  - &#34;127.0.0.1:8001:8001&#34;
+</span></span><span class=line><span class=cl>  - &#34;127.0.0.1:5000-5010:5000-5010&#34;
+</span></span><span class=line><span class=cl>  - &#34;127.0.0.1::5000&#34;
+</span></span><span class=line><span class=cl>  - &#34;6060:6060/udp&#34;
+</span></span><span class=line><span class=cl>  - &#34;12400-12500:1240&#34;
+</span></span></code></pre></td></tr></table></div></div><p>长语法</p><ul><li><p><code>target</code>: 容器内的端口</p></li><li><p><code>published</code>: 公开的端口</p></li><li><p><code>protocol</code>：端口协议（<code>tcp</code>或<code>udp</code>）</p></li><li><p><code>mode</code>：<code>host</code>用于在每个节点上发布主机端口，或<code>ingress</code>用于负载平衡的群模式端口。</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>ports:
+</span></span><span class=line><span class=cl>  - target: 80
+</span></span><span class=line><span class=cl>    published: 8080
+</span></span><span class=line><span class=cl>    protocol: tcp
+</span></span><span class=line><span class=cl>    mode: host
+</span></span></code></pre></td></tr></table></div></div><a href=#profiles><h2 id=profiles><span class=hanchor arialabel=Anchor># </span>profiles</h2></a><p>允许通过有选择地启用服务来针对各种用途和环境调整 Compose 应用程序模型。这是通过将每个服务分配给单个或多个配置文件来实现的。如果未分配，则始终启动该服务，但如果已分配，则仅在激活配置文件时才启动。</p><p>这允许人们在单个<code>docker-compose.yml</code>文件中定义额外的服务，这些服务应该只在特定场景中启动，例如用于调试或开发任务。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>profiles: [&#34;frontend&#34;, &#34;debug&#34;]
+</span></span><span class=line><span class=cl>profiles:
+</span></span><span class=line><span class=cl>  - frontend
+</span></span><span class=line><span class=cl>  - debug
+</span></span></code></pre></td></tr></table></div></div><a href=#restart><h2 id=restart><span class=hanchor arialabel=Anchor># </span>restart</h2></a><p><code>no</code>是默认的重启策略，在任何情况下都不会重启容器。当<code>always</code>指定时，容器总是重新启动。<code>on-failure</code>如果退出代码指示失败错误，则该策略会重新启动容器。<code>unless-stopped</code>总是重新启动容器，除非容器停止（手动或其他方式）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>restart: &#34;no&#34;
+</span></span><span class=line><span class=cl>restart: always
+</span></span><span class=line><span class=cl>restart: on-failure
+</span></span><span class=line><span class=cl>restart: unless-stopped
+</span></span></code></pre></td></tr></table></div></div><a href=#secrets><h2 id=secrets><span class=hanchor arialabel=Anchor># </span>secrets</h2></a><p>为每个服务机密授予相应的访问权限</p><p>简短语法</p><p>简短的语法仅指定机密名称。</p><p>以下示例授予<code>redis</code>服务对<code>my_secret</code>和<code>my_other_secret</code>机密的访问权限。<code>./my_secret.txt</code>文件的内容被设置为 my_secret，<code>my_other_secret</code>被定义为外部机密，这意味着它已经在Docker中定义，无论是通过运行<code>docker secret create</code>命令还是通过另一个堆栈部署，都不会重新创建。如果外部机密不存在，堆栈部署将失败并显示<code>secret not found</code>错误。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  redis:
+</span></span><span class=line><span class=cl>    image: redis:latest
+</span></span><span class=line><span class=cl>    deploy:
+</span></span><span class=line><span class=cl>      replicas: 1
+</span></span><span class=line><span class=cl>    secrets:
+</span></span><span class=line><span class=cl>      - my_secret
+</span></span><span class=line><span class=cl>      - my_other_secret
+</span></span><span class=line><span class=cl>secrets:
+</span></span><span class=line><span class=cl>  my_secret:
+</span></span><span class=line><span class=cl>    file: ./my_secret.txt
+</span></span><span class=line><span class=cl>  my_other_secret:
+</span></span><span class=line><span class=cl>    external: true
+</span></span></code></pre></td></tr></table></div></div><p>长语法</p><ul><li><p><code>source</code>：定义机密标识符。</p></li><li><p><code>target</code>：要挂载在<code>/run/secrets/</code>服务的任务容器中的文件的名称，默认是 source。</p></li><li><p><code>uid</code>和<code>gid</code>：<code>/run/secrets/</code>在服务的任务容器中拥有文件的数字 UID 或 GID 。</p></li><li><p><code>mode</code>：要挂载在<code>/run/secrets/</code> 服务的任务容器中的文件的权限，以八进制表示法。例如，<code>0444</code> 代表可读。</p></li></ul><p>下面的示例表示将my_secret 命名为<code>redis_secret</code>，模式为<code>0440</code>（组可读），和用户组为<code>103</code>。该<code>redis</code>服务无权访问该<code>my_other_secret</code>机密。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  redis:
+</span></span><span class=line><span class=cl>    image: redis:latest
+</span></span><span class=line><span class=cl>    deploy:
+</span></span><span class=line><span class=cl>      replicas: 1
+</span></span><span class=line><span class=cl>    secrets:
+</span></span><span class=line><span class=cl>      - source: my_secret
+</span></span><span class=line><span class=cl>        target: redis_secret
+</span></span><span class=line><span class=cl>        uid: &#39;103&#39;
+</span></span><span class=line><span class=cl>        gid: &#39;103&#39;
+</span></span><span class=line><span class=cl>        mode: 0440
+</span></span><span class=line><span class=cl>secrets:
+</span></span><span class=line><span class=cl>  my_secret:
+</span></span><span class=line><span class=cl>    file: ./my_secret.txt
+</span></span><span class=line><span class=cl>  my_other_secret:
+</span></span><span class=line><span class=cl>    external: true
+</span></span></code></pre></td></tr></table></div></div><p>一级<code>secrets</code>详细配置：</p><ul><li><p><code>file</code>：使用指定路径中的文件内容创建机密。</p></li><li><p><code>external</code>：如果设置为 true，则指定此机密已创建。Docker 不会尝试创建它，如果它不存在， 会报错<code>secret not found</code>。</p></li><li><p><code>name</code>：Docker 中秘密对象的名称。此字段可用于引用包含特殊字符的机密。</p></li><li><p><code>template_driver</code>：要使用的模板驱动程序的名称，它控制是否以及如何将机密负载评估为模板。如果未设置驱动程序，则不使用模板。当前支持的唯一驱动程序是<code>golang</code>，它使用<code>golang</code>。</p></li></ul><p>在本示例中，<code>my_first_secret</code>在<code>&lt;stack_name>_my_first_secret</code> 部署堆栈时创建 ，并且<code>my_second_secret</code>已存在于 Docker 中。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>secrets:
+</span></span><span class=line><span class=cl>  my_first_secret:
+</span></span><span class=line><span class=cl>    file: ./secret_data
+</span></span><span class=line><span class=cl>  my_second_secret:
+</span></span><span class=line><span class=cl>    external: true 
+</span></span></code></pre></td></tr></table></div></div><a href=#security_opt><h2 id=security_opt><span class=hanchor arialabel=Anchor># </span>security_opt</h2></a><p>为每个容器覆盖默认的标签。简单说来就是管理全部服务的标签，比如设置全部服务的 user 标签值为<code>USER</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>security_opt:
+</span></span><span class=line><span class=cl>  - label:user:USER
+</span></span><span class=line><span class=cl>  - label:role:ROLE 
+</span></span></code></pre></td></tr></table></div></div><a href=#stop_grace_period><h2 id=stop_grace_period><span class=hanchor arialabel=Anchor># </span>stop_grace_period</h2></a><p>指定在尝试停止容器时等待多长时间。</p><p>在docker stop命令执行的时候，会先向容器中的进程发送系统信号SIGTERM，然后等待容器中的应用程序终止执行。如果等待时间达到设定的超时时间，或者默认的10秒，会继续发送SIGKILL的系统信号强行kill掉进程。</p><p>在容器中的应用程序，可以选择忽略和不处理SIGTERM信号，不过一旦达到超时时间，程序就会被系统强行kill掉，因为SIGKILL信号是直接发往系统内核的，应用程序没有机会去处理它。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>stop_grace_period: 1s
+</span></span></code></pre></td></tr></table></div></div><p>默认情况下，<code>stop</code>在发送 SIGKILL 之前等待容器退出 10 秒。</p><a href=#stop_signal><h2 id=stop_signal><span class=hanchor arialabel=Anchor># </span>stop_signal</h2></a><p>设置一个替代信号来停止容器。默认情况下<code>stop</code>使用 SIGTERM。使用<code>stop_signal</code>设置替代信号来<code>stop</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>stop_signal: SIGUSR1
+</span></span></code></pre></td></tr></table></div></div><a href=#sysctls><h2 id=sysctls><span class=hanchor arialabel=Anchor># </span>sysctls</h2></a><p>在容器中设置的内核参数，可以为数组或字典</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>sysctls:
+</span></span><span class=line><span class=cl>  net.core.somaxconn: 1024
+</span></span><span class=line><span class=cl>  net.ipv4.tcp_syncookies: 0
+</span></span></code></pre></td></tr></table></div></div><a href=#tmpfs><h2 id=tmpfs><span class=hanchor arialabel=Anchor># </span>tmpfs</h2></a><p>在容器内挂载一个临时文件系统。可以是单个值或列表。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>tmpfs: /run
+</span></span><span class=line><span class=cl>tmpfs:
+</span></span><span class=line><span class=cl>  - /run
+</span></span><span class=line><span class=cl>  - /tmp
+</span></span></code></pre></td></tr></table></div></div><a href=#ulimits><h2 id=ulimits><span class=hanchor arialabel=Anchor># </span>ulimits</h2></a><p>设置当前进程以及其子进程的资源使用量，覆盖容器的默认限制，可以单一地将限制值设为一个整数，也可以将<code>soft/hard</code>限制指定为映射</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>ulimits:
+</span></span><span class=line><span class=cl>  nproc: 65535
+</span></span><span class=line><span class=cl>  nofile:
+</span></span><span class=line><span class=cl>    soft: 20000
+</span></span><span class=line><span class=cl>    hard: 40000
+</span></span></code></pre></td></tr></table></div></div><a href=#userns_mode><h2 id=userns_mode><span class=hanchor arialabel=Anchor># </span>userns_mode</h2></a><p>如果 Docker 守护程序配置了用户命名空间，则禁用此服务的用户命名空间。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>userns_mode: &#34;host&#34;
+</span></span></code></pre></td></tr></table></div></div><a href=#volumes><h2 id=volumes><span class=hanchor arialabel=Anchor># </span>volumes</h2></a><p>挂载一个目录或者一个已存在的数据卷容器，</p><ul><li><p>可以直接使用<code>HOST:CONTAINER</code>这样的格式，</p></li><li><p>或者使用<code>HOST:CONTAINER:ro</code>这样的格式，后者对于容器来说，数据卷是只读的，这样可以有效保护宿主机的文件系统</p></li></ul><p>您可以将主机路径挂载为单个服务定义的一部分，无需在一级<code>volumes</code>键中定义它。</p><p>但是，如果您想在多个服务中重用一个卷，则需要在一级volumes 中定义一个命名卷。</p><p>如下实例，web 服务使用命名卷 (<code>mydata</code>)，以及为单个服务定义的绑定安装（<code>db</code>service下的第一个路径<code>volumes</code>）。<code>db</code>服务还使用名为<code>dbdata</code>（<code>db</code>service下的第二个路径<code>volumes</code>）的命名卷，使用了旧字符串格式定义它以安装命名卷。命名卷必须列在顶级<code>volumes</code>键下。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  web:
+</span></span><span class=line><span class=cl>    image: nginx:alpine
+</span></span><span class=line><span class=cl>    volumes:
+</span></span><span class=line><span class=cl>      - type: volume
+</span></span><span class=line><span class=cl>        source: mydata
+</span></span><span class=line><span class=cl>        target: /data
+</span></span><span class=line><span class=cl>        volume:
+</span></span><span class=line><span class=cl>          nocopy: true
+</span></span><span class=line><span class=cl>      - type: bind
+</span></span><span class=line><span class=cl>        source: ./static
+</span></span><span class=line><span class=cl>        target: /opt/app/static
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  db:
+</span></span><span class=line><span class=cl>    image: postgres:latest
+</span></span><span class=line><span class=cl>    volumes:
+</span></span><span class=line><span class=cl>      - &#34;/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock&#34;
+</span></span><span class=line><span class=cl>      - &#34;dbdata:/var/lib/postgresql/data&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>volumes:
+</span></span><span class=line><span class=cl>  mydata:
+</span></span><span class=line><span class=cl>  dbdata:
+</span></span></code></pre></td></tr></table></div></div><a href=#简短语法><h4 id=简短语法><span class=hanchor arialabel=Anchor># </span>简短语法</h4></a><p>简短语法使用通用<code>[SOURCE:]TARGET[:MODE]</code>格式，其中 <code>SOURCE</code>可以是主机路径或卷名。<code>TARGET</code>是安装卷的容器路径。标准模式<code>ro</code>用于只读和<code>rw</code>读写（默认）。</p><p>您可以在主机上挂载一个相对路径，该路径相对于正在使用的 Compose 配置文件的目录展开。相对路径应始终以<code>.</code>或开头<code>..</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>volumes:
+</span></span><span class=line><span class=cl>  # Just specify a path and let the Engine create a volume
+</span></span><span class=line><span class=cl>  - /var/lib/mysql
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  # Specify an absolute path mapping
+</span></span><span class=line><span class=cl>  - /opt/data:/var/lib/mysql
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  # Path on the host, relative to the Compose file
+</span></span><span class=line><span class=cl>  - ./cache:/tmp/cache
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  # User-relative path
+</span></span><span class=line><span class=cl>  - ~/configs:/etc/configs/:ro
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  # 命名卷
+</span></span><span class=line><span class=cl>  - datavolume:/var/lib/mysql
+</span></span></code></pre></td></tr></table></div></div><a href=#长语法><h4 id=长语法><span class=hanchor arialabel=Anchor># </span>长语法</h4></a><ul><li><p><code>type</code>: 安装类型， <code>bind</code>,<code>tmpfs</code>或<code>npipe</code></p></li><li><p><code>source</code>: 安装源、主机上用于绑定安装的路径或在顶级volumes 中定义的卷的名称 。不适用于 tmpfs 挂载。</p></li><li><p><code>target</code>：安装卷的容器中的路径</p></li><li><p><code>read_only</code>: 将卷设置为只读的标志</p></li><li><p><code>bind</code>: 配置额外的绑定选项</p></li></ul><ol><li><code>propagation</code>：用于绑定的传播模式</li></ol><p><code>volume</code>: 配置额外的选项</p><ol><li><code>nocopy</code>: 创建卷时禁用从容器复制数据的标志</li></ol><p><code>tmpfs</code>: 配置额外的 tmpfs 选项</p><ol><li><code>size</code>：tmpfs 挂载的大小（以字节为单位）</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>services:
+</span></span><span class=line><span class=cl>  web:
+</span></span><span class=line><span class=cl>    image: nginx:alpine
+</span></span><span class=line><span class=cl>    ports:
+</span></span><span class=line><span class=cl>      - &#34;80:80&#34;
+</span></span><span class=line><span class=cl>    volumes:
+</span></span><span class=line><span class=cl>      - type: volume
+</span></span><span class=line><span class=cl>        source: mydata
+</span></span><span class=line><span class=cl>        target: /data
+</span></span><span class=line><span class=cl>        volume:
+</span></span><span class=line><span class=cl>          nocopy: true
+</span></span><span class=line><span class=cl>      - type: bind
+</span></span><span class=line><span class=cl>        source: ./static
+</span></span><span class=line><span class=cl>        target: /opt/app/static
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>networks:
+</span></span><span class=line><span class=cl>  webnet:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>volumes:
+</span></span><span class=line><span class=cl>  mydata:
+</span></span></code></pre></td></tr></table></div></div><a href=#一级-volume-详细配置><h4 id=一级-volume-详细配置><span class=hanchor arialabel=Anchor># </span>一级 Volume 详细配置：</h4></a><ul><li><p>driver 指定该卷应使用哪个卷驱动程序</p></li><li><p>driver_opts 将选项列表指定为键值对以传递给此卷的驱动程序</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>volumes:
+</span></span><span class=line><span class=cl>  example:
+</span></span><span class=line><span class=cl>    driver_opts:
+</span></span><span class=line><span class=cl>      type: &#34;nfs&#34;
+</span></span><span class=line><span class=cl>      o: &#34;addr=10.40.0.199,nolock,soft,rw&#34;
+</span></span><span class=line><span class=cl>      device: &#34;:/docker/example&#34;
+</span></span></code></pre></td></tr></table></div></div><ul><li><p>external 如果设置为true，则指定该卷是在 Compose 之外创建的</p></li><li><p>labels 添加元数据</p></li><li><p>name 为此卷设置自定义名称</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Plain data-lang=Plain><span class=line><span class=cl>version: &#34;3.9&#34;
+</span></span><span class=line><span class=cl>volumes:
+</span></span><span class=line><span class=cl>  data:
+</span></span><span class=line><span class=cl>    name: my-app-data
+</span></span></code></pre></td></tr></table></div></div><a href=#变量置换><h2 id=变量置换><span class=hanchor arialabel=Anchor># </span>变量置换</h2></a><p>你可以使用 $VARIABLE 或者 ${VARIABLE} 来置换变量</p><ul><li><p><code>${VARIABLE:-default}VARIABLE</code>在环境中未设置或为空时设置为default。</p></li><li><p><code>${VARIABLE-default}</code>仅当<code>VARIABLE</code>在环境中未设置时才设置为default。</p></li><li><p><code>${VARIABLE:?err}</code>退出并显示一条错误消息，其中包含环境中的<code>err</code>if <code>VARIABLE</code>未设置或为空。</p></li><li><p><code>${VARIABLE?err}</code>退出并显示一条错误消息，其中包含<code>err</code>if <code>VARIABLE</code>在环境中未设置。</p></li><li><p>如果想使用一个不被compose处理的变量，可用使用</p></li></ul><p>一个配置文件</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>zookeeper</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>docker</span><span class=p>.</span><span class=n>io</span><span class=o>/</span><span class=n>bitnami</span><span class=o>/</span><span class=n>zookeeper</span><span class=p>:</span><span class=mi>3</span><span class=p>.</span><span class=mi>8</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;22181:2181&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;zookeeper_data:/bitnami&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>ALLOW_ANONYMOUS_LOGIN</span><span class=o>=</span><span class=n>yes</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>kafka</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>container_name</span><span class=p>:</span><span class=w> </span><span class=n>kafka1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>docker</span><span class=p>.</span><span class=n>io</span><span class=o>/</span><span class=n>bitnami</span><span class=o>/</span><span class=n>kafka</span><span class=p>:</span><span class=mi>3</span><span class=p>.</span><span class=mi>4</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;9192:9092&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=s2>&#34;kafka_data:/bitnami&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>KAFKA_CFG_ZOOKEEPER_CONNECT</span><span class=o>=</span><span class=n>zookeeper</span><span class=p>:</span><span class=mi>2181</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>ALLOW_PLAINTEXT_LISTENER</span><span class=o>=</span><span class=n>yes</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>KAFKA_CFG_ADVERTISED_LISTENERS</span><span class=o>=</span><span class=n>PLAINTEXT</span><span class=p>:</span><span class=o>//</span><span class=err>宿主机</span><span class=n>ip</span><span class=p>:</span><span class=mi>9192</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE</span><span class=o>=</span><span class=k>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>depends_on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=o>-</span><span class=w> </span><span class=n>zookeeper</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>kafka</span><span class=o>-</span><span class=n>ui</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>image</span><span class=p>:</span><span class=w> </span><span class=n>provectuslabs</span><span class=o>/</span><span class=n>kafka</span><span class=o>-</span><span class=n>ui</span><span class=p>:</span><span class=n>latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>container_name</span><span class=p>:</span><span class=w> </span><span class=n>kafka</span><span class=o>-</span><span class=n>ui</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>restart</span><span class=p>:</span><span class=w> </span><span class=n>always</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=o>-</span><span class=w> </span><span class=mi>10010</span><span class=p>:</span><span class=mi>8080</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=o>-</span><span class=w> </span><span class=o>/</span><span class=n>etc</span><span class=o>/</span><span class=k>localtime</span><span class=p>:</span><span class=o>/</span><span class=n>etc</span><span class=o>/</span><span class=k>localtime</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=o>-</span><span class=w> </span><span class=n>KAFKA_CLUSTERS_0_NAME</span><span class=o>=</span><span class=k>local</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=o>-</span><span class=w> </span><span class=n>KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS</span><span class=o>=</span><span class=n>kafka1</span><span class=p>:</span><span class=mi>9092</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>zookeeper_data</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=k>local</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>kafka_data</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>driver</span><span class=p>:</span><span class=w> </span><span class=k>local</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://quartz.jzhao.xyz/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by Jacky Zhao using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://quartz.jzhao.xyz/>Home</a></li><li><a href=https://twitter.com/_jzhao>Twitter</a></li><li><a href=https://github.com/jackyzha0>GitHub</a></li></ul></footer></div></div></body></html>

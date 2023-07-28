@@ -1,0 +1,168 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="1 2 3 4 5 6 7 8 9 10 11  public class Test { AtomicLong count = new AtomicLong(0); void add10K() { int idx = 0; while(idx++ < 10000) { count."><meta property="og:title" content><meta property="og:description" content="1 2 3 4 5 6 7 8 9 10 11  public class Test { AtomicLong count = new AtomicLong(0); void add10K() { int idx = 0; while(idx++ < 10000) { count."><meta property="og:type" content="website"><meta property="og:image" content="https://quartz.jzhao.xyz/icon.png"><meta property="og:url" content="https://quartz.jzhao.xyz/Java/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%B8%B8%E7%94%A8%E7%B1%BB/%E5%8E%9F%E5%AD%90%E7%B1%BB%E6%97%A0%E9%94%81%E5%B7%A5%E5%85%B7%E7%B1%BB%E7%9A%84%E5%85%B8%E8%8C%83/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="1 2 3 4 5 6 7 8 9 10 11  public class Test { AtomicLong count = new AtomicLong(0); void add10K() { int idx = 0; while(idx++ < 10000) { count."><meta name=twitter:image content="https://quartz.jzhao.xyz/icon.png"><meta name=twitter:site content="_jzhao"><title>🪴 Quartz 3.3</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://quartz.jzhao.xyz//icon.png><link href=https://quartz.jzhao.xyz/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://quartz.jzhao.xyz/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://quartz.jzhao.xyz/js/darkmode.63d6a3e095d0bd2b935b62adec9dc11b.min.js></script>
+<script src=https://quartz.jzhao.xyz/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://quartz.jzhao.xyz/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://quartz.jzhao.xyz/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://quartz.jzhao.xyz/",fetchData=Promise.all([fetch("https://quartz.jzhao.xyz/indices/linkIndex.26897e4d1acf67c094aa607e8f2e6316.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://quartz.jzhao.xyz/indices/contentIndex.fd0b08e0fcf0fc58c8d873581bcb40dd.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://quartz.jzhao.xyz",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://quartz.jzhao.xyz",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/quartz.jzhao.xyz\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=quartz.jzhao.xyz src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://quartz.jzhao.xyz/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://quartz.jzhao.xyz/>🪴 Quartz 3.3</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=https://github.com/jackyzha0/quartz/tree/hugo/content/Java/%e5%a4%9a%e7%ba%bf%e7%a8%8b/%e5%b8%b8%e7%94%a8%e7%b1%bb/%e5%8e%9f%e5%ad%90%e7%b1%bb%ef%bc%9a%e6%97%a0%e9%94%81%e5%b7%a5%e5%85%b7%e7%b1%bb%e7%9a%84%e5%85%b8%e8%8c%83.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#cas>CAS</a></li><li><a href=#自旋><strong>自旋</strong></a></li><li><a href=#aba问题>ABA问题</a></li></ol></nav></details></aside><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>public</span> <span class=nx>class</span> <span class=nx>Test</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>AtomicLong</span> <span class=nx>count</span> <span class=p>=</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>new</span> <span class=nf>AtomicLong</span><span class=p>(</span><span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=nx>void</span> <span class=nf>add10K</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=nx>idx</span> <span class=p>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=nf>while</span><span class=p>(</span><span class=nx>idx</span><span class=o>++</span> <span class=p>&lt;</span> <span class=mi>10000</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>count</span><span class=p>.</span><span class=nf>getAndIncrement</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><p>互斥锁方案为了保证互斥性，需要执行加锁、解锁操作，而加锁、解锁操作本身就消耗性能；同时拿不到锁的线程还会进入阻塞状态，进而触发线程切换，线程切换对性能的消耗也很大。</p></li><li><p>无锁方案则完全没有加锁、解锁的性能消耗，同时还能保证互斥性，既解决了问题，又没有带来新的问题，可谓绝佳方案</p></li></ul><a href=#无锁方案的实现原理><h1 id=无锁方案的实现原理><span class=hanchor arialabel=Anchor># </span>无锁方案的实现原理</h1></a><a href=#cas><h2 id=cas><span class=hanchor arialabel=Anchor># </span>CAS</h2></a><p>其实原子类性能高的秘密很简单，<strong>硬件支持</strong>而已 。CPU 为了解决并发问题，提供了 <strong>CAS 指令</strong>（CAS，全称是 <strong>Compare And Swap，即“比较并交换”</strong>）</p><p>CAS的3个参数：</p><ul><li><p>共享变量的内存地址 A</p></li><li><p>用于比较的值 B</p></li><li><p>共享变量的新值 C</p></li></ul><p><strong>并且只有当内存中地址 A 处的值等于 B 时，才能将内存中地址 A 处的值更新为新值 C。<strong>作为一条 CPU 指令，CAS 指令本身是</strong>能够保证原子性</strong>的。</p><p>CAS 指令的模拟代码来理解 CAS 的工作原理、</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>class</span> <span class=nx>SimulatedCAS</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=nx>count</span><span class=err>；</span>
+</span></span><span class=line><span class=cl>  <span class=nx>synchronized</span> <span class=kt>int</span> <span class=nf>cas</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=nx>expect</span><span class=p>,</span> <span class=kt>int</span> <span class=nx>newValue</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 读目前count的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int</span> <span class=nx>curValue</span> <span class=p>=</span> <span class=nx>count</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 比较目前count值是否==期望值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span><span class=p>(</span><span class=nx>curValue</span> <span class=o>==</span> <span class=nx>expect</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>      <span class=c1>// 如果是，则更新count的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>      <span class=nx>count</span> <span class=p>=</span> <span class=nx>newValue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 返回写入前的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=nx>curValue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>只有当目前 count 的值和期望值 expect 相等时，才会将 count 更新为 newValue.</p><a href=#自旋><h2 id=自旋><span class=hanchor arialabel=Anchor># </span><strong>自旋</strong></h2></a><p><strong>使用 CAS 来解决并发问题，一般都会伴随着自旋，而所谓自旋，其实就是循环尝试,</strong></p><p><strong>如果操作的值发生了改变，需要重新加载计算</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>class</span> <span class=nx>SimulatedCAS</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>volatile</span> <span class=kt>int</span> <span class=nx>count</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// 实现count+=1
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nf>addOne</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>    <span class=nx>do</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>newValue</span> <span class=p>=</span> <span class=nx>count</span><span class=o>+</span><span class=mi>1</span><span class=p>;</span> <span class=c1>//①
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span><span class=nf>while</span><span class=p>(</span><span class=nx>count</span> <span class=o>!=</span>
+</span></span><span class=line><span class=cl>      <span class=nf>cas</span><span class=p>(</span><span class=nx>count</span><span class=p>,</span><span class=nx>newValue</span><span class=p>)</span> <span class=c1>//②
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// 模拟实现CAS，仅用来帮助理解
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>synchronized</span> <span class=kt>int</span> <span class=nf>cas</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=nx>expect</span><span class=p>,</span> <span class=kt>int</span> <span class=nx>newValue</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 读目前count的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int</span> <span class=nx>curValue</span> <span class=p>=</span> <span class=nx>count</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 比较目前count值是否==期望值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span><span class=p>(</span><span class=nx>curValue</span> <span class=o>==</span> <span class=nx>expect</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>      <span class=c1>// 如果是，则更新count的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>      <span class=nx>count</span><span class=p>=</span> <span class=nx>newValue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 返回写入前的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=nx>curValue</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>首先计算 newValue = count+1，如果 cas(count,newValue) 返回的值不等于 count，则意味着线程在执行完代码①处之后，执行代码②处之前，count 的值被其他线程更新过。那此时该怎么处理呢？可以采用自旋方案，就像下面代码中展示的，可以<strong>重新读 count 最新的值来计算 newValue 并尝试再次更新</strong>，直到成功</p><a href=#aba问题><h2 id=aba问题><span class=hanchor arialabel=Anchor># </span>ABA问题</h2></a><p>如果 cas(count,newValue) 返回的值不等于count，意味着线程在执行完代码①处之后，执行代码②处之前，count 的值被其他线程更新过”，<strong>那如果 cas(count,newValue) 返回的值等于count</strong>，是否就能够认为 count 的值没有被其他线程更新过呢？显然不是的</p><p>假设 count 原本是 A，线程 T1 在执行完代码①处之后，执行代码②处之前，有可能 count 被线程 T2 更新成了 B，之后又被 T3 更新回了 A，这样线程 T1 虽然看到的一直是 A，但是其实已经被其他线程更新过了，<strong>这就是 ABA 问题</strong></p><p><strong>可能大多数情况下我们并不关心 ABA 问题</strong></p><a href=#看-java-如何实现原子化的-count--1><h1 id=看-java-如何实现原子化的-count--1><span class=hanchor arialabel=Anchor># </span>看 Java 如何实现原子化的 count += 1</h1></a><p>我们使用原子类 AtomicLong 的 getAndIncrement() 方法替代了count += 1，从而实现了线程安全。</p><p>在 Java 1.8 版本中，getAndIncrement() 方法会转调 unsafe.getAndAddLong() 方法。<strong>这里 this 和 valueOffset 两个参数可以唯一确定共享变量的内存地址</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>final</span> <span class=nx>long</span> <span class=nf>getAndIncrement</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>getAndAddLong</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=nx>this</span><span class=p>,</span> <span class=nx>valueOffset</span><span class=p>,</span> <span class=mi>1</span><span class=nx>L</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>unsafe.getAndAddLong() 方法的源码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Go data-lang=Go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>public</span> <span class=nx>final</span> <span class=nx>long</span> <span class=nf>getAndAddLong</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>  <span class=nx>Object</span> <span class=nx>o</span><span class=p>,</span> <span class=nx>long</span> <span class=nx>offset</span><span class=p>,</span> <span class=nx>long</span> <span class=nx>delta</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>  <span class=nx>long</span> <span class=nx>v</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=nx>do</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 读取内存中的值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>v</span> <span class=p>=</span> <span class=nf>getLongVolatile</span><span class=p>(</span><span class=nx>o</span><span class=p>,</span> <span class=nx>offset</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span> <span class=nf>while</span> <span class=p>(!</span><span class=nf>compareAndSwapLong</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>      <span class=nx>o</span><span class=p>,</span> <span class=nx>offset</span><span class=p>,</span> <span class=nx>v</span><span class=p>,</span> <span class=nx>v</span> <span class=o>+</span> <span class=nx>delta</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>v</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=c1>//原子性地将变量更新为x
+</span></span></span><span class=line><span class=cl><span class=c1>//条件是内存中的值等于expected
+</span></span></span><span class=line><span class=cl><span class=c1>//更新成功则返回true
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>native</span> <span class=nx>boolean</span> <span class=nf>compareAndSwapLong</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>  <span class=nx>Object</span> <span class=nx>o</span><span class=p>,</span> <span class=nx>long</span> <span class=nx>offset</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=nx>long</span> <span class=nx>expected</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nx>long</span> <span class=nx>x</span><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>该方法首先会在内存中读取共享变量的值，之后循环调用 compareAndSwapLong() 方法来尝试设置共享变量的值，直到成功为止。compareAndSwapLong() 是一个 native 方法，只有当内存中共享变量的值等于 expected 时，才会将共享变量的值更新为 x，并且返回 true；否则返回 fasle。compareAndSwapLong 的语义和 CAS 指令的语义的差别仅仅是返回值不同而已</p><a href=#原子类概览><h1 id=原子类概览><span class=hanchor arialabel=Anchor># </span>原子类概览</h1></a><p>我们可以将它们分为五个类别：<strong>原子化的基本数据类型、原子化的对象引用类型、原子化数组、原子化对象属性更新器和原子化的累加器</strong></p><ul><li><p>原子类</p><ul><li><p>基本数据类型</p><ul><li><p>AtomicBoolean</p></li><li><p>AtomicInteger</p></li><li><p>AtomicLong</p></li></ul></li><li><p>引用类型</p><ul><li><p>AtomicReference</p></li><li><p>AtomicStampedReference</p></li><li><p>AtomicMarkableReference</p></li></ul></li><li><p>数组</p><ul><li><p>AtomicIntegerArray</p></li><li><p>AtomicLongArray</p></li><li><p>AromicReferenceArray</p></li></ul></li><li><p>对象属性更新器</p><ul><li><p>AtomicIntegerFeildUpdater</p></li><li><p>AtomicLongFeildUpdater</p></li><li><p>AtomicReferenceFeildUpdater</p></li></ul></li><li><p>累加器</p><ul><li><p>DoubleAccumlator</p></li><li><p>DoubleAdder</p></li><li><p>LongAccumulator</p></li><li><p>LongAdder</p></li></ul></li></ul></li></ul></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://quartz.jzhao.xyz/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by Jacky Zhao using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://quartz.jzhao.xyz/>Home</a></li><li><a href=https://twitter.com/_jzhao>Twitter</a></li><li><a href=https://github.com/jackyzha0>GitHub</a></li></ul></footer></div></div></body></html>

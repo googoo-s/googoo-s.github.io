@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SPI on</title><link>https://quartz.jzhao.xyz/tags/SPI/</link><description>Recent content in SPI on</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://quartz.jzhao.xyz/tags/SPI/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://quartz.jzhao.xyz/Java/%E5%9F%BA%E7%A1%80/Java-SPI/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://quartz.jzhao.xyz/Java/%E5%9F%BA%E7%A1%80/Java-SPI/</guid><description>何谓 SPI? SPI 即 Service Provider Interface ，字面意思就是：“服务提供者的接口”，我的理解是：专门提供给服务提供者或者扩展框架功能的开发者去使用的一个接口。
+SPI 将服务接口和具体的服务实现分离开来，将服务调用方和服务实现者解耦，能够提升程序的扩展性、可维护性。修改或者替换服务实现并不需要修改调用方。
+很多框架都使用了 Java 的 SPI 机制，比如：Spring 框架、数据库加载驱动、日志接口、以及 Dubbo 的扩展实现等等。
+SPI 和 API 有什么区别？ 那 SPI 和 API 有啥区别？</description></item></channel></rss>
