@@ -1,6 +1,8 @@
 name: Deploy to GitHub Pages
 
 on:
+  repository_dispatch:
+    types: [makabaka-update]
   push:
     branches:
       - hugo
