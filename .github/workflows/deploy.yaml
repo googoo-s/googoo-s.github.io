@@ -38,4 +38,4 @@ jobs:
           # github_token: ${{ secrets.DEPLOY_KEY  }}
           publish_dir: ./public
           publish_branch: master  # deploying branch
-          cname: quartz.jzhao.xyz
+          cname: googoo-s.github.io
