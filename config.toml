@@ -1,5 +1,5 @@
-baseURL = "https://quartz.jzhao.xyz/"
-languageCode = "en-us"
+baseURL = "https://googoo-s.github.io/"
+languageCode = "zh-cn"
 relativeURLs = false
 disablePathToLower = true
 ignoreFiles = [
