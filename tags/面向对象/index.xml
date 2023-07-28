@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>面向对象 on</title><link>https://googoo-s.github.io/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link><description>Recent content in 面向对象 on</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://googoo-s.github.io/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://googoo-s.github.io/Java/%E5%9F%BA%E7%A1%80/Java-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Java/%E5%9F%BA%E7%A1%80/Java-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</guid><description>面向对象和面向过程的区别 两者的主要区别在于解决问题的方式不同：
-面向过程把解决问题的过程拆成一个个方法，通过一个个方法的执行解决问题。
-面向对象会先抽象出对象，然后用对象执行方法的方式解决问题。
-另外，面向对象开发的程序一般更易维护、易复用、易扩展。
-相关 issue : 面向过程 ：面向过程性能比面向对象高？？open in new window
-创建一个对象用什么运算符?对象实体与对象引用有何不同? new 运算符，new 创建对象实例（对象实例在堆内存中），对象引用指向对象实例（对象引用存放在栈内存中）。</description></item></channel></rss>
