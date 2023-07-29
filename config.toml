@@ -16,7 +16,7 @@ enableGitInfo = true
         endLevel = 3
         ordered = true
         startLevel = 2
-    [markup.highlight]
+    [markup.highlight] 
         noClasses = false
         anchorLineNos = false
         codeFences = true
