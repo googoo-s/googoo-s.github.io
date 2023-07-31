@@ -19,7 +19,7 @@ jobs:
         with:
           submodules: recursive  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 10000000000    # Fetch all history for .GitInfo and .Lastmod
-          # ssh-key: ${{ secrets.WUXIDIXI_DEPLOY }}   # Fetch all history for .GitInfo and .Lastmod
+          ssh-key: ${{ secrets.WUXIDIXI_DEPLOY }}   # Fetch all history for .GitInfo and .Lastmod
 
       - name: Build Link Index
         uses: jackyzha0/hugo-obsidian@v2.20
