@@ -1,5 +1,5 @@
 baseURL = "https://googoo-s.github.io/"
-languageCode = "zh-cn"
+languageCode = "en-us"
 relativeURLs = false
 disablePathToLower = true
 ignoreFiles = [
@@ -16,7 +16,7 @@ enableGitInfo = true
         endLevel = 3
         ordered = true
         startLevel = 1
-    [markup.highlight] 
+    [markup.highlight]
         noClasses = false
         anchorLineNos = false
         codeFences = true

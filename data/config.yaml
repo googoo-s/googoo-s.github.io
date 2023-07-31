@@ -3,7 +3,7 @@ enableToc: true
 openToc: false
 enableLinkPreview: true
 enableLatex: true
-enableCodeBlockTitle: false
+enableCodeBlockTitle: true
 enableCodeBlockCopy: true
 enableCallouts: true
 enableSPA: true
@@ -21,13 +21,9 @@ search:
 #   Host your second brain and digital garden for free. Quartz features extremely fast full-text search,
 #   Wikilink support, backlinks, local graph, tags, and link previews.
 page_title:
-  "googoo-s"
+  "googoo-s 😄😸😎"
 links:
   # - link_name: Twitter
   #   link: https://twitter.com/_jzhao
   - link_name: GitHub
     link: https://github.com/googoo-s
-
-
-
-    
