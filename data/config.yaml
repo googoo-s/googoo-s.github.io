@@ -1,9 +1,9 @@
 name: googoo-s
 enableToc: true
-openToc: ture
+openToc: false
 enableLinkPreview: true
 enableLatex: true
-enableCodeBlockTitle: true
+enableCodeBlockTitle: false
 enableCodeBlockCopy: true
 enableCallouts: true
 enableSPA: true
