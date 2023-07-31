@@ -25,7 +25,7 @@ jobs:
           ssh-key: ${{ secrets.WUXIDIXI_DEPLOY }}   # Fetch all history for .GitInfo and .Lastmod
 
       - name: Only on repository_dispatch
-        if: ${{ github.event_name == 'repository_dispatch' }} 
+        # if: ${{ github.event_name == 'repository_dispatch' }} 
         run:  git submodule update --remote
 
       - name: Build Link Index
