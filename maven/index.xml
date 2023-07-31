@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mavens on</title><link>https://googoo-s.github.io/maven/</link><description>Recent content in Mavens on</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://googoo-s.github.io/maven/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://googoo-s.github.io/maven/maven-overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/maven/maven-overview/</guid><description>什么是 Maven Maven 是一种用来管理 Java 项目的工具，但不是那种用来管理资源规划和调度的工具。 相反，它处理的是管理一个具体的项目所涉及的各种任务，如编译、测试、打包、文档以及分发。
-Maven 包括以下的几个部分。
-一组用于处理依赖管理、目录结构以及构建工作流的约定。
-基于这些约定实现的标准化 ，可以极大地简化开发过程。例如，一个常用的目录结构使得开发者可以更加容易地跟上不熟悉的项目的节奏。 一个用于项目配置的XML Schema：项目对象模型（Project Object Model），简称POM①。</description></item></channel></rss>
