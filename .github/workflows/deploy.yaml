@@ -7,6 +7,9 @@ on:
     branches:
       - hugo
 
+env:
+  PRIVATE_SSH_KEY: ${{ secrets.WUXIDIXI_DEPLOY }} 
+
 jobs:
   deploy:
     runs-on: ubuntu-20.04
@@ -18,8 +21,12 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 10000000000    # Fetch all history for .GitInfo and .Lastmod
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
           ssh-key: ${{ secrets.WUXIDIXI_DEPLOY }}   # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Only on repository_dispatch
+        if: ${{ github.event_name == 'repository_dispatch' }} 
+        run:  git submodule update --remote
 
       - name: Build Link Index
         uses: jackyzha0/hugo-obsidian@v2.20
