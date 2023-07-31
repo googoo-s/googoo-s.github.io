@@ -1,6 +1,6 @@
 baseURL = "https://googoo-s.github.io/"
 languageCode = "zh-cn"
-relativeURLs = true
+relativeURLs = false
 disablePathToLower = true
 ignoreFiles = [
     "/content/templates/*",
