@@ -1,0 +1,302 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="4.22 TCP 四次挥手，可以变成三次吗？ 大家好，我是小林。
+有位读者面美团时，被问到：TCP 四次挥手中，能不能把第二次的 ACK 报文， 放到第三次 FIN 报文一起发送？
+ 虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是在一些情况下， TCP 四次挥手是可以变成 TCP 三次挥手的。"><meta property="og:title" content><meta property="og:description" content="4.22 TCP 四次挥手，可以变成三次吗？ 大家好，我是小林。
+有位读者面美团时，被问到：TCP 四次挥手中，能不能把第二次的 ACK 报文， 放到第三次 FIN 报文一起发送？
+ 虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是在一些情况下， TCP 四次挥手是可以变成 TCP 三次挥手的。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_three_fin/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="4.22 TCP 四次挥手，可以变成三次吗？ 大家好，我是小林。
+有位读者面美团时，被问到：TCP 四次挥手中，能不能把第二次的 ACK 报文， 放到第三次 FIN 报文一起发送？
+ 虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是在一些情况下， TCP 四次挥手是可以变成 TCP 三次挥手的。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.0be9ea5cc5a709de699463fae2ac30a8.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.0d1fcd0ce55147328e47ced9d4063f41.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#422-tcp-四次挥手可以变成三次吗>4.22 TCP 四次挥手，可以变成三次吗？</a><ol><li><a href=#tcp-四次挥手>TCP 四次挥手</a><ol><li><a href=#为什么-tcp-挥手需要四次呢>为什么 TCP 挥手需要四次呢？</a></li><li><a href=#粗暴关闭-vs-优雅关闭>粗暴关闭 vs 优雅关闭</a></li></ol></li><li><a href=#什么情况会出现三次挥手>什么情况会出现三次挥手？</a><ol><li><a href=#实验验证>实验验证</a></li></ol></li><li><a href=#总结>总结</a></li></ol></li></ol></nav></details></aside><a href=#422-tcp-四次挥手可以变成三次吗><h1 id=422-tcp-四次挥手可以变成三次吗><span class=hanchor arialabel=Anchor># </span>4.22 TCP 四次挥手，可以变成三次吗？</h1></a><p>大家好，我是小林。</p><p>有位读者面美团时，被问到：<strong>TCP 四次挥手中，能不能把第二次的 ACK 报文， 放到第三次 FIN 报文一起发送？</strong></p><p><img src=https://img-blog.csdnimg.cn/6e02477ccea24facbf7eada108158bc2.png width=auto alt></p><p>虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是<strong>在一些情况下， TCP 四次挥手是可以变成 TCP 三次挥手的</strong>。</p><p><img src=https://img-blog.csdnimg.cn/52f35dcbe24a4ca7abb23f292837c707.png width=auto alt=在这里插入图片描述></p><p>而且在用 wireshark 工具抓包的时候，我们也会常看到 TCP 挥手过程是三次，而不是四次，如下图：</p><p><img src=https://img-blog.csdnimg.cn/361207c2e5c34bec8708b79990ba7e99.png width=auto alt=在这里插入图片描述></p><p>先来回答为什么 RFC 文档里定义 TCP 挥手过程是要四次？</p><p>再来回答什么情况下，什么情况会出现三次挥手？</p><a href=#tcp-四次挥手><h2 id=tcp-四次挥手><span class=hanchor arialabel=Anchor># </span>TCP 四次挥手</h2></a><p>TCP 四次挥手的过程如下：</p><p><img src=https://img-blog.csdnimg.cn/18635e15653a4affbdab2c9bf72d599e.png width=auto alt=在这里插入图片描述></p><p>具体过程：</p><ul><li>客户端主动调用关闭连接的函数，于是就会发送 FIN 报文，这个 FIN 报文代表客户端不会再发送数据了，进入 FIN_WAIT_1 状态；</li><li>服务端收到了 FIN 报文，然后马上回复一个 ACK 确认报文，此时服务端进入 CLOSE_WAIT 状态。在收到 FIN 报文的时候，TCP 协议栈会为 FIN 包插入一个文件结束符 EOF 到接收缓冲区中，服务端应用程序可以通过 read 调用来感知这个 FIN 包，这个 EOF 会被<strong>放在已排队等候的其他已接收的数据之后</strong>，所以必须要得继续 read 接收缓冲区已接收的数据；</li><li>接着，当服务端在 read 数据的时候，最后自然就会读到 EOF，接着 <strong>read() 就会返回 0，这时服务端应用程序如果有数据要发送的话，就发完数据后才调用关闭连接的函数，如果服务端应用程序没有数据要发送的话，可以直接调用关闭连接的函数</strong>，这时服务端就会发一个 FIN 包，这个 FIN 报文代表服务端不会再发送数据了，之后处于 LAST_ACK 状态；</li><li>客户端接收到服务端的 FIN 包，并发送 ACK 确认包给服务端，此时客户端将进入 TIME_WAIT 状态；</li><li>服务端收到 ACK 确认包后，就进入了最后的 CLOSE 状态；</li><li>客户端经过 2MSL 时间之后，也进入 CLOSE 状态；</li></ul><p>你可以看到，每个方向都需要<strong>一个 FIN 和一个 ACK</strong>，因此通常被称为<strong>四次挥手</strong>。</p><a href=#为什么-tcp-挥手需要四次呢><h3 id=为什么-tcp-挥手需要四次呢><span class=hanchor arialabel=Anchor># </span>为什么 TCP 挥手需要四次呢？</h3></a><p>服务器收到客户端的 FIN 报文时，内核会马上回一个 ACK 应答报文，<strong>但是服务端应用程序可能还有数据要发送，所以并不能马上发送 FIN 报文，而是将发送 FIN 报文的控制权交给服务端应用程序</strong>：</p><ul><li>如果服务端应用程序有数据要发送的话，就发完数据后，才调用关闭连接的函数；</li><li>如果服务端应用程序没有数据要发送的话，可以直接调用关闭连接的函数，</li></ul><p>从上面过程可知，<strong>是否要发送第三次挥手的控制权不在内核，而是在被动关闭方（上图的服务端）的应用程序，因为应用程序可能还有数据要发送，由应用程序决定什么时候调用关闭连接的函数，当调用了关闭连接的函数，内核就会发送 FIN 报文了，</strong> 所以服务端的 ACK 和 FIN 一般都会分开发送。</p><blockquote><p>FIN 报文一定得调用关闭连接的函数，才会发送吗？</p></blockquote><p>不一定。</p><p>如果进程退出了，不管是不是正常退出，还是异常退出（如进程崩溃），内核都会发送 FIN 报文，与对方完成四次挥手。</p><a href=#粗暴关闭-vs-优雅关闭><h3 id=粗暴关闭-vs-优雅关闭><span class=hanchor arialabel=Anchor># </span>粗暴关闭 vs 优雅关闭</h3></a><p>前面介绍 TCP 四次挥手的时候，并没有详细介绍关闭连接的函数，其实关闭的连接的函数有两种函数：</p><ul><li>close 函数，同时 socket 关闭发送方向和读取方向，也就是 socket 不再有发送和接收数据的能力。如果有多进程/多线程共享同一个 socket，如果有一个进程调用了 close 关闭只是让 socket 引用计数 -1，并不会导致 socket 不可用，同时也不会发出 FIN 报文，其他进程还是可以正常读写该 socket，直到引用计数变为 0，才会发出 FIN 报文。</li><li>shutdown 函数，可以指定 socket 只关闭发送方向而不关闭读取方向，也就是 socket 不再有发送数据的能力，但是还是具有接收数据的能力。如果有多进程/多线程共享同一个 socket，shutdown 则不管引用计数，直接使得该 socket 不可用，然后发出 FIN 报文，如果有别的进程企图使用该 socket，将会受到影响。</li></ul><p>如果客户端是用 close 函数来关闭连接，那么在 TCP 四次挥手过程中，如果收到了服务端发送的数据，由于客户端已经不再具有发送和接收数据的能力，所以客户端的内核会回 RST 报文给服务端，然后内核会释放连接，这时就不会经历完成的 TCP 四次挥手，所以我们常说，调用 close 是粗暴的关闭。</p><p><img src=https://img-blog.csdnimg.cn/3b5f1897d2d74028aaf4d552fbce1a74.png width=auto alt=在这里插入图片描述></p><p>当服务端收到 RST 后，内核就会释放连接，当服务端应用程序再次发起读操作或者写操作时，就能感知到连接已经被释放了：</p><ul><li>如果是读操作，则会返回 RST 的报错，也就是我们常见的Connection reset by peer。</li><li>如果是写操作，那么程序会产生 SIGPIPE 信号，应用层代码可以捕获并处理信号，如果不处理，则默认情况下进程会终止，异常退出。</li></ul><p>相对的，shutdown 函数因为可以指定只关闭发送方向而不关闭读取方向，所以即使在 TCP 四次挥手过程中，如果收到了服务端发送的数据，客户端也是可以正常读取到该数据的，然后就会经历完整的 TCP 四次挥手，所以我们常说，调用 shutdown 是优雅的关闭。</p><p><img src=https://img-blog.csdnimg.cn/71f5646ec58849e5921adc08bb6789d4.png width=auto alt=优雅关闭.drawio.png></p><p>但是注意，shutdown 函数也可以指定「只关闭读取方向，而不关闭发送方向」，但是这时候内核是不会发送 FIN 报文的，因为发送 FIN 报文是意味着我方将不再发送任何数据，而 shutdown 如果指定「不关闭发送方向」，就意味着 socket 还有发送数据的能力，所以内核就不会发送 FIN。</p><a href=#什么情况会出现三次挥手><h2 id=什么情况会出现三次挥手><span class=hanchor arialabel=Anchor># </span>什么情况会出现三次挥手？</h2></a><p>当被动关闭方（上图的服务端）在 TCP 挥手过程中，「<strong>没有数据要发送」并且「开启了 TCP 延迟确认机制」，那么第二和第三次挥手就会合并传输，这样就出现了三次挥手。</strong></p><p><img src=https://img-blog.csdnimg.cn/d7b349efa4f94453943b433b704a4ca8.png width=auto alt=在这里插入图片描述></p><p>然后因为 TCP 延迟确认机制是默认开启的，所以导致我们抓包时，看见三次挥手的次数比四次挥手还多。</p><blockquote><p>什么是 TCP 延迟确认机制？</p></blockquote><p>当发送没有携带数据的 ACK，它的网络效率也是很低的，因为它也有 40 个字节的 IP 头 和 TCP 头，但却没有携带数据报文。
+为了解决 ACK 传输效率低问题，所以就衍生出了 <strong>TCP 延迟确认</strong>。
+TCP 延迟确认的策略：</p><ul><li>当有响应数据要发送时，ACK 会随着响应数据一起立刻发送给对方</li><li>当没有响应数据要发送时，ACK 将会延迟一段时间，以等待是否有响应数据可以一起发送</li><li>如果在延迟等待发送 ACK 期间，对方的第二个数据报文又到达了，这时就会立刻发送 ACK</li></ul><p><img src=https://img-blog.csdnimg.cn/33f3d2d54a924b0a80f565038327e0e4.png width=auto alt></p><p>延迟等待的时间是在 Linux 内核中定义的，如下图：</p><p><img src=https://img-blog.csdnimg.cn/ae241915337a4d2c9cb2f7ab91e6661d.png width=auto alt></p><p>关键就需要 HZ 这个数值大小，HZ 是跟系统的时钟频率有关，每个操作系统都不一样，在我的 Linux 系统中 HZ 大小是 1000，如下图：</p><p><img src=https://img-blog.csdnimg.cn/7a67bd4dc2894335b974e38674ba90b4.png width=auto alt></p><p>知道了 HZ 的大小，那么就可以算出：</p><ul><li>最大延迟确认时间是 200 ms （1000/5）</li><li>最短延迟确认时间是 40 ms （1000/25）</li></ul><blockquote><p>怎么关闭 TCP 延迟确认机制？</p></blockquote><p>如果要关闭 TCP 延迟确认机制，可以在 Socket 设置里启用 TCP_QUICKACK。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=c1>// 1 表示开启 TCP_QUICKACK，即关闭 TCP 延迟确认机制
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>value</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=n>setsockopt</span><span class=p>(</span><span class=n>socketfd</span><span class=p>,</span> <span class=n>IPPROTO_TCP</span><span class=p>,</span> <span class=n>TCP_QUICKACK</span><span class=p>,</span> <span class=p>(</span><span class=kt>char</span><span class=o>*</span><span class=p>)</span><span class=o>&amp;</span> <span class=n>value</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=kt>int</span><span class=p>));</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#实验验证><h3 id=实验验证><span class=hanchor arialabel=Anchor># </span>实验验证</h3></a><a href=#实验一><h4 id=实验一><span class=hanchor arialabel=Anchor># </span>实验一</h4></a><p>接下来，来给大家做个实验，验证这个结论：</p><blockquote><p>当被动关闭方（上图的服务端）在 TCP 挥手过程中，「<strong>没有数据要发送」并且「开启了 TCP 延迟确认机制」，那么第二和第三次挥手就会合并传输，这样就出现了三次挥手。</strong></p></blockquote><p>服务端的代码如下，做的事情很简单，就读取数据，然后当 read 返回 0 的时候，就马上调用 close 关闭连接。因为 TCP 延迟确认机制是默认开启的，所以不需要特殊设置。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;errno.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;netdb.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;sys/types.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;netinet/in.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;sys/socket.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;netinet/tcp.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=cp>#define MAXLINE 1024
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 1. 创建一个监听 socket
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int</span> <span class=n>listenfd</span> <span class=o>=</span> <span class=n>socket</span><span class=p>(</span><span class=n>AF_INET</span><span class=p>,</span> <span class=n>SOCK_STREAM</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span><span class=p>(</span><span class=n>listenfd</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;socket error : %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 2. 初始化服务器地址和端口
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>struct</span> <span class=nc>sockaddr_in</span> <span class=n>server_addr</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>bzero</span><span class=p>(</span><span class=o>&amp;</span><span class=n>server_addr</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=k>struct</span> <span class=nc>sockaddr_in</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_addr</span><span class=p>.</span><span class=n>sin_family</span> <span class=o>=</span> <span class=n>AF_INET</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_addr</span><span class=p>.</span><span class=n>sin_addr</span><span class=p>.</span><span class=n>s_addr</span> <span class=o>=</span> <span class=n>htonl</span><span class=p>(</span><span class=n>INADDR_ANY</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_addr</span><span class=p>.</span><span class=n>sin_port</span> <span class=o>=</span> <span class=n>htons</span><span class=p>(</span><span class=mi>8888</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 3. 绑定地址+端口
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span><span class=p>(</span><span class=n>bind</span><span class=p>(</span><span class=n>listenfd</span><span class=p>,</span> <span class=p>(</span><span class=k>struct</span> <span class=nc>sockaddr</span> <span class=o>*</span><span class=p>)(</span><span class=o>&amp;</span><span class=n>server_addr</span><span class=p>),</span> <span class=k>sizeof</span><span class=p>(</span><span class=k>struct</span> <span class=nc>sockaddr</span><span class=p>))</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span><span class=s>&#34;bind error:%s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;begin listen....</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 4. 开始监听
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span><span class=p>(</span><span class=n>listen</span><span class=p>(</span><span class=n>listenfd</span><span class=p>,</span> <span class=mi>128</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;listen error:%s</span><span class=se>\n\a</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=n>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 5. 获取已连接的socket
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>struct</span> <span class=nc>sockaddr_in</span> <span class=n>client_addr</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>socklen_t</span> <span class=n>client_addrlen</span> <span class=o>=</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>client_addr</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>clientfd</span> <span class=o>=</span> <span class=n>accept</span><span class=p>(</span><span class=n>listenfd</span><span class=p>,</span> <span class=p>(</span><span class=k>struct</span> <span class=nc>sockaddr</span> <span class=o>*</span><span class=p>)</span><span class=o>&amp;</span><span class=n>client_addr</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>client_addrlen</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span><span class=p>(</span><span class=n>clientfd</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;accept error:%s</span><span class=se>\n\a</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=n>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;accept success</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>char</span> <span class=n>message</span><span class=p>[</span><span class=n>MAXLINE</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span><span class=mi>0</span><span class=p>};</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=k>while</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//6. 读取客户端发送的数据
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=kt>int</span> <span class=n>n</span> <span class=o>=</span> <span class=n>read</span><span class=p>(</span><span class=n>clientfd</span><span class=p>,</span> <span class=n>message</span><span class=p>,</span> <span class=n>MAXLINE</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span><span class=p>(</span><span class=n>n</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// 读取错误
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;read error:%s</span><span class=se>\n\a</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=n>n</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>  <span class=c1>// 返回 0 ，代表读到 FIN 报文
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;client closed </span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>close</span><span class=p>(</span><span class=n>clientfd</span><span class=p>);</span> <span class=c1>// 没有数据要发送，立马关闭连接
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>message</span><span class=p>[</span><span class=n>n</span><span class=p>]</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl>        <span class=n>printf</span><span class=p>(</span><span class=s>&#34;received %d bytes: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>n</span><span class=p>,</span> <span class=n>message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>	
+</span></span><span class=line><span class=cl>    <span class=n>close</span><span class=p>(</span><span class=n>listenfd</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>客户端代码如下，做的事情也很简单，与服务端连接成功后，就发送数据给服务端，然后睡眠一秒后，就调用 close 关闭连接，所以客户端是主动关闭方：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;errno.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;netdb.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;sys/types.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;netinet/in.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;sys/socket.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 1. 创建一个监听 socket
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int</span> <span class=n>connectfd</span> <span class=o>=</span> <span class=n>socket</span><span class=p>(</span><span class=n>AF_INET</span><span class=p>,</span> <span class=n>SOCK_STREAM</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span><span class=p>(</span><span class=n>connectfd</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;socket error : %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 2. 初始化服务器地址和端口
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>struct</span> <span class=nc>sockaddr_in</span> <span class=n>server_addr</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>bzero</span><span class=p>(</span><span class=o>&amp;</span><span class=n>server_addr</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=k>struct</span> <span class=nc>sockaddr_in</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_addr</span><span class=p>.</span><span class=n>sin_family</span> <span class=o>=</span> <span class=n>AF_INET</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_addr</span><span class=p>.</span><span class=n>sin_addr</span><span class=p>.</span><span class=n>s_addr</span> <span class=o>=</span> <span class=n>inet_addr</span><span class=p>(</span><span class=s>&#34;127.0.0.1&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_addr</span><span class=p>.</span><span class=n>sin_port</span> <span class=o>=</span> <span class=n>htons</span><span class=p>(</span><span class=mi>8888</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1>// 3. 连接服务器
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span><span class=p>(</span><span class=n>connect</span><span class=p>(</span><span class=n>connectfd</span><span class=p>,</span> <span class=p>(</span><span class=k>struct</span> <span class=nc>sockaddr</span> <span class=o>*</span><span class=p>)(</span><span class=o>&amp;</span><span class=n>server_addr</span><span class=p>),</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>server_addr</span><span class=p>))</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span><span class=s>&#34;connect error:%s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;connect success</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>char</span> <span class=n>sendline</span><span class=p>[</span><span class=mi>64</span><span class=p>]</span> <span class=o>=</span> <span class=s>&#34;hello, i am xiaolin&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>//4. 发送数据
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int</span> <span class=n>ret</span> <span class=o>=</span> <span class=n>send</span><span class=p>(</span><span class=n>connectfd</span><span class=p>,</span> <span class=n>sendline</span><span class=p>,</span> <span class=n>strlen</span><span class=p>(</span><span class=n>sendline</span><span class=p>),</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span><span class=p>(</span><span class=n>ret</span> <span class=o>!=</span> <span class=n>strlen</span><span class=p>(</span><span class=n>sendline</span><span class=p>))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span><span class=s>&#34;send data error:%s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>strerror</span><span class=p>(</span><span class=n>errno</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;already send %d bytes</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>ret</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>//5. 关闭连接
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>close</span><span class=p>(</span><span class=n>connectfd</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>编译服务端和客户端的代码：</p><p><img src=https://img-blog.csdnimg.cn/291c6bdf93fa4e04b1606eef57d76836.png width=auto alt=在这里插入图片描述></p><p>先启用服务端：</p><p><img src=https://img-blog.csdnimg.cn/a975aa542caf41b2a1f303563df697b7.png width=auto alt=在这里插入图片描述></p><p>然后用 tcpdump 工具开始抓包，命令如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>tcpdump -i lo tcp and port <span class=m>8888</span> -s0 -w /home/tcp_close.pcap
+</span></span></code></pre></td></tr></table></div></div><p>然后启用客户端，可以看到，与服务端连接成功后，发完数据就退出了。</p><p><img src=https://img-blog.csdnimg.cn/8ea9f527a68a4c0184edc8842aaf55d6.png width=auto alt=在这里插入图片描述></p><p>此时，服务端的输出：</p><p><img src=https://img-blog.csdnimg.cn/ff5f9ae91a3a4576b59e6e9c4716464d.png width=auto alt=在这里插入图片描述></p><p>接下来，我们来看看抓包的结果。</p><p><img src=https://img-blog.csdnimg.cn/b542a2777aca4419b47205484b52cc03.png width=auto alt=在这里插入图片描述></p><p>可以看到，TCP 挥手次数是 3 次。</p><p>所以，下面这个结论是没问题的。</p><blockquote><p>结论：当被动关闭方（上图的服务端）在 TCP 挥手过程中，「<strong>没有数据要发送」并且「开启了 TCP 延迟确认机制（默认会开启）」，那么第二和第三次挥手就会合并传输，这样就出现了三次挥手。</strong></p></blockquote><a href=#实验二><h4 id=实验二><span class=hanchor arialabel=Anchor># </span>实验二</h4></a><p>我们再做一次实验，来看看<strong>关闭 TCP 延迟确认机制，会出现四次挥手吗？</strong></p><p>客户端代码保持不变，服务端代码需要增加一点东西。</p><p>在上面服务端代码中，增加了打开了 TCP_QUICKACK （快速应答）机制的代码，如下：</p><p><img src=https://img-blog.csdnimg.cn/fbbe19e6b1cc4a21b024588950b88eee.png width=auto alt=在这里插入图片描述></p><p>编译好服务端代码后，就开始运行服务端和客户端的代码，同时用 tcpdump 进行抓包。</p><p>抓包的结果如下，可以看到是四次挥手。
+<img src=https://img-blog.csdnimg.cn/b6327b1057d64f54997c0eb322b28a55.png width=auto alt=在这里插入图片描述></p><p>所以，当被动关闭方（上图的服务端）在 TCP 挥手过程中，「<strong>没有数据要发送」，同时「关闭了 TCP 延迟确认机制」，那么就会是四次挥手。</strong></p><blockquote><p>设置 TCP_QUICKACK 的代码，为什么要放在 read 返回 0 之后？</p></blockquote><p>我也是多次实验才发现，在 bind 之前设置 TCP_QUICKACK 是不生效的，只有在 read 返回 0 的时候，设置 TCP_QUICKACK 才会出现四次挥手。</p><p>网上查了下资料说，设置 TCP_QUICKACK 并不是永久的，所以每次读取数据的时候，如果想要立刻回 ACK，那就得在每次读取数据之后，重新设置 TCP_QUICKACK。</p><p>而我这里的实验，目的是为了当收到客户端的 FIN 报文（第一次挥手）后，立马回 ACK 报文。所以就在 read 返回 0 的时候，设置 TCP_QUICKACK。当然，实际应用中，没人会在这个位置设置 TCP_QUICKACK，因为操作系统都通过 TCP 延迟确认机制帮我们把四次挥手优化成了三次挥手了。</p><a href=#总结><h2 id=总结><span class=hanchor arialabel=Anchor># </span>总结</h2></a><p>当被动关闭方在 TCP 挥手过程中，如果「没有数据要发送」，同时「没有开启 TCP_QUICKACK（默认情况就是没有开启，没有开启 TCP_QUICKACK，等于就是在使用 TCP 延迟确认机制）」，那么第二和第三次挥手就会合并传输，这样就出现了三次挥手。</p><p><strong>所以，出现三次挥手现象，是因为 TCP 延迟确认机制导致的。</strong></p><hr><p><em><strong>哈喽，我是小林，就爱图解计算机基础，如果觉得文章对你有帮助，欢迎微信搜索「小林coding」</strong></em></p><p><img src=https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost3@main/%E5%85%B6%E4%BB%96/%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BB%8B%E7%BB%8D.png width=auto alt=img></p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li><a href=/%E7%BD%91%E7%BB%9C/README/ data-ctx="TCP 四次挥手，可以变成三次吗？" data-src=/%E7%BD%91%E7%BB%9C/README class=internal-link>README</a></li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>

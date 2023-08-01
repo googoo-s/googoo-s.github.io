@@ -1,9 +1,315 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://googoo-s.github.io/</link><description>Recent content on</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 31 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://googoo-s.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>dataview</title><link>https://googoo-s.github.io/Obsidian/dataview/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/dataview/</guid><description>官方地址 代码仓库 文档地址 其他教程 Obsidian DataView 入门保姆级引导手册 元数据 元数据是一系列的键值对,可以给笔记，可以给note,list item ,task 添加元数据
 如何添加元数据 Frontmatter frontmatter 是markdown的一种扩展，可以使用yaml 来添加元数据 1 2 3 4 5 6 7 --- alias: &amp;#34;document&amp;#34; last-reviewed: 2021-08-17 thoughts: rating: 8 reviewable: false --- inline fields 使用方法为在文件的任意位置添加 1 2 3 4 Basic Field:: Some random Value **Bold Field**:: Nice!</description></item><item><title>excalidraw</title><link>https://googoo-s.github.io/Obsidian/excalidraw/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/excalidraw/</guid><description> 代码仓库 note 中插入excalidraw 语法 1 ![[excalidraw]]</description></item><item><title>Front Matter</title><link>https://googoo-s.github.io/Obsidian/Front-Matter/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/Front-Matter/</guid><description>使用 Front Matter 可以保存 note 待元数据，推荐使用 Hugo 的配置 Front matter | Hugo (gohugo.io)</description></item><item><title>lua基础</title><link>https://googoo-s.github.io/lua/lua%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/lua/lua%E5%9F%BA%E7%A1%80/</guid><description>Lua 简介 Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组并于 1993 年开发。其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。Lua 由标准 C 编写而成，几乎在所有操作系统和平台上都可以编译、运行。Lua 并没有提供强大的库，这是由它的定位决定的。所以 Lua 不适合作为开发独立应用程序的语言。Lua 有一个同时进行的 JIT 项目，提供在特定平台上的即时编译功能。</description></item><item><title>Lua高级</title><link>https://googoo-s.github.io/lua/Lua%E9%AB%98%E7%BA%A7/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/lua/Lua%E9%AB%98%E7%BA%A7/</guid><description>元表 元表 (metatable) 的表现行为类似于 C++ 语言中的操作符重载，例如我们可以重载 &amp;ldquo;__add&amp;rdquo; 元方法 (metamethod)，来计算两个 Lua 数组的并集；或者重载 &amp;ldquo;__index&amp;rdquo; 方法，来定义我们自己的 Hash 函数。Lua 提供了两个十分重要的用来处理元表的方法
 setmetatable(table, metatable)：此方法用于为一个表设置元表。</description></item><item><title>obsidian overview</title><link>https://googoo-s.github.io/Obsidian/obsidian-overview/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/obsidian-overview/</guid><description>主页内容 obsidian 相关内容，包括插件
-结构</description></item><item><title>Obsidian-plugin</title><link>https://googoo-s.github.io/Obsidian/Obsidian-plugin/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/Obsidian-plugin/</guid><description> advanced-table banners calendar commander dataview emoji-shortcodes emoji-toolbar excel-to-markdown-table homepage hover-editor icon-folder) icons image-toolkit minimal-settings obsidian-git recent-files settings-search style-settings tag-wrangler excalidraw</description></item><item><title>publish</title><link>https://googoo-s.github.io/Obsidian/publish/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/publish/</guid><description>obsidian 目前最完美的免费发布方案 渐进式教程 by oldwinter</description></item><item><title>template</title><link>https://googoo-s.github.io/Obsidian/template/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/template/</guid><description> * 模板的使用方法 默认存放的文件夹 /template</description></item><item><title/><link>https://googoo-s.github.io/statistic/%E5%BA%94%E7%94%A8%E5%B1%82.png/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/statistic/%E5%BA%94%E7%94%A8%E5%B1%82.png/</guid><description/></item><item><title/><link>https://googoo-s.github.io/statistic/%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E5%B1%82.png/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/statistic/%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E5%B1%82.png/</guid><description/></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/HTTP/HTTP-%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/HTTP/HTTP-%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/</guid><description>在面试过程中，HTTP 被提问的概率还是比较高的。
-小林我搜集了 6 大类 HTTP 面试常问的题目，同时这 6 大类题跟 HTTP 的发展和演变关联性是比较大的，通过问答 + 图解的形式由浅入深的方式帮助大家进一步的学习和理解 HTTP。
-HTTP 基本概念 Get 与 Post HTTP 特性 HTTP 缓存技术 HTTPS 与 HTTP HTTP/1.</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%80%8E%E4%B9%88%E5%AD%A6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%80%8E%E4%B9%88%E5%AD%A6/</guid><description>计算机网络相比操作系统好学非常多，因为计算机网络不抽象，你要想知道网络中的细节，你都可以通过抓包来分析，而且不管是手机、个人电脑和服务器，它们所使用的计算网络协议是一致的。
-也就是说，计算机网络不会因为设备的不同而不同，大家都遵循这一套「规则」来相互通信，这套规则就是 TCP/IP 网络模型。
-TCP/IP 网络参考模型共有 4 层，其中需要我们熟练掌握的是应用层、传输层和网络层，至于网络接口层（数据链路层和物理层）我们只需要做简单的了解就可以了。
-对于应用层，当然重点要熟悉最常见的 HTTP 和 HTTPS (opens new window)，传输层 TCP 和 UDP 都要熟悉，网络层要熟悉 IPv4 (opens new window)，IPv6 可以做简单点了解。</description></item></channel></rss>
+结构</description></item><item><title>Obsidian-plugin</title><link>https://googoo-s.github.io/Obsidian/Obsidian-plugin/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/Obsidian-plugin/</guid><description> advanced-table banners calendar commander dataview emoji-shortcodes emoji-toolbar excel-to-markdown-table homepage hover-editor icon-folder) icons image-toolkit minimal-settings obsidian-git recent-files settings-search style-settings tag-wrangler excalidraw</description></item><item><title>publish</title><link>https://googoo-s.github.io/Obsidian/publish/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/publish/</guid><description>obsidian 目前最完美的免费发布方案 渐进式教程 by oldwinter</description></item><item><title>template</title><link>https://googoo-s.github.io/Obsidian/template/</link><pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/Obsidian/template/</guid><description> * 模板的使用方法 默认存放的文件夹 /template</description></item><item><title/><link>https://googoo-s.github.io/statistic/%E5%BA%94%E7%94%A8%E5%B1%82.png/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/statistic/%E5%BA%94%E7%94%A8%E5%B1%82.png/</guid><description/></item><item><title/><link>https://googoo-s.github.io/statistic/%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E5%B1%82.png/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/statistic/%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E5%B1%82.png/</guid><description/></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/10_learn/draw/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/10_learn/draw/</guid><description>11.2 画图经验分享 小林写这么多篇图解文章，你们猜我收到的最多的读者问题是什么？没错，就是问我是使用什么画图工具，看来对这一点大家都相当好奇，那干脆不如写一篇介绍下我是怎么画图的。
+如果我的文章缺少了自己画的图片，相当于失去了灵魂，技术文章本身就很枯燥，如果文章中没有几张图片，读者被劝退的概率飙飙升，剩下没被劝退的估计看着看着就睡着了。所以，精美的图片可以说是必不可少的一部分，不仅在阅读时能带来视觉的冲击，而且图片相比文字能涵盖更多的信息，不然怎会有一图胜千言的说法呢？
+这时，可能有的读者会说自己不写文章呀，是不是没有必要了解画图了？我觉得这是不对，画图在我们工作中其实也是有帮助的，比如如果你想跟领导汇报一个业务流程的问题，把业务流程画出来，肯定用图的方式比用文字的方式交流起来会更有效率，更轻松些；如果你参与了一个比较复杂的项目开发，你也可以把代码的流程图给画出来，不仅能帮助自己加深理解，也能帮助后面参与的同事能更快的接手这个项目；甚至如果你要晋升级别了，演讲 PTT 里的配图也是必不可少的。
+不过很多人都是纠结用什么画图工具，其实小林觉得再烂的画图工具，只要你思路清晰，确定自己要表达出什么信息，也是能把图画好的，所以不必纠结哪款画图工具，挑一款自己画起来舒服的就行了。
+“小林，你说的我都懂，我就是喜欢你的画图风格嘛，你就说说你用啥画的？”
+咳咳，没问题，直接坦白讲，我用的是一个在线的画图网址，地址是：
+https://draw.io 用它的原因是使用方便和简单，当然最重要的是它完全免费，没有什么限制，甚至还能直接把图片保存到 GoogleDrive 、 OneDrive 和 Github，我就是保存到 Github，然后用 Github 作为我的图床。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/10_learn/learn_os/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/10_learn/learn_os/</guid><description>11.1 操作系统怎么学？ 操作系统真的可以说是 Super Man，它为了我们做了非常厉害的事情，以至于我们根本察觉不到，只有通过学习它，我们才能深刻体会到它的精妙之处，甚至会被计算机科学家设计思想所震撼，有些思想实际上也是可以应用于我们工作开发中。
+操作系统比较重要的四大模块，分别是 内存管理、 进程管理、 文件系统管理、 输入输出设备管理。这是我学习操作系统的顺序，也是我推荐给大家的学习顺序，因为内存管理不仅是最重要、最难的模块，也是和其他模块关联性最大的模块，先把它搞定，后续的模块学起来我认为会相对轻松一些。
+学习的过程中，你可能会遇到很多「虚拟」的概念，比如虚拟内存、虚拟文件系统，实际上它们的本质上都是一样的，都是向下屏蔽差异，向上提供统一的东西，以方便我们程序员使用。
+还有，你也遇到各种各样的 调度算法，在这里你可以看到数据结构与算法的魅力，重要的是我们要理解为什么要提出那么多调度算法，你当然可以说是为了更快更有效率，但是因什么问题而因此引入新算法的这个过程，更是我们重点学习的地方。
+你也会开始明白进程与线程最大的区别在于上下文切换过程中，线程不用切换虚拟内存，因为同一个进程内的线程都是共享虚拟内存空间的，线程就单这一点不用切换，就相比进程上下文切换的性能开销减少了很多。由于虚拟内存与物理内存的映射关系需要查询页表，页表的查询是很慢的过程，因此会把常用的地址映射关系缓存在 TLB 里的，这样便可以提高页表的查询速度，如果发生了进程切换，那 TLB 缓存的地址映射关系就会失效，缓存失效就意味着命中率降低，于是虚拟地址转为物理地址这一过程就会很慢。
+你也开始不会傻傻的认为 read 或 write 之后数据就直接写到硬盘了，更不会觉得多次操作 read 或 write 方法性能会很低，因为你发现操作系统会有个「磁盘高速缓冲区」，它已经帮我们做了缓存的工作，它会预读数据、缓存最近访问的数据，以及使用 I/O 调度算法来合并和排队磁盘调度 I/O，这些都是为了减少操作系统对磁盘的访问频率。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/cpu_mesi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/cpu_mesi/</guid><description>2.4 CPU 缓存一致性 直接上，不多 BB 了。
+CPU Cache 的数据写入 随着时间的推移，CPU 和内存的访问性能相差越来越大，于是就在 CPU 内部嵌入了 CPU Cache（高速缓存），CPU Cache 离 CPU 核心相当近，因此它的访问速度是很快的，于是它充当了 CPU 与内存之间的缓存角色。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/float/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/float/</guid><description>2.7 为什么 0.1 + 0.2 不等于 0.3 ？ 我们来思考几个问题：
+为什么负数要用补码表示？ 十进制小数怎么转成二进制？ 计算机是怎么存小数的？ 0.1 + 0.2 == 0.3 吗？ &amp;hellip; 别看这些问题都看似简单，但是其实还是有点东西的这些问题。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/how_cpu_deal_task/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/how_cpu_deal_task/</guid><description>2.5 CPU 是如何执行任务的？ 你清楚下面这几个问题吗？
+有了内存，为什么还需要 CPU Cache？ CPU 是怎么读写数据的？ 如何让 CPU 能读取数据更快一些？ CPU 伪共享是如何发生的？又该如何避免？ CPU 是如何调度任务的？如果你的任务对响应要求很高，你希望它总是能被先调度，这该怎么办？ &amp;hellip; 这篇，我们就来回答这些问题。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/how_cpu_run/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/how_cpu_run/</guid><description>2.1 CPU 是如何执行程序的？ 代码写了那么多，你知道 a = 1 + 2 这条代码是怎么被 CPU 执行的吗？
+软件用了那么多，你知道软件的 32 位和 64 位之间的区别吗？再来 32 位的操作系统可以运行在 64 位的电脑上吗？64 位的操作系统可以运行在 32 位的电脑上吗？如果不行，原因是什么？</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/how_to_make_cpu_run_faster/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/how_to_make_cpu_run_faster/</guid><description>2.3 如何写出让 CPU 跑得更快的代码？ 代码都是由 CPU 跑起来的，我们代码写的好与坏就决定了 CPU 的执行效率，特别是在编写计算密集型的程序，更要注重 CPU 的执行效率，否则将会大大影响系统性能。
+CPU 内部嵌入了 CPU Cache（高速缓存），它的存储容量很小，但是离 CPU 核心很近，所以缓存的读写速度是极快的，那么如果 CPU 运算时，直接从 CPU Cache 读取数据，而不是从内存的话，运算速度就会很快。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/soft_interrupt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/soft_interrupt/</guid><description>2.6 什么是软中断？ 今日的技术主题：什么是软中断？。
+中断是什么？ 先来看看什么是中断？在计算机中，中断是系统用来响应硬件设备请求的一种机制，操作系统收到硬件的中断请求，会打断正在执行的进程，然后调用内核中的中断处理程序来响应请求。
+这样的解释可能过于学术了，容易云里雾里，我就举个生活中取外卖的例子。
+小林中午搬完砖，肚子饿了，点了份白切鸡外卖，这次我带闪了，没有被某团大数据杀熟。虽然平台上会显示配送进度，但是我也不能一直傻傻地盯着呀，时间很宝贵，当然得去干别的事情，等外卖到了配送员会通过「电话」通知我，电话响了，我就会停下手中地事情，去拿外卖。
+这里的打电话，其实就是对应计算机里的中断，没接到电话的时候，我可以做其他的事情，只有接到了电话，也就是发生中断，我才会停下当前的事情，去进行另一个事情，也就是拿外卖。
+从这个例子，我们可以知道，中断是一种异步的事件处理机制，可以提高系统的并发处理能力。
+操作系统收到了中断请求，会打断其他进程的运行，所以中断请求的响应程序，也就是中断处理程序，要尽可能快的执行完，这样可以减少对正常进程运行调度地影响。
+而且，中断处理程序在响应中断时，可能还会「临时关闭中断」，这意味着，如果当前中断处理程序没有执行完之前，系统中其他的中断请求都无法被响应，也就说中断有可能会丢失，所以中断处理程序要短且快。
+还是回到外卖的例子，小林到了晚上又点起了外卖，这次为了犒劳自己，共点了两份外卖，一份小龙虾和一份奶茶，并且是由不同地配送员来配送，那么问题来了，当第一份外卖送到时，配送员给我打了长长的电话，说了一些杂七杂八的事情，比如给个好评等等，但如果这时另一位配送员也想给我打电话。
+很明显，这时第二位配送员因为我在通话中（相当于关闭了中断响应），自然就无法打通我的电话，他可能尝试了几次后就走掉了（相当于丢失了一次中断）。
+什么是软中断？ 前面我们也提到了，中断请求的处理程序应该要短且快，这样才能减少对正常进程运行调度地影响，而且中断处理程序可能会暂时关闭中断，这时如果中断处理程序执行时间过长，可能在还未执行完中断处理程序前，会丢失当前其他设备的中断请求。
+那 Linux 系统为了解决中断处理程序执行过长和中断丢失的问题，将中断过程分成了两个阶段，分别是「上半部和下半部分」。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1_hardware/storage/</guid><description>2.2 磁盘比内存慢几万倍？ 大家如果想自己组装电脑的话，肯定需要购买一个 CPU，但是存储器方面的设备，分类比较多，那我们肯定不能只买一种存储器，比如你除了要买内存，还要买硬盘，而针对硬盘我们还可以选择是固态硬盘还是机械硬盘。
+相信大家都知道内存和硬盘都属于计算机的存储设备，断电后内存的数据是会丢失的，而硬盘则不会，因为硬盘是持久化存储设备，同时也是一个 I/O 设备。
+但其实 CPU 内部也有存储数据的组件，这个应该比较少人注意到，比如寄存器、CPU L1/L2/L3 Cache 也都是属于存储设备，只不过它们能存储的数据非常小，但是它们因为靠近 CPU 核心，所以访问速度都非常快，快过硬盘好几个数量级别。
+问题来了，那机械硬盘、固态硬盘、内存这三个存储器，到底和 CPU L1 Cache 相比速度差多少倍呢？</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/2_os_structure/linux_vs_windows/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/2_os_structure/linux_vs_windows/</guid><description>3.1 Linux 内核 vs Windows 内核 Windows 和 Linux 可以说是我们比较常见的两款操作系统的。
+Windows 基本占领了电脑时代的市场，商业上取得了很大成就，但是它并不开源，所以要想接触源码得加入 Windows 的开发团队中。
+对于服务器使用的操作系统基本上都是 Linux，而且内核源码也是开源的，任何人都可以下载，并增加自己的改动或功能，Linux 最大的魅力在于，全世界有非常多的技术大佬为它贡献代码。
+这两个操作系统各有千秋，不分伯仲。
+操作系统核心的东西就是内核，这次我们就来看看，Linux 内核和 Windows 内核有什么区别？</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/alloc_mem/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/alloc_mem/</guid><description>4.4 在 4GB 物理内存的机器上，申请 8G 内存会怎么样？ 大家好，我是小林。
+看到读者在群里讨论这些面试题：
+其中，第一个问题「在 4GB 物理内存的机器上，申请 8G 内存会怎么样？」存在比较大的争议，有人说会申请失败，有的人说可以申请成功。
+这个问题在没有前置条件下，就说出答案就是耍流氓。这个问题要考虑三个前置条件：
+操作系统是 32 位的，还是 64 位的？ 申请完 8G 内存后会不会被使用？ 操作系统有没有使用 Swap 机制？ 所以，我们要分场景讨论。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/cache_lru/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/cache_lru/</guid><description>4.5 如何避免预读失效和缓存污染的问题？ 大家好，我是小林。
+上周群里看到有位小伙伴面试时，被问到这两个问题：
+咋一看，以为是在问操作系统的问题，其实这两个题目都是在问如何改进 LRU 算法。
+因为传统的 LRU 算法存在这两个问题：
+「预读失效」导致缓存命中率下降（对应第一个题目） 「缓存污染」导致缓存命中率下降（对应第二个题目） Redis 的缓存淘汰算法则是通过实现 LFU 算法来避免「缓存污染」而导致缓存命中率下降的问题（Redis 没有预读机制）。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/malloc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/malloc/</guid><description>4.2 malloc 是如何分配内存的？ 大家好，我是小林。
+这次我们就以 malloc 动态内存分配为切入点，我在文中也做了小实验：
+malloc 是如何分配内存的？ malloc 分配的是物理内存吗？ malloc(1) 会分配多大的内存？ free 释放内存，会归还给操作系统吗？ free() 函数只传入一个内存地址，为什么能知道要释放多大的内存？ 发车！</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/mem_reclaim/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/mem_reclaim/</guid><description>4.3 内存满了，会发生什么？ 大家好，我是小林。
+前几天有位读者留言说，面腾讯时，被问了两个内存管理的问题：
+先来说说第一个问题：虚拟内存有什么作用？
+第一，虚拟内存可以使得进程对运行内存超过物理内存大小，因为程序运行符合局部性原理，CPU 访问内存会有很明显的重复访问的倾向性，对于那些没有被经常使用到的内存，我们可以把它换出到物理内存之外，比如硬盘上的 swap 区域。 第二，由于每个进程都有自己的页表，所以每个进程的虚拟内存空间就是相互独立的。进程也没有办法访问其他进程的页表，所以这些页表是私有的，这就解决了多进程之间地址冲突的问题。 第三，页表里的页表项中除了物理地址之外，还有一些标记属性的比特，比如控制一个页的读写权限，标记该页是否存在等。在内存访问方面，操作系统提供了更好的安全性。 然后今天主要是聊聊第二个问题，「系统内存紧张时，会发生什么？」
+发车！
+内存分配的过程是怎样的？ 应用程序通过 malloc 函数申请内存的时候，实际上申请的是虚拟内存，此时并不会分配物理内存。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/vmem/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3_memory/vmem/</guid><description>4.1 为什么要有虚拟内存？ 本篇跟大家说说内存管理，内存管理还是比较重要的一个环节，理解了它，至少对整个操作系统的工作会有一个初步的轮廓，这也难怪面试的时候常问内存管理。
+干就完事，本文的提纲：
+虚拟内存 如果你是电子相关专业的，肯定在大学里捣鼓过单片机。
+单片机是没有操作系统的，所以每次写完代码，都需要借助工具把程序烧录进去，这样程序才能跑起来。
+另外，单片机的 CPU 是直接操作内存的「物理地址」。
+在这种情况下，要想在内存中同时运行两个程序是不可能的。如果第一个程序在 2000 的位置写入一个新的值，将会擦掉第二个程序存放在相同位置上的所有内容，所以同时运行两个程序是根本行不通的，这两个程序会立刻崩溃。
+操作系统是如何解决这个问题呢？
+这里关键的问题是这两个程序都引用了绝对物理地址，而这正是我们最需要避免的。
+我们可以把进程所使用的地址「隔离」开来，即让操作系统为每个进程分配独立的一套「虚拟地址」，人人都有，大家自己玩自己的地址就行，互不干涉。但是有个前提每个进程都不能访问物理地址，至于虚拟地址最终怎么落到物理内存里，对进程来说是透明的，操作系统已经把这些都安排的明明白白了。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/create_thread_max/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/create_thread_max/</guid><description>5.6 一个进程最多可以创建多少个线程？ 大家好，我是小林。
+昨天有位读者问了我这么个问题：
+大致意思就是，他看了一个面经，说虚拟内存是 2G 大小，然后他看了我的图解系统 PDF 里说虚拟内存是 4G，然后他就懵逼了。
+其实他看这个面经很有问题，没有说明是什么操作系统，以及是多少位操作系统。
+因为不同的操作系统和不同位数的操作系统，虚拟内存可能是不一样多。
+Windows 系统我不了解，我就说说 Linux 系统。
+在 Linux 操作系统中，虚拟地址空间的内部又被分为内核空间和用户空间两部分，不同位数的系统，地址 空间的范围也不同。比如最常⻅的 32 位和 64 位系统，如下所示:</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/deadlock/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/deadlock/</guid><description>5.4 怎么避免死锁？ 面试过程中，死锁也是高频的考点，因为如果线上环境真多发生了死锁，那真的出大事了。
+这次，我们就来系统地聊聊死锁的问题。
+死锁的概念； 模拟死锁问题的产生； 利用工具排查死锁问题； 避免死锁问题的发生； 死锁的概念 在多线程编程中，我们为了防止多线程竞争共享资源而导致数据错乱，都会在操作共享资源之前加上互斥锁，只有成功获得到锁的线程，才能操作共享资源，获取不到锁的线程就只能等待，直到锁被释放。
+那么，当两个线程为了保护两个不同的共享资源而使用了两个互斥锁，那么这两个互斥锁应用不当的时候，可能会造成两个线程都在等待对方释放锁，在没有外力的作用下，这些线程会一直相互等待，就没办法继续运行，这种情况就是发生了死锁。
+举个例子，小林拿了小美房间的钥匙，而小林在自己的房间里，小美拿了小林房间的钥匙，而小美也在自己的房间里。如果小林要从自己的房间里出去，必须拿到小美手中的钥匙，但是小美要出去，又必须拿到小林手中的钥匙，这就形成了死锁。
+死锁只有同时满足以下四个条件才会发生：
+互斥条件； 持有并等待条件； 不可剥夺条件； 环路等待条件； 互斥条件 互斥条件是指多个线程不能同时使用同一个资源。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/multithread_sync/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/multithread_sync/</guid><description>5.3 多线程冲突了怎么办？ 先来看看虚构的小故事
+已经晚上 11 点了，程序员小明的双手还在键盘上飞舞着，眼神依然注视着的电脑屏幕。
+没办法这段时间公司业绩增长中，需求自然也多了起来，加班自然也少不了。
+天气变化莫测，这时窗外下起了蓬勃大雨，同时闪电轰鸣。
+但这一丝都没有影响到小明，始料未及，突然一道巨大的雷一闪而过，办公楼就这么停电了，随后整栋楼都在回荡着的小明那一声撕心裂肺的「卧槽」。
+此时，求小明的心里面积有多大？
+等小明心里平复后，突然肚子非常的痛，想上厕所，小明心想肯定是晚上吃的某堡王有问题。
+整栋楼都停了电，小明两眼一抹黑，啥都看不见，只能靠摸墙的方法，一步一步的来到了厕所门口。
+到了厕所（共享资源），由于实在太急，小明直接冲入了厕所里，用手摸索着刚好第一个门没锁门，便夺门而入。
+这就荒唐了，这个门里面正好小红在上着厕所，正好这个厕所门是坏了的，没办法锁门。
+黑暗中，小红虽然看不见，但靠着声音，发现自己面前的这扇门有动静，觉得不对劲，于是铆足了力气，用她穿着高跟鞋脚，用力地一脚踢了过去。
+小明很幸运，被踢中了「命根子」，撕心裂肺地喊出了一个字「痛」！
+故事说完了，扯了那么多，实际上是为了说明，对于共享资源，如果没有上锁，在多线程的环境里，那么就可能会发生翻车现场。
+接下来，用 30+ 张图，带大家走进操作系统中避免多线程资源竞争的互斥、同步的方法。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/pessim_and_optimi_lock/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/pessim_and_optimi_lock/</guid><description>5.5 什么是悲观锁、乐观锁？ 生活中用到的锁，用途都比较简单粗暴，上锁基本是为了防止外人进来、电动车被偷等等。
+但生活中也不是没有 BUG 的，比如加锁的电动车在「广西 - 窃·格瓦拉」面前，锁就是形同虚设，只要他愿意，他就可以轻轻松松地把你电动车给「顺走」，不然打工怎么会是他这辈子不可能的事情呢？牛逼之人，必有牛逼之处。
+那在编程世界里，「锁」更是五花八门，多种多样，每种锁的加锁开销以及应用场景也可能会不同。
+如何用好锁，也是程序员的基本素养之一了。
+高并发的场景下，如果选对了合适的锁，则会大大提高系统的性能，否则性能会降低。
+所以，知道各种锁的开销，以及应用场景是很有必要的。
+接下来，就谈一谈常见的这几种锁：
+多线程访问共享资源的时候，避免不了资源竞争而导致数据错乱的问题，所以我们通常为了解决这一问题，都会在访问共享资源之前加锁。
+最常用的就是互斥锁，当然还有很多种不同的锁，比如自旋锁、读写锁、乐观锁等，不同种类的锁自然适用于不同的场景。
+如果选择了错误的锁，那么在一些高并发的场景下，可能会降低系统的性能，这样用户体验就会非常差了。
+所以，为了选择合适的锁，我们不仅需要清楚知道加锁的成本开销有多大，还需要分析业务场景中访问的共享资源的方式，再来还要考虑并发访问共享资源时的冲突概率。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/process_base/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/process_base/</guid><description>5.1 进程、线程基础知识 先来看看一则小故事
+我们写好的一行行代码，为了让其工作起来，我们还得把它送进城（进程）里，那既然进了城里，那肯定不能胡作非为了。
+城里人有城里人的规矩，城中有个专门管辖你们的城管（操作系统），人家让你休息就休息，让你工作就工作，毕竟摊位不多，每个人都要占这个摊位来工作，城里要工作的人多着去了。
+所以城管为了公平起见，它使用一种策略（调度）方式，给每个人一个固定的工作时间（时间片），时间到了就会通知你去休息而换另外一个人上场工作。
+另外，在休息时候你也不能偷懒，要记住工作到哪了，不然下次到你工作了，你忘记工作到哪了，那还怎么继续？
+有的人，可能还进入了县城（线程）工作，这里相对轻松一些，在休息的时候，要记住的东西相对较少，而且还能共享城里的资源。
+“哎哟，难道本文内容是进程和线程？”
+可以，聪明的你猜出来了，也不枉费我瞎编乱造的故事了。
+进程和线程对于写代码的我们，真的天天见、日日见了，但见的多不代表你就熟悉它们，比如简单问你一句，你知道它们的工作原理和区别吗？
+不知道没关系，今天就要跟大家讨论操作系统的进程和线程。
+::: tip</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/process_commu/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/process_commu/</guid><description>5.2 进程间有哪些通信方式？ 直接开讲！
+每个进程的用户地址空间都是独立的，一般而言是不能互相访问的，但内核空间是每个进程都共享的，所以进程之间要通信必须通过内核。
+Linux 内核提供了不少进程间通信的机制，我们来一起瞧瞧有哪些？
+管道 如果你学过 Linux 命令，那你肯定很熟悉「|」这个竖线。
+1 $ ps auxf | grep mysql 上面命令行里的「|」竖线就是一个管道，它的功能是将前一个命令（ps auxf）的输出，作为后一个命令（grep mysql）的输入，从这功能描述，可以看出管道传输数据是单向的，如果想相互通信，我们需要创建两个管道才行。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/thread_crash/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4_process/thread_crash/</guid><description>5.7 线程崩溃了，进程也会崩溃吗？ 来源：公众号@码海
+原文地址： 美团一面：线程崩溃了，进程也会崩溃吗？
+大家好，我是小林。
+之前分享这篇文章的时候： 进程和线程基础知识全家桶，30 张图一套带走，提到说线程的一个缺点：
+很多同学就好奇，为什么 C/C++ 语言里，线程崩溃后，进程也会崩溃，而 Java 语言里却不会呢？
+刚好看到朋友（ 公众号：码海）写了一篇：「美团面试题：为什么线程崩溃崩溃不会导致 JVM 崩溃?</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/5_schedule/schedule/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/5_schedule/schedule/</guid><description>6.1 进程调度/页面置换/磁盘调度算法 最近，我偷偷潜伏在各大技术群，因为秋招在即，看到不少小伙伴分享的大厂面经。
+然后发现，操作系统的知识点考察还是比较多的，大厂就是大厂就爱问基础知识。其中，关于操作系统的「调度算法」考察也算比较频繁。
+所以，我这边总结了操作系统的三大调度机制，分别是「进程调度/页面置换/磁盘调度算法」，供大家复习，希望大家在秋招能斩获自己心意的 offer。
+进程调度算法 进程调度算法也称 CPU 调度算法，毕竟进程是由 CPU 调度的。
+当 CPU 空闲时，操作系统就选择内存中的某个「就绪状态」的进程，并给其分配 CPU。
+什么时候会发生 CPU 调度呢？通常有以下情况：</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6_file_system/file_system/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6_file_system/file_system/</guid><description>7.1 文件系统全家桶 不多 BB，直接上「硬菜」。
+文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就是负责把用户的文件存到磁盘硬件中，因为即使计算机断电了，磁盘里的数据并不会丢失，所以可以持久化的保存文件。
+文件系统的基本数据单位是文件，它的目的是对磁盘上的文件进行组织管理，那组织的方式不同，就会形成不同的文件系统。
+Linux 最经典的一句话是：「一切皆文件」，不仅普通的文件和目录，就连块设备、管道、socket 等，也都是统一交给文件系统管理的。
+Linux 文件系统会为每个文件分配两个数据结构：索引节点（index node）和目录项（directory entry），它们主要用来记录文件的元信息和目录层次结构。
+索引节点，也就是 inode，用来记录文件的元信息，比如 inode 编号、文件大小、访问权限、创建时间、修改时间、数据在磁盘的位置等等。索引节点是文件的唯一标识，它们之间一一对应，也同样都会被存储在硬盘中，所以索引节点同样占用磁盘空间。 目录项，也就是 dentry，用来记录文件的名字、索引节点指针以及与其他目录项的层级关联关系。多个目录项关联起来，就会形成目录结构，但它与索引节点不同的是，目录项是由内核维护的一个数据结构，不存放于磁盘，而是缓存在内存。 由于索引节点唯一标识一个文件，而目录项记录着文件的名字，所以目录项和索引节点的关系是多对一，也就是说，一个文件可以有多个别名。比如，硬链接的实现就是多个目录项中的索引节点指向同一个文件。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6_file_system/pagecache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6_file_system/pagecache/</guid><description>7.2 进程写文件时，进程发生了崩溃，已写入的数据会丢失吗？ 大家好，我是小林。
+前几天，有位读者问了我这么个问题：
+大概就是，进程写文件（使用缓冲 IO）过程中，写一半的时候，进程发生了崩溃，已写入的数据会丢失吗？
+答案，是不会的。
+因为进程在执行 write （使用缓冲 IO）系统调用的时候，实际上是将文件数据写到了内核的 page cache，它是文件系统中用于缓存文件数据的缓冲，所以即使进程崩溃了，文件数据还是保留在内核的 page cache，我们读数据的时候，也是从内核的 page cache 读取，因此还是依然读的进程崩溃前写入的数据。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7_device/device/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7_device/device/</guid><description>8.1 键盘敲入 A 字母时，操作系统期间发生了什么？ 键盘可以说是我们最常使用的输入硬件设备了，但身为程序员的你，你知道「键盘敲入A 字母时，操作系统期间发生了什么吗」？
+那要想知道这个发生的过程，我们得先了解了解「操作系统是如何管理多种多样的的输入输出设备」的，等了解完这个后，我们再来看看这个问题，你就会发现问题已经被迎刃而解了。
+设备控制器 我们的电脑设备可以接非常多的输入输出设备，比如键盘、鼠标、显示器、网卡、硬盘、打印机、音响等等，每个设备的用法和功能都不同，那操作系统是如何把这些输入输出设备统一管理的呢?
+为了屏蔽设备之间的差异，每个设备都有一个叫设备控制器（Device Control） 的组件，比如硬盘有硬盘控制器、显示器有视频控制器等。
+因为这些控制器都很清楚的知道对应设备的用法和功能，所以 CPU 是通过设备控制器来和设备打交道的。
+设备控制器里有芯片，它可执行自己的逻辑，也有自己的寄存器，用来与 CPU 进行通信，比如：</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/hash/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/hash/</guid><description>9.4 什么是一致性哈希？ 大家好，我是小林。
+在逛牛客网的面经的时候，发现有位同学在面微信的时候，被问到这个问题：
+第一个问题就是：一致性哈希是什么，使用场景，解决了什么问题？
+这个问题还挺有意思的，所以今天就来聊聊这个。
+发车！
+如何分配请求？ 大多数网站背后肯定不是只有一台服务器提供服务，因为单机的并发量和数据量都是有限的，所以都会用多台服务器构成集群来对外提供服务。
+但是问题来了，现在有那么多个节点（后面统称服务器为节点，因为少一个字），要如何分配客户端的请求呢？
+其实这个问题就是「负载均衡问题」。解决负载均衡问题的算法很多，不同的负载均衡算法，对应的就是不同的分配策略，适应的业务场景也不同。
+最简单的方式，引入一个中间的负载均衡层，让它将外界的请求「轮流」的转发给内部的集群。比如集群有 3 个节点，外界请求有 3 个，那么每个节点都会处理 1 个请求，达到了分配请求的目的。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/reactor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/reactor/</guid><description>9.3 高性能网络模式：Reactor 和 Proactor 小林，来了。
+这次就来图解 Reactor 和 Proactor 这两个高性能网络模式。
+别小看这两个东西，特别是 Reactor 模式，市面上常见的开源软件很多都采用了这个方案，比如 Redis、Nginx、Netty 等等，所以学好这个模式设计的思想，不仅有助于我们理解很多开源软件，而且也能在面试时吹逼。
+发车！
+演进 如果要让服务器服务多个客户端，那么最直接的方式就是为每一条连接创建线程。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/selete_poll_epoll/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/selete_poll_epoll/</guid><description>9.2 I/O 多路复用：select/poll/epoll 我们以最简单 socket 网络模型，一步一步的过渡到 I/O 多路复用。
+但我不会具体细节说到每个系统调用的参数，这方面书上肯定比我说的详细。
+好了，发车！
+最基本的 Socket 模型 要想客户端和服务器能在网络中通信，那必须得使用 Socket 编程，它是进程间通信里比较特别的方式，特别之处在于它是可以跨主机间通信。
+Socket 的中文名叫作插口，咋一看还挺迷惑的。事实上，双方要进行网络通信前，各自得创建一个 Socket，这相当于客户端和服务器都开了一个“口子”，双方读取和发送数据的时候，都通过这个“口子”。这样一看，是不是觉得很像弄了一根网线，一头插在客户端，一头插在服务端，然后进行通信。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/zero_copy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8_network_system/zero_copy/</guid><description>9.1 什么是零拷贝？ 磁盘可以说是计算机系统最慢的硬件之一，读写速度相差内存 10 倍以上，所以针对优化磁盘的技术非常的多，比如零拷贝、直接 I/O、异步 I/O 等等，这些优化的目的就是为了提高系统的吞吐量，另外操作系统内核中的磁盘高速缓存区，可以有效的减少磁盘的访问次数。
+这次，我们就以「文件传输」作为切入点，来分析 I/O 工作方式，以及如何优化传输文件的性能。
+为什么要有 DMA 技术? 在没有 DMA 技术前，I/O 的过程是这样的：</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/9_linux_cmd/linux_network/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/9_linux_cmd/linux_network/</guid><description>10.1 如何查看网络的性能指标？ Linux 网络协议栈是根据 TCP/IP 模型来实现的，TCP/IP 模型由应用层、传输层、网络层和网络接口层，共四层组成，每一层都有各自的职责。
+应用程序要发送数据包时，通常是通过 socket 接口，于是就会发生系统调用，把应用层的数据拷贝到内核里的 socket 层，接着由网络协议栈从上到下逐层处理后，最后才会送到网卡发送出去。
+而对于接收网络包时，同样也要经过网络协议逐层处理，不过处理的方向与发送数据时是相反的，也就是从下到上的逐层处理，最后才送到应用程序。
+网络的速度往往跟用户体验是挂钩的，那我们又该用什么指标来衡量 Linux 的网络性能呢？以及如何分析网络问题呢？
+这次，我们就来说这些。
+性能指标有哪些？ 通常是以 4 个指标来衡量网络的性能，分别是带宽、延时、吞吐率、PPS（Packet Per Second），它们表示的意义如下：</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/9_linux_cmd/pv_uv/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/9_linux_cmd/pv_uv/</guid><description>10.2 如何从日志分析 PV、UV？ 很多时候，我们观察程序是否如期运行，或者是否有错误，最直接的方式就是看运行日志，当然要想从日志快速查到我们想要的信息，前提是程序打印的日志要精炼、精准。
+但日志涵盖的信息远不止于此，比如对于 nginx 的 access.log 日志，我们可以根据日志信息分析用户行为。
+什么用户行为呢？比如分析出哪个页面访问次数（PV）最多，访问人数（UV）最多，以及哪天访问量最多，哪个请求访问最多等等。
+这次，将用一个大概几万条记录的 nginx 日志文件作为案例，一起来看看如何分析出「用户信息」。
+别急着开始 当我们要分析日志的时候，先用 ls -lh 命令查看日志文件的大小，如果日志文件大小非常大，最好不要在线上环境做。</description></item><item><title/><link>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/README/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/README/</guid><description>图解系统介绍 大家好，我是小林，是《图解系统》的作者，本站的内容都是整理于我 公众号里的图解文章。
+还没关注的朋友，可以微信搜索「小林coding」，关注我的公众号，后续最新版本的 PDF 会在我的公众号第一时间发布，而且会有更多其他系列的图解文章，比如操作系统、计算机组成、数据库、算法等等。
+简单介绍下这个《图解系统》，整个内容共有 16W 字 + 400 张图，文字都是小林一个字一个字敲出来的，图片都是小林一个点一条线画出来的，非常的不容易。
+图解系统不仅仅涉及了操作系统的内容，还涉及一些计算机组成和 Linux 命令的内容，
+当然还是操作系统的内容占比较高，基本把操作系统进程管理、内存管理、文件系统、设备管理、网络系统这五大结构图解了，其中进程管理和网络系统这两个章节篇幅比较多，进程管理不仅包含了进程与线程的基本知识，还包含了进程间通信，多线程同步、死锁、悲观锁和乐观锁。网络系统包含 I/O 多路复用、零拷贝、Reactor 等等。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/1_base/how_os_deal_network_package/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/1_base/how_os_deal_network_package/</guid><description>2.3 Linux 系统是如何收发网络包的？ 这次，就围绕一个问题来说。
+Linux 系统是如何收发网络包的？
+网络模型 为了使得多种设备能通过网络相互通信，和为了解决各种不同设备在网络互联中的兼容性问题，国际标准化组织制定了开放式系统互联通信参考模型（Open System Interconnection Reference Model），也就是 OSI 网络模型，该模型主要有 7 层，分别是应用层、表示层、会话层、传输层、网络层、数据链路层以及物理层。
+每一层负责的职能都不同，如下：
+应用层，负责给应用程序提供统一的接口； 表示层，负责把数据转换成兼容另一个系统能识别的格式； 会话层，负责建立、管理和终止表示层实体之间的通信会话； 传输层，负责端到端的数据传输； 网络层，负责数据的路由、转发、分片； 数据链路层，负责数据的封帧和差错检测，以及 MAC 寻址； 物理层，负责在物理网络中传输数据帧； 由于 OSI 模型实在太复杂，提出的也只是概念理论上的分层，并没有提供具体的实现方案。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/1_base/tcp_ip_model/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/1_base/tcp_ip_model/</guid><description>2.1 TCP/IP 网络模型有哪几层？ 问大家，为什么要有 TCP/IP 网络模型？
+对于同一台设备上的进程间通信，有很多种方式，比如有管道、消息队列、共享内存、信号等方式，而对于不同设备上的进程间通信，就需要网络通信，而设备是多样性的，所以要兼容多种多样的设备，就协商出了一套通用的网络协议。
+这个网络协议是分层的，每一层都有各自的作用和职责，接下来就根据「 TCP/IP 网络模型」分别对每一层进行介绍。
+应用层 最上层的，也是我们能直接接触到的就是应用层（Application Layer），我们电脑或手机使用的应用软件都是在应用层实现。那么，当两个不同设备的应用需要通信的时候，应用就把应用数据传给下一层，也就是传输层。
+所以，应用层只需要专注于为用户提供应用功能，比如 HTTP、FTP、Telnet、DNS、SMTP等。
+应用层是不用去关心数据是如何传输的，就类似于，我们寄快递的时候，只需要把包裹交给快递员，由他负责运输快递，我们不需要关心快递是如何被运输的。
+而且应用层是工作在操作系统中的用户态，传输层及以下则工作在内核态。
+传输层 应用层的数据包会传给传输层，传输层（Transport Layer）是为应用层提供网络支持的。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/1_base/what_happen_url/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/1_base/what_happen_url/</guid><description>2.2 键入网址到网页显示，期间发生了什么？ 想必不少小伙伴面试过程中，会遇到「当键入网址后，到网页显示，其间发生了什么」的面试题。
+还别说，这问题真挺常问的，前几天坐在我旁边的主管电话面试应聘者的时候，也问了这个问题。
+接下来以下图较简单的网络拓扑模型作为例子，探究探究其间发生了什么？
+孤单小弟 —— HTTP 浏览器做的第一步工作是解析 URL
+首先浏览器做的第一步工作就是要对 URL 进行解析，从而生成发送给 Web 服务器的请求信息。
+让我们看看一条长长的 URL 里的各个元素的代表什么，见下图：</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http2/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http2/</guid><description>3.6 HTTP/2 牛逼在哪？ 不多 BB 了，直接发车！
+一起来看看 HTTP/2 牛逼在哪？
+HTTP/1.1 协议的性能问题 我们得先要了解下 HTTP/1.1 协议存在的性能问题，因为 HTTP/2 协议就是把这些性能问题逐个攻破了。
+现在的站点相比以前变化太多了，比如：
+消息的大小变大了，从几 KB 大小的消息，到几 MB 大小的消息； 页面资源变多了，从每个页面不到 10 个的资源，到每页超 100 多个资源； 内容形式变多样了，从单纯到文本内容，到图片、视频、音频等内容； 实时性要求变高了，对页面的实时性要求的应用越来越多； 这些变化带来的最大性能问题就是 HTTP/1.</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http3/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http3/</guid><description>3.7 HTTP/3 强势来袭 HTTP/3 现在（2022 年 5 月）还没正式推出，不过自 2017 年起，HTTP/3 已经更新到 34 个草案了，基本的特性已经确定下来了，对于包格式可能后续会有变化。
+所以，这次 HTTP/3 介绍不会涉及到包格式，只说它的特性。
+美中不足的 HTTP/2 HTTP/2 通过头部压缩、二进制编码、多路复用、服务器推送等新特性大幅度提升了 HTTP/1.</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_interview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_interview/</guid><description>3.1 HTTP 常见面试题 在面试过程中，HTTP 被提问的概率还是比较高的。
+小林我搜集了 6 大类 HTTP 面试常问的题目，同时这 6 大类题跟 HTTP 的发展和演变关联性是比较大的，通过问答 + 图解的形式由浅入深的方式帮助大家进一步的学习和理解 HTTP。
+HTTP 基本概念 Get 与 Post HTTP 特性 HTTP 缓存技术 HTTPS 与 HTTP HTTP/1.</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_optimize/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_optimize/</guid><description>3.2 HTTP/1.1 如何优化？ 问你一句：「你知道 HTTP/1.1 该如何优化吗？」
+我们可以从下面这三种优化思路来优化 HTTP/1.1 协议：
+尽量避免发送 HTTP 请求； 在需要发送 HTTP 请求时，考虑如何减少请求次数； 减少服务器的 HTTP 响应的数据大小； 下面，就针对这三种思路具体看看有哪些优化方法。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_rpc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_rpc/</guid><description>3.8 既然有 HTTP 协议，为什么还要有 RPC？ 来源：公众号@小白debug
+原文地址： 既然有 HTTP 协议，为什么还要有 RPC？
+我想起了我刚工作的时候，第一次接触 RPC 协议，当时就很懵，我 HTTP 协议用的好好的，为什么还要用 RPC 协议？</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_websocket/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/http_websocket/</guid><description>3.9 既然有 HTTP 协议，为什么还要有 WebSocket？ 来源：公众号@小白debug
+原文地址： 既然有 HTTP 协议，为什么还要有 WebSocket？
+平时我们打开网页，比如购物网站某宝。都是点一下「列表商品」，跳转一下网页就到了「商品详情」。
+从 HTTP 协议的角度来看，就是点一下网页上的某个按钮，前端发一次 HTTP 请求，网站返回一次 HTTP 响应。这种由客户端主动请求，服务器响应的方式也满足大部分网页的功能场景。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/https_ecdhe/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/https_ecdhe/</guid><description>3.4 HTTPS ECDHE 握手解析 HTTPS 常用的密钥交换算法有两种，分别是 RSA 和 ECDHE 算法。
+其中，RSA 是比较传统的密钥交换算法，它不具备前向安全的性质，因此现在很少服务器使用的。而 ECDHE 算法具有前向安全，所以被广泛使用。
+我在上一篇已经介绍了 RSA 握手的过程，今天这一篇就「从理论再到实战抓包」介绍 ECDHE 算法。
+离散对数 ECDHE 密钥协商算法是 DH 算法演进过来的，所以我们先从 DH 算法说起。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/https_optimize/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/https_optimize/</guid><description>3.5 HTTPS 如何优化？ 由裸数据传输的 HTTP 协议转成加密数据传输的 HTTPS 协议，给应用数据套了个「保护伞」，提高安全性的同时也带来了性能消耗。
+因为 HTTPS 相比 HTTP 协议多一个 TLS 协议握手过程，目的是为了通过非对称加密握手协商或者交换出对称加密密钥，这个过程最长可以花费掉 2 RTT，接着后续传输的应用数据都得使用对称加密密钥来加密/解密。
+为了数据的安全性，我们不得不使用 HTTPS 协议，至今大部分网址都已从 HTTP 迁移至 HTTPS 协议，因此针对 HTTPS 的优化是非常重要的。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/https_rsa/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/2_http/https_rsa/</guid><description>3.3 HTTPS RSA 握手解析 我前面讲，简单给大家介绍了的 HTTPS 握手过程，但是还不够细！
+只讲了比较基础的部分，所以这次我们再来深入一下 HTTPS，用实战抓包的方式，带大家再来窥探一次 HTTPS。
+对于还不知道对称加密和非对称加密的同学，你先复习我以前的这篇文章 「硬核！30 张图解 HTTP 常见的面试题」，本篇文章默认大家已经具备了这些知识。
+TLS 握手过程 HTTP 由于是明文传输，所谓的明文，就是说客户端与服务端通信的信息都是肉眼可见的，随意使用一个抓包工具都可以截获通信的内容。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/challenge_ack/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/challenge_ack/</guid><description>4.9 已建立连接的 TCP，收到 SYN 会发生什么？ 大家好，我是小林。
+昨晚有位读者问了我这么个问题：
+大概意思是，一个已经建立的 TCP 连接，客户端中途宕机了，而服务端此时也没有数据要发送，一直处于 Established 状态，客户端恢复后，向服务端建立连接，此时服务端会怎么处理？
+看过我的图解网络的读者都知道，TCP 连接是由「四元组」唯一确认的。
+然后这个场景中，客户端的 IP、服务端 IP、目的端口并没有变化，所以这个问题关键要看客户端发送的 SYN 报文中的源端口是否和上一次连接的源端口相同。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/isn_deff/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/isn_deff/</guid><description>4.7 为什么 TCP 每次建立连接时，初始化序列号都要不一样呢？ 大家好，我是小林。
+为什么 TCP 每次建立连接时，初始化序列号都要不一样呢？
+接下来，我一步一步给大家讲明白，我觉得应该有不少人会有类似的问题，所以今天在肝一篇！
+为什么 TCP 每次建立连接时，初始化序列号都要不一样呢？
+主要原因是为了防止历史报文被下一个相同四元组的连接接收。
+TCP 四次挥手中的 TIME_WAIT 状态不是会持续 2 MSL 时长，历史报文不是早就在网络中消失了吗？</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/out_of_order_fin/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/out_of_order_fin/</guid><description>4.10 四次挥手中收到乱序的 FIN 包会如何处理？ 大家好，我是小林。
+收到个读者的问题，他在面试鹅厂的时候，被搞懵了，因为面试官问了他这么一个网络问题：
+不得不说，鹅厂真的很喜欢问网络问题，而且爱问异常情况下的网络问题，之前也有篇另外一个读者面试鹅厂的网络问题：「 被鹅厂面怕了！」。
+不过这道鹅厂的网络题可能是提问的读者表述有问题，因为如果 FIN 报文比数据包先抵达客户端，此时 FIN 报文其实是一个乱序的报文，此时客户端的 TCP 连接并不会从 FIN_WAIT_2 状态转换到 TIME_WAIT 状态。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/port/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/port/</guid><description>4.18 TCP 和 UDP 可以使用同一个端口吗？ 大家好，我是小林。
+之前有读者在字节面试的时候，被问到：TCP 和 UDP 可以同时监听相同的端口吗？
+关于端口的知识点，还是挺多可以讲的，比如还可以牵扯到这几个问题：
+多个 TCP 服务进程可以同时绑定同一个端口吗？ 重启 TCP 服务进程时，为什么会出现“Address in use”的报错信息？又该怎么避免？ 客户端的端口可以重复使用吗？ 客户端 TCP 连接 TIME_WAIT 状态过多，会导致端口资源耗尽而无法建立新的连接吗？ 所以，这次就跟大家盘一盘这些问题。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/quic/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/quic/</guid><description>4.17 如何基于 UDP 协议实现可靠传输？ 大家好，我是小林。
+我记得之前在群里看到，有位读者字节一面的时候被问到：「如何基于 UDP 协议实现可靠传输？」
+很多同学第一反应就会说把 TCP 可靠传输的特性（序列号、确认应答、超时重传、流量控制、拥塞控制）在应用层实现一遍。
+实现的思路确实这样没错，但是有没有想过，既然 TCP 天然支持可靠传输，为什么还需要基于 UDP 实现可靠传输呢？这不是重复造轮子吗？
+所以，我们要先弄清楚 TCP 协议有哪些痛点？而这些痛点是否可以在基于 UDP 协议实现的可靠传输协议中得到改进？</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/syn_drop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/syn_drop/</guid><description>4.8 SYN 报文什么时候情况下会被丢弃？ 大家好，我是小林。
+之前有个读者在秋招面试的时候，被问了这么一个问题：SYN 报文什么时候情况下会被丢弃？
+好家伙，现在面试都问那么细节了吗？
+不过话说回来，这个问题跟工作上也是有关系的，因为我就在工作中碰到这么奇怪的时候，客户端向服务端发起了连接，但是连接并没有建立起来，通过抓包分析发现，服务端是收到 SYN 报文了，但是并没有回复 SYN+ACK（TCP 第二次握手），说明 SYN 报文被服务端忽略了，然后客户端就一直在超时重传 SYN 报文，直到达到最大的重传次数。
+接下来，我就给出我遇到过 SYN 报文被丢弃的两种场景：</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_down_and_crash/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_down_and_crash/</guid><description>4.12 TCP 连接，一端断电和进程崩溃有什么区别？ 有位读者找我说，他在面试腾讯的时候，遇到了这么个问题：
+这个属于 TCP 异常断开连接的场景，这部分内容在我的「图解网络」还没有详细介绍过，这次就乘着这次机会补一补。
+这个问题有几个关键词：
+没有开启 keepalive； 一直没有数据交互； 进程崩溃； 主机崩溃； 我们先来认识认识什么是 TCP keepalive 呢？</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_drop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_drop/</guid><description>4.21 用了 TCP 协议，数据一定不会丢吗？ 来源：公众号@小白debug
+原文地址： 用了 TCP 协议，数据一定不会丢吗？
+大家后，我是小林。
+问大家一句：TCP 是一个可靠的传输协议，那它一定能保证数据不丢失吗？
+这次，就跟大家探讨这个问题。
+数据包的发送流程 首先，我们两个手机的绿皮聊天软件客户端，要通信，中间会通过它们家服务器。大概长这样。
+但为了简化模型，我们把中间的服务器给省略掉，假设这是个端到端的通信。且为了保证消息的可靠性，我们盲猜它们之间用的是TCP协议进行通信。
+为了发送数据包，两端首先会通过三次握手，建立TCP连接。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_feature/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_feature/</guid><description>4.2 TCP 重传、滑动窗口、流量控制、拥塞控制 TCP 巨复杂，它为了保证可靠性，用了巨多的机制来保证，真是个「伟大」的协议，写着写着发现这水太深了。。。
+本文的全部图片都是小林绘画的，非常的辛苦且累，不废话了，直接进入正文，Go！
+相信大家都知道 TCP 是一个可靠传输的协议，那它是如何保证可靠的呢？
+为了实现可靠性传输，需要考虑很多事情，例如数据的破坏、丢包、重复以及分片顺序混乱等问题。如不能解决这些问题，也就无从谈起可靠传输。
+那么，TCP 是通过序列号、确认应答、重发控制、连接管理以及窗口控制等机制实现可靠性传输的。
+今天，将重点介绍 TCP 的重传机制、滑动窗口、流量控制、拥塞控制。
+重传机制 TCP 实现可靠传输的方式之一，是通过序列号与确认应答。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_http_keepalive/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_http_keepalive/</guid><description>4.15 TCP Keepalive 和 HTTP Keep-Alive 是一个东西吗？ 大家好，我是小林。
+之前有读者问了我这么个问题：
+大致问题是，TCP 的 Keepalive 和 HTTP 的 Keep-Alive 是一个东西吗？
+这是个好问题，应该有不少人都会搞混，因为这两个东西看上去太像了，很容易误以为是同一个东西。
+事实上，这两个完全是两样不同东西，实现的层面也不同：</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_interview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_interview/</guid><description>4.1 TCP 三次握手与四次挥手面试题 大家好，我是小林。
+任 TCP 虐我千百遍，我仍待 TCP 如初恋。
+巨巨巨巨长的提纲，发车！发车！
+PS：本次文章不涉及 TCP 流量控制、拥塞控制、可靠性传输等方面知识，这些知识在这篇： 你还在为 TCP 重传、滑动窗口、流量控制、拥塞控制发愁吗？看完图解就不愁了
+TCP 基本认识 TCP 头格式有哪些？ 我们先来看看 TCP 头的格式，标注颜色的表示与本文关联比较大的字段，其他字段不做详细阐述。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_no_accpet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_no_accpet/</guid><description>4.20 没有 accept，能建立 TCP 连接吗？ 来源：公众号@小白debug 原文地址： 阿里二面：没有 accept，能建立 TCP 连接吗？
+大家好，我是小林。
+这次，我们来讨论一下，没有 accept，能建立 TCP 连接吗？
+下面这个动图，是我们平时客户端和服务端建立连接时的代码流程。
+对应的是下面一段简化过的服务端伪代码。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_no_listen/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_no_listen/</guid><description>4.19 服务端没有 listen，客户端发起连接建立，会发生什么？ 大家好，我是小林。
+早上看到一个读者说面字节三面的时候，问了这个问题：
+这位读者的角度是以为服务端没有调用 listen，客户端会 ping 不通服务器，很明显，搞错了。
+ping 使用的协议是 ICMP，属于网络层的事情，而面试官问的是传输层的问题。
+针对这个问题，服务端如果只 bind 了 IP 地址和端口，而没有调用 listen 的话，然后客户端对服务端发起了 TCP 连接建立，此时那么会发生什么呢？</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_optimize/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_optimize/</guid><description>4.5 如何优化 TCP? TCP 性能的提升不仅考察 TCP 的理论知识，还考察了对于操作系统提供的内核参数的理解与应用。
+TCP 协议是由操作系统实现，所以操作系统提供了不少调节 TCP 的参数。
+如何正确有效的使用这些参数，来提高 TCP 性能是一个不那么简单事情。我们需要针对 TCP 每个阶段的问题来对症下药，而不是病急乱投医。
+接下来，将以三个角度来阐述提升 TCP 的策略，分别是：</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_problem/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_problem/</guid><description>4.16 TCP 协议有什么缺陷？ 大家好，我是小林。
+写的多了后，忽然思考一个问题，TCP 通过序列号、确认应答、超时重传、流量控制、拥塞控制等方式实现了可靠传输，看起来它很完美，事实真的是这样吗？TCP 就没什么缺陷吗？
+所以，今天就跟大家聊聊，TCP 协议有哪些缺陷？主要有四个方面：
+升级 TCP 的工作很困难； TCP 建立连接的延迟； TCP 存在队头阻塞问题； 网络迁移需要重新建立 TCP 连接； 接下来，针对这四个方面详细说一下。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_queue/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_queue/</guid><description>4.4 TCP 半连接队列和全连接队列 网上许多博客针对增大 TCP 半连接队列和全连接队列的方式如下：
+增大 TCP 半连接队列的方式是增大 /proc/sys/net/ipv4/tcp_max_syn_backlog； 增大 TCP 全连接队列的方式是增大 listen() 函数中的 backlog； 这里先跟大家说下，上面的方式都是不准确的。
+“你怎么知道不准确？”</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_stream/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_stream/</guid><description>4.6 如何理解是 TCP 面向字节流协议？ 有个读者问我，这么个问题：
+TCP 是面向字节流的协议，UDP 是面向报文的协议？这里的「面向字节流」和「面向报文」该如何理解。
+如何理解字节流？ 之所以会说 TCP 是面向字节流的协议，UDP 是面向报文的协议，是因为操作系统对 TCP 和 UDP 协议的发送方的机制不同，也就是问题原因在发送方。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_tcpdump/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_tcpdump/</guid><description>4.3 TCP 实战抓包分析 为了让大家更容易「看得见」 TCP，我搭建不少测试环境，并且数据包抓很多次，花费了不少时间，才抓到比较容易分析的数据包。
+接下来丢包、乱序、超时重传、快速重传、选择性确认、流量控制等等 TCP 的特性，都能「一览无余」。
+没错，我把 TCP 的&amp;quot;衣服扒光&amp;quot;了，就为了给大家看的清楚，嘻嘻。
+显形“不可见”的网络包 网络世界中的数据包交互我们肉眼是看不见的，它们就好像隐形了一样，我们对着课本学习计算机网络的时候就会觉得非常的抽象，加大了学习的难度。
+还别说，我自己在大学的时候，也是如此。
+直到工作后，认识了两大分析网络的利器：tcpdump 和 Wireshark，这两大利器把我们“看不见”的数据包，呈现在我们眼前，一目了然。
+唉，当初大学学习计网的时候，要是能知道这两个工具，就不会学的一脸懵逼。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_three_fin/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_three_fin/</guid><description>4.22 TCP 四次挥手，可以变成三次吗？ 大家好，我是小林。
+有位读者面美团时，被问到：TCP 四次挥手中，能不能把第二次的 ACK 报文， 放到第三次 FIN 报文一起发送？
+虽然我们在学习 TCP 挥手时，学到的是需要四次来完成 TCP 挥手，但是在一些情况下， TCP 四次挥手是可以变成 TCP 三次挥手的。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_tls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_tls/</guid><description>4.14 HTTPS 中 TLS 和 TCP 能同时握手吗？ 大家好，我是小林。
+有位读者在面试的时候，碰到这么个问题：
+面试官跟他说 HTTPS 中的 TLS 握手过程可以同时进行三次握手，然后读者之前看我的文章是说「先进行 TCP 三次握手，再进行 TLS 四次握手」，他跟面试官说了这个，面试官说他不对，他就感到很困惑。
+我们先不管面试官说的那句「HTTPS 中的 TLS 握手过程可以同时进行三次握手」对不对。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_tw_reuse_close/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_tw_reuse_close/</guid><description>4.14 tcp_tw_reuse 为什么默认是关闭的？ 大家好，我是小林。
+上周有个读者在面试微信的时候，被问到既然打开 net.ipv4.tcp_tw_reuse 参数可以快速复用处于 TIME_WAIT 状态的 TCP 连接，那为什么 Linux 默认是关闭状态呢？
+好家伙，真的问好细节！
+当时看到读者这个问题的时候，我也是一脸懵逼的，经过我的一番思考后，终于知道怎么回答这题了。
+其实这题在变相问「如果 TIME_WAIT 状态持续时间过短或者没有，会有什么问题？」</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_unplug_the_network_cable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/tcp_unplug_the_network_cable/</guid><description>4.13 拔掉网线后， 原本的 TCP 连接还存在吗？ 大家好，我是小林。
+今天，聊一个有趣的问题：拔掉网线几秒，再插回去，原本的 TCP 连接还存在吗？
+可能有的同学会说，网线都被拔掉了，那说明物理层被断开了，那在上层的传输层理应也会断开，所以原本的 TCP 连接就不会存在的了。就好像， 我们拨打有线电话的时候，如果某一方的电话线被拔了，那么本次通话就彻底断了。
+真的是这样吗？
+上面这个逻辑就有问题。问题在于，错误的认为拔掉网线这个动作会影响传输层，事实上并不会影响。
+实际上，TCP 连接在 Linux 内核中是一个名为 struct socket 的结构体，该结构体的内容包含 TCP 连接的状态等信息。当拔掉网线的时候，操作系统并不会变更该结构体的任何内容，所以 TCP 连接的状态也不会发生改变。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/time_wait_recv_syn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/3_tcp/time_wait_recv_syn/</guid><description>4.11 在 TIME_WAIT 状态的 TCP 连接，收到 SYN 后会发生什么？ 大家好，我是小林。
+周末跟朋友讨论了一些 TCP 的问题，在查阅《Linux 服务器高性能编程》这本书的时候，发现书上写了这么一句话：
+书上说，处于 TIME_WAIT 状态的连接，在收到相同四元组的 SYN 后，会回 RST 报文，对方收到后就会断开连接。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/4_ip/ip_base/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/4_ip/ip_base/</guid><description>5.1 IP 基础知识全家桶 前段时间，有读者希望我写一篇关于 IP 分类地址、子网划分等的文章，他反馈常常混淆，摸不着头脑。
+那么，说来就来！而且要盘就盘全一点，顺便挑战下小林的图解功力，所以就来个 IP 基础知识全家桶。
+吃完这个 IP 基础知识全家桶，包你撑着肚子喊出：“真香！”
+不多说，直接上菜，共分为三道菜：
+首先是前菜 「 IP 基本认识 」 其次是主菜 「IP 地址的基础知识」 最后是点心 「IP 协议相关技术」 为啥要比喻成菜？因为小林是菜狗（押韵不？）</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/4_ip/ping/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/4_ip/ping/</guid><description>5.2 ping 的工作原理 在日常生活或工作中，我们在判断与对方网络是否畅通，使用的最多的莫过于 ping 命令了。
+“那你知道 ping 是如何工作的吗？” —— 来自小林的灵魂拷问
+可能有的小伙伴奇怪的问：“我虽然不明白它的工作，但 ping 我也用的贼 6 啊！”
+你用的是 6 ，但你在面试官面前，你就 6 不起来了，毕竟他们也爱问。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/4_ip/ping_lo/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/4_ip/ping_lo/</guid><description>5.3 断网了，还能 ping 通 127.0.0.1 吗？ 来源：公众号@小白debug
+原文地址： 断网了，还能 ping 通 127.0.0.1 吗？
+你女神爱不爱你，你问她，她可能不会告诉你。
+但网通不通，你 ping 一下就知道了。
+可能看到标题，你就知道答案了，但是你了解背后的原因吗？</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/5_learn/draw/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/5_learn/draw/</guid><description>6.2 画图经验分享 小林写这么多篇图解文章，你们猜我收到的最多的读者问题是什么？没错，就是问我是使用什么画图工具，看来对这一点大家都相当好奇，那干脆不如写一篇介绍下我是怎么画图的。
+如果我的文章缺少了自己画的图片，相当于失去了灵魂，技术文章本身就很枯燥，如果文章中没有几张图片，读者被劝退的概率飙飙升，剩下没被劝退的估计看着看着就睡着了。所以，精美的图片可以说是必不可少的一部分，不仅在阅读时能带来视觉的冲击，而且图片相比文字能涵盖更多的信息，不然怎会有一图胜千言的说法呢？
+这时，可能有的读者会说自己不写文章呀，是不是没有必要了解画图了？我觉得这是不对，画图在我们工作中其实也是有帮助的，比如如果你想跟领导汇报一个业务流程的问题，把业务流程画出来，肯定用图的方式比用文字的方式交流起来会更有效率，更轻松些；如果你参与了一个比较复杂的项目开发，你也可以把代码的流程图给画出来，不仅能帮助自己加深理解，也能帮助后面参与的同事能更快的接手这个项目；甚至如果你要晋升级别了，演讲 PTT 里的配图也是必不可少的。
+不过很多人都是纠结用什么画图工具，其实小林觉得再烂的画图工具，只要你思路清晰，确定自己要表达出什么信息，也是能把图画好的，所以不必纠结哪款画图工具，挑一款自己画起来舒服的就行了。
+“小林，你说的我都懂，我就是喜欢你的画图风格嘛，你就说说你用啥画的？”
+咳咳，没问题，直接坦白讲，我用的是一个在线的画图网址，地址是：
+https://draw.io 用它的原因是使用方便和简单，当然最重要的是它完全免费，没有什么限制，甚至还能直接把图片保存到 GoogleDrive 、 OneDrive 和 Github，我就是保存到 Github，然后用 Github 作为我的图床。</description></item><item><title/><link>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/README/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/%E7%BD%91%E7%BB%9C/README/</guid><description>图解网络介绍 大家好，我是小林，是《图解网络》的作者，本站的内容都是整理于我 公众号里的图解文章。
+还没关注的朋友，可以微信搜索「小林coding」，关注我的公众号，后续最新版本的 PDF 会在我的公众号第一时间发布，而且会有更多其他系列的图解文章，比如操作系统、计算机组成、数据库、算法等等。
+简单介绍下《图解网络》，整个内容共有 20W 字 + 500 张图，每一篇都自己手绘了很多图，目的也很简单，击破大家对于「八股文」的恐惧。
+适合什么群体？ 《图解网络》写的网络知识主要是面向程序员的，因为小林本身也是个程序员，所以涉及到的知识主要是关于程序员日常工作或者面试的网络知识。
+非常适合有一点网络基础，但是又不怎么扎实，或者知识点串不起来的同学，说白这本图解网络就是为了拯救半桶水的同学而出来的。
+因为小林写的图解网络就四个字，通俗易懂！
+相信你在看这本图解网络的时候，你心里的感受会是：
+「卧槽，原来是这样，大学老师教知识原来是这么理解」 「卧槽，我的网络知识串起来了」 「卧槽，我感觉面试稳了」 「卧槽，相见恨晚」 当然，也适合面试突击网络知识时拿来看。图解网络里的内容基本是面试常见的协议，比如 HTTP、HTTPS、TCP、UDP、IP 等等，也有很多面试常问的问题，比如：</description></item></channel></rss>
