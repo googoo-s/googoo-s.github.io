@@ -1,0 +1,108 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="为了避免这里成为知识杂货铺，我会对严格筛选入选的优质主题。
+更新日期：2023-06-11
+面试
+● Java面试常见问题总结（2023最新版）
+● 一位 HR 分享的求职建议
+● 面试和简历上的一些大忌
+●项目：
+○ 如何回答项目遇到什么困难，如何解决这类问题
+○ 项目太简单怎么办?
+○ 商城项目到底能不能做？
+安抚心态
+如果你陷入精神内耗或者自我怀疑，不然看看下面这些内容："><meta property="og:title" content><meta property="og:description" content="为了避免这里成为知识杂货铺，我会对严格筛选入选的优质主题。
+更新日期：2023-06-11
+面试
+● Java面试常见问题总结（2023最新版）
+● 一位 HR 分享的求职建议
+● 面试和简历上的一些大忌
+●项目：
+○ 如何回答项目遇到什么困难，如何解决这类问题
+○ 项目太简单怎么办?
+○ 商城项目到底能不能做？
+安抚心态
+如果你陷入精神内耗或者自我怀疑，不然看看下面这些内容："><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/awesome/JavaGuide-%E7%9F%A5%E8%AF%86%E6%98%9F%E7%90%83%E4%BC%98%E8%B4%A8%E4%B8%BB%E9%A2%98%E6%B1%87%E6%80%BB/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="为了避免这里成为知识杂货铺，我会对严格筛选入选的优质主题。
+更新日期：2023-06-11
+面试
+● Java面试常见问题总结（2023最新版）
+● 一位 HR 分享的求职建议
+● 面试和简历上的一些大忌
+●项目：
+○ 如何回答项目遇到什么困难，如何解决这类问题
+○ 项目太简单怎么办?
+○ 商城项目到底能不能做？
+安抚心态
+如果你陷入精神内耗或者自我怀疑，不然看看下面这些内容："><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.42375ba996c43a74314996d90dacfb87.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.a8d1d10b2df09f8ff9d138bda51687f8.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><p>为了避免这里成为知识杂货铺，我会对严格筛选入选的优质主题。</p><p>更新日期：2023-06-11</p><p>面试</p><p>●
+<a href=https://t.zsxq.com/0eRq7EJPy rel=noopener>Java面试常见问题总结（2023最新版）</a><br>●
+<a href=https://t.zsxq.com/0dSKX0jkK rel=noopener>一位 HR 分享的求职建议</a><br>●
+<a href=https://t.zsxq.com/0eOgYt3qU rel=noopener>面试和简历上的一些大忌</a><br>●项目：<br>○
+<a href=https://t.zsxq.com/0dduy9CeQ rel=noopener>如何回答项目遇到什么困难，如何解决这类问题</a><br>○
+<a href=https://t.zsxq.com/0eV4BksDb rel=noopener>项目太简单怎么办?</a><br>○
+<a href=https://t.zsxq.com/0eBcCNhbB rel=noopener>商城项目到底能不能做？</a></p><p>安抚心态</p><p>如果你陷入精神内耗或者自我怀疑，不然看看下面这些内容：</p><p>●
+<a href=https://t.zsxq.com/0edKnfcZW rel=noopener>编程找工作现状 - 哔哩哔哩</a></p><p>技术资源</p><p>学习路线：
+<a href=https://t.zsxq.com/0dupYAEaq rel=noopener>Java 系统学习路线</a></p><p>总结 ：</p><p>●
+<a href=https://t.zsxq.com/0bWeUrBVq rel=noopener>Java 后端开发常用的技术书籍+原创面试资料 PDF 版本</a><br>●
+<a href=https://t.zsxq.com/0biGG9UlX rel=noopener>JavaGuide 网站总结的八股文合集  - 念神</a><br>●
+<a href=https://t.zsxq.com/0bHk3wEDs rel=noopener>Java 后端常见知识点思维导图分享 - 吴不卷</a></p><p>常用技术：</p><p>●
+<a href=https://t.zsxq.com/0eEGBV1Md rel=noopener>SpringBoot 学习资源推荐</a><br>●
+<a href=https://t.zsxq.com/0d7jOz9Vm rel=noopener>单测技术选型+学习资源推荐</a><br>●
+<a href=https://t.zsxq.com/0dwd4ONZ9 rel=noopener>Redis 学习资源推荐</a><br>●
+<a href=https://t.zsxq.com/0dEWEThKR rel=noopener>Elasticsearch 学习资源推荐</a><br>●
+<a href=https://t.zsxq.com/0bEDFwgon rel=noopener>Kafka、RocketMQ、RabbitMQ 学习资源推荐</a><br>●
+<a href=https://t.zsxq.com/0euwZ8uiP rel=noopener>分布式学习资源推荐（偏理论方向）</a><br>●
+<a href=https://t.zsxq.com/0bTheL01q rel=noopener>Git 学习资源推荐</a><br>●
+<a href=https://t.zsxq.com/0bEiLJIVW rel=noopener>《阿里开发者手册 - Redis 专题》PDF 文档</a></p><p>代码质量</p><p>●
+<a href=https://t.zsxq.com/0foGrZIc7 rel=noopener>24 个写出漂亮代码的小技巧</a><br>●
+<a href=https://t.zsxq.com/0d8ODCefj rel=noopener>程序员“起名”头痛根治指南</a><br>●
+<a href=https://t.zsxq.com/0dIkpk8AV rel=noopener>5天带你读完《Effective Java》</a><br>●
+<a href=https://t.zsxq.com/0dWEHSiBW rel=noopener>提高代码质量的书籍和文章推荐</a><br>●
+<a href=https://t.zsxq.com/0d221QNao rel=noopener>一个练习重构的开源教程</a><br>●
+<a href=https://t.zsxq.com/0dFLaE2Lp rel=noopener>分享3本对于提高代码质量有实际帮助的书籍</a>（《编写可读代码的艺术》、《Clean Code》、《The Clean Coder》）</p><p>进阶攻略</p><p>●
+<a href=https://articles.zsxq.com/id_2kdw0o0ovc44.html rel=noopener>如何撰写一份令人赞叹的软件专利技术交底书？</a><br>●
+<a href=https://articles.zsxq.com/id_q0g14e71eqc3.html rel=noopener>校招生如何参与开源项目？如何获得开源经历？</a><br>●
+<a href=https://t.zsxq.com/0cpx9pkIE rel=noopener>一些读书心得和看书做笔记的经验</a><br>●
+<a href=https://t.zsxq.com/0c2OboF1Q rel=noopener>一个关于提升学习能力和效率的视频</a>（收益匪浅）<br>●
+<a href=https://t.zsxq.com/0eIuSBARU rel=noopener>如何有效提升专注力？</a><br>●
+<a href=https://t.zsxq.com/0cGu9HjPQ rel=noopener>快速熟悉业务逻辑并付诸落地的建议 - 念神</a><br>●
+<a href=https://t.zsxq.com/0ckNvT31a rel=noopener>给初级 Java 工程师的一些学习建议 - 念神</a><br>●
+<a href=https://t.zsxq.com/0ciPGdBoZ rel=noopener>项目技术选型的建议</a>（听了一个技术选型分享之后的一些心得体会）<br>●
+<a href=https://t.zsxq.com/0c0K3zPRk rel=noopener>使用 Google 搜索的实用建议</a><br>●
+<a href=https://t.zsxq.com/0cdHCFWNw rel=noopener>不要把自己局限在技术上!</a> （重视技术能力，但你的世界不能仅仅只有技术）<br>●
+<a href=https://t.zsxq.com/0crTLD2hY rel=noopener>给一些想要换职业方向的朋友一些客观的建议</a><br>●
+<a href=https://t.zsxq.com/0ccagnzao rel=noopener>如何做编程知识投资及减少知识失效的影响</a> （感触很深的一篇文章，强烈推荐阅读）<br>●
+<a href=https://t.zsxq.com/0cdfq7iR4 rel=noopener>碎片化知识可能会带来的坏处</a>（碎片化知识泛滥的时代，应该注意其对自身的影响）</p><p>开源项目</p><p>●
+<a href=https://t.zsxq.com/0eCVtaUND rel=noopener>一个简易版的IoC的轮子（球友自制，附笔记）</a><br>●
+<a href=https://t.zsxq.com/0ekLd7XaX rel=noopener>Java 语言手写的一款简易版 Git（球友自制）</a><br>●
+<a href=https://t.zsxq.com/0b3wlSfjS rel=noopener>基于 SpringBoot 的国密前后端分离快速开发平台</a><br>●
+<a href=https://t.zsxq.com/0bmQXO4bf rel=noopener>《高并发的哲学原理》开源图书</a><br>●
+<a href=https://t.zsxq.com/0bcfjG15v rel=noopener>zyplayer-doc：适合团队和个人使用的WIKI文档管理工具，同时还包含数据库文档、Api接口文档。</a><br>●
+<a href=https://t.zsxq.com/0b1CDmh5H rel=noopener>《深入理解 Java 虚拟机》阅读笔记，基于第二版（目前最新版是第三版）</a><br>●
+<a href=https://wx.zsxq.com/dweb2/index/group/48418884588288 rel=noopener>think：一款开源知识管理工具，支持创建知识库、多人协作、分享知识库、绘制思维导图、添加附加附件等功能</a><br>●
+<a href=https://t.zsxq.com/0b6BYX1rp rel=noopener>ip2region：高性能离线IP地址定位库，10微秒级别的查询效率，开箱即用，提供了多种主流编程语言（如 Go，Java，Python）的 xdb 数据生成和查询客户端 API。</a><br>●
+<a href=https://t.zsxq.com/0b71m4luD rel=noopener>novel：一套基于时下最新 Java 技术栈 Spring Boot 3 + Vue 3 开发的前后端分离学习型小说项目</a><br>●
+<a href=https://t.zsxq.com/0baOCvT01 rel=noopener>lu-raft-kv：分布式 KV 存储轮子</a><br>●
+<a href=https://t.zsxq.com/0b0d5pFHt rel=noopener>MYDB：简易版数据库</a><br>●
+<a href=https://t.zsxq.com/0bai0TuJX rel=noopener>mini-spring-cloud：手写的简化版的 Spring Cloud</a><br>●
+<a href=https://t.zsxq.com/0bJaH3GSP rel=noopener>SurveyKing：号称功能最强大的调查问卷系统和考试系统</a><br>●
+<a href=https://t.zsxq.com/0biDtoOF7 rel=noopener>cs-self-learning：计算机自学指南</a><br>●
+<a href=https://t.zsxq.com/0bZrBeqMg rel=noopener>upupor：小众但是功能强大的开源社区</a><br>●
+<a href=https://t.zsxq.com/0bWdejp6D rel=noopener>Easy-Es： Elasticsearch 工具库</a></p><p>工具网站</p><p>●
+<a href=https://t.zsxq.com/0eKkOJPDA rel=noopener>两个巨好用的 Linux 命令网站</a><br>●
+<a href=https://t.zsxq.com/0eDXSZsBw rel=noopener>GitHub Web IDE：直接通过多种在线 IDE 打开Github项目</a></p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>
