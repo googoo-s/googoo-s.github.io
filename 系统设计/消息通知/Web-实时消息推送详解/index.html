@@ -1,0 +1,487 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="原文地址： https://juejin.cn/post/7122014462181113887，JavaGuideopen in new window 对本文进行了完善总结。
+ 我有一个朋友做了一个小破站，现在要实现一个站内信 Web 消息推送的功能，对，就是下图这个小红点，一个很常用的功能。
+ 站内信 Web 消息推送
+不过他还没想好用什么方式做，这里我帮他整理了一下几种方案，并简单做了实现。
+# 什么是消息推送？ 推送的场景比较多，比如有人关注我的公众号，这时我就会收到一条推送消息，以此来吸引我点击打开应用。
+消息推送通常是指网站的运营工作等人员，通过某种工具对用户当前网页或移动设备 APP 进行的主动消息推送。"><meta property="og:title" content><meta property="og:description" content="原文地址： https://juejin.cn/post/7122014462181113887，JavaGuideopen in new window 对本文进行了完善总结。
+ 我有一个朋友做了一个小破站，现在要实现一个站内信 Web 消息推送的功能，对，就是下图这个小红点，一个很常用的功能。
+ 站内信 Web 消息推送
+不过他还没想好用什么方式做，这里我帮他整理了一下几种方案，并简单做了实现。
+# 什么是消息推送？ 推送的场景比较多，比如有人关注我的公众号，这时我就会收到一条推送消息，以此来吸引我点击打开应用。
+消息推送通常是指网站的运营工作等人员，通过某种工具对用户当前网页或移动设备 APP 进行的主动消息推送。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5/Web-%E5%AE%9E%E6%97%B6%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81%E8%AF%A6%E8%A7%A3/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="原文地址： https://juejin.cn/post/7122014462181113887，JavaGuideopen in new window 对本文进行了完善总结。
+ 我有一个朋友做了一个小破站，现在要实现一个站内信 Web 消息推送的功能，对，就是下图这个小红点，一个很常用的功能。
+ 站内信 Web 消息推送
+不过他还没想好用什么方式做，这里我帮他整理了一下几种方案，并简单做了实现。
+# 什么是消息推送？ 推送的场景比较多，比如有人关注我的公众号，这时我就会收到一条推送消息，以此来吸引我点击打开应用。
+消息推送通常是指网站的运营工作等人员，通过某种工具对用户当前网页或移动设备 APP 进行的主动消息推送。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.42375ba996c43a74314996d90dacfb87.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.4994776ff53419a01429d7b1a0de2e9f.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><ol><li><a href=#什么是消息推送-什么是消息推送><a href=#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81>#</a> 什么是消息推送？</a></li><li><a href=#消息推送常见方案-消息推送常见方案><a href=#%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81%E5%B8%B8%E8%A7%81%E6%96%B9%E6%A1%88>#</a> 消息推送常见方案</a><ol><li><a href=#短轮询-短轮询><a href=#%E7%9F%AD%E8%BD%AE%E8%AF%A2>#</a> 短轮询</a></li><li><a href=#长轮询-长轮询><a href=#%E9%95%BF%E8%BD%AE%E8%AF%A2>#</a> 长轮询</a></li><li><a href=#iframe-流-iframe-流><a href=#iframe-%E6%B5%81>#</a> iframe 流</a></li><li><a href=#sse-我的方式-sse-我的方式><a href=#sse-%E6%88%91%E7%9A%84%E6%96%B9%E5%BC%8F>#</a> SSE (我的方式)</a></li><li><a href=#websocket-websocket><a href=#websocket>#</a> Websocket</a></li><li><a href=#mqtt-mqtt><a href=#mqtt>#</a> MQTT</a></li></ol></li><li><a href=#总结-总结><a href=#%E6%80%BB%E7%BB%93>#</a> 总结</a></li></ol></li></ol></nav></details></aside><blockquote><p>原文地址：
+<a href=https://juejin.cn/post/7122014462181113887%EF%BC%8CJavaGuide rel=noopener>https://juejin.cn/post/7122014462181113887，JavaGuideopen in new window</a> 对本文进行了完善总结。</p></blockquote><p>我有一个朋友做了一个小破站，现在要实现一个站内信 Web 消息推送的功能，对，就是下图这个小红点，一个很常用的功能。</p><p><img src=https://googoo-s.github.io//statistic/%E7%AB%99%E5%86%85%E4%BF%A1_Web_%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81.png width=auto alt="站内信 Web 消息推送"></p><p>站内信 Web 消息推送</p><p>不过他还没想好用什么方式做，这里我帮他整理了一下几种方案，并简单做了实现。</p><h2 id=什么是消息推送-什么是消息推送><a rel=noopener class="internal-link broken" data-src=#%e4%bb%80%e4%b9%88%e6%98%af%e6%b6%88%e6%81%af%e6%8e%a8%e9%80%81>#</a> 什么是消息推送？</h2><p>推送的场景比较多，比如有人关注我的公众号，这时我就会收到一条推送消息，以此来吸引我点击打开应用。</p><p>消息推送通常是指网站的运营工作等人员，通过某种工具对用户当前网页或移动设备 APP 进行的主动消息推送。</p><p>消息推送一般又分为 Web 端消息推送和移动端消息推送。</p><p>移动端消息推送示例：</p><p><img src=https://googoo-s.github.io//statistic/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81%E7%A4%BA%E4%BE%8B.png width=auto alt=移动端消息推送示例></p><p>移动端消息推送示例</p><p>Web 端消息推送示例：</p><p><img src=https://googoo-s.github.io//statistic/Web_%E7%AB%AF%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81%E7%A4%BA%E4%BE%8B.png width=auto alt="Web 端消息推送示例"></p><p>Web 端消息推送示例</p><p>在具体实现之前，咱们再来分析一下前边的需求，其实功能很简单，只要触发某个事件（主动分享了资源或者后台主动推送消息），Web 页面的通知小红点就会实时的 <code>+1</code> 就可以了。</p><p>通常在服务端会有若干张消息推送表，用来记录用户触发不同事件所推送不同类型的消息，前端主动查询（拉）或者被动接收（推）用户所有未读的消息数。</p><p><img src=https://googoo-s.github.io//statistic/%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81%E8%A1%A8.png width=auto alt=消息推送表></p><p>消息推送表</p><p>消息推送无非是推（push）和拉（pull）两种形式，下边我们逐个了解下。</p><h2 id=消息推送常见方案-消息推送常见方案><a rel=noopener class="internal-link broken" data-src=#%e6%b6%88%e6%81%af%e6%8e%a8%e9%80%81%e5%b8%b8%e8%a7%81%e6%96%b9%e6%a1%88>#</a> 消息推送常见方案</h2><h3 id=短轮询-短轮询><a rel=noopener class="internal-link broken" data-src=#%e7%9f%ad%e8%bd%ae%e8%af%a2>#</a> 短轮询</h3><p><strong>轮询(polling)</strong> 应该是实现消息推送方案中最简单的一种，这里我们暂且将轮询分为短轮询和长轮询。</p><p>短轮询很好理解，指定的时间间隔，由浏览器向服务器发出 HTTP 请求，服务器实时返回未读消息数据给客户端，浏览器再做渲染显示。</p><p>一个简单的 JS 定时器就可以搞定，每秒钟请求一次未读消息数接口，返回的数据展示即可。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>setInterval(() =&gt; {
+</span></span><span class=line><span class=cl>  // 方法请求
+</span></span><span class=line><span class=cl>  messageCount().then((res) =&gt; {
+</span></span><span class=line><span class=cl>    if (res.code === 200) {
+</span></span><span class=line><span class=cl>      this.messageCount = res.data;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>  });
+</span></span><span class=line><span class=cl>}, 1000);
+</span></span></code></pre></td></tr></table></div></div><p>效果还是可以的，短轮询实现固然简单，缺点也是显而易见，由于推送数据并不会频繁变更，无论后端此时是否有新的消息产生，客户端都会进行请求，势必会对服务端造成很大压力，浪费带宽和服务器资源。</p><h3 id=长轮询-长轮询><a rel=noopener class="internal-link broken" data-src=#%e9%95%bf%e8%bd%ae%e8%af%a2>#</a> 长轮询</h3><p>长轮询是对上边短轮询的一种改进版本，在尽可能减少对服务器资源浪费的同时，保证消息的相对实时性。长轮询在中间件中应用的很广泛，比如 Nacos 和 Apollo 配置中心，消息队列 Kafka、RocketMQ 中都有用到长轮询。</p><p><a href=https://mp.weixin.qq.com/s/94ftESkDoZI9gAGflLiGwg rel=noopener>Nacos 配置中心交互模型是 push 还是 pull？open in new window</a>一文中我详细介绍过 Nacos 长轮询的实现原理，感兴趣的小伙伴可以瞅瞅。</p><p>长轮询其实原理跟轮询差不多，都是采用轮询的方式。不过，如果服务端的数据没有发生变更，会 一直 hold 住请求，直到服务端的数据发生变化，或者等待一定时间超时才会返回。返回后，客户端又会立即再次发起下一次长轮询。</p><p>这次我使用 Apollo 配置中心实现长轮询的方式，应用了一个类<code>DeferredResult</code>，它是在 Servlet3.0 后经过 Spring 封装提供的一种异步请求机制，直意就是延迟结果。</p><p><img src=https://googoo-s.github.io//statistic/%E9%95%BF%E8%BD%AE%E8%AF%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png width=auto alt=长轮询示意图></p><p>长轮询示意图</p><p><code>DeferredResult</code>可以允许容器线程快速释放占用的资源，不阻塞请求线程，以此接受更多的请求提升系统的吞吐量，然后启动异步工作线程处理真正的业务逻辑，处理完成调用<code>DeferredResult.setResult(200)</code>提交响应结果。</p><p>下边我们用长轮询来实现消息推送。</p><p>因为一个 ID 可能会被多个长轮询请求监听，所以我采用了 Guava 包提供的<code>Multimap</code>结构存放长轮询，一个 key 可以对应多个 value。一旦监听到 key 发生变化，对应的所有长轮询都会响应。前端得到非请求超时的状态码，知晓数据变更，主动查询未读消息数接口，更新页面数据。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@Controller
+</span></span><span class=line><span class=cl>@RequestMapping(&#34;/polling&#34;)
+</span></span><span class=line><span class=cl>public class PollingController {
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // 存放监听某个Id的长轮询集合
+</span></span><span class=line><span class=cl>    // 线程同步结构
+</span></span><span class=line><span class=cl>    public static Multimap&lt;String, DeferredResult&lt;String&gt;&gt; watchRequests = Multimaps.synchronizedMultimap(HashMultimap.create());
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    /**
+</span></span><span class=line><span class=cl>     * 设置监听
+</span></span><span class=line><span class=cl>     */
+</span></span><span class=line><span class=cl>    @GetMapping(path = &#34;watch/{id}&#34;)
+</span></span><span class=line><span class=cl>    @ResponseBody
+</span></span><span class=line><span class=cl>    public DeferredResult&lt;String&gt; watch(@PathVariable String id) {
+</span></span><span class=line><span class=cl>        // 延迟对象设置超时时间
+</span></span><span class=line><span class=cl>        DeferredResult&lt;String&gt; deferredResult = new DeferredResult&lt;&gt;(TIME_OUT);
+</span></span><span class=line><span class=cl>        // 异步请求完成时移除 key，防止内存溢出
+</span></span><span class=line><span class=cl>        deferredResult.onCompletion(() -&gt; {
+</span></span><span class=line><span class=cl>            watchRequests.remove(id, deferredResult);
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>        // 注册长轮询请求
+</span></span><span class=line><span class=cl>        watchRequests.put(id, deferredResult);
+</span></span><span class=line><span class=cl>        return deferredResult;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    /**
+</span></span><span class=line><span class=cl>     * 变更数据
+</span></span><span class=line><span class=cl>     */
+</span></span><span class=line><span class=cl>    @GetMapping(path = &#34;publish/{id}&#34;)
+</span></span><span class=line><span class=cl>    @ResponseBody
+</span></span><span class=line><span class=cl>    public String publish(@PathVariable String id) {
+</span></span><span class=line><span class=cl>        // 数据变更 取出监听ID的所有长轮询请求，并一一响应处理
+</span></span><span class=line><span class=cl>        if (watchRequests.containsKey(id)) {
+</span></span><span class=line><span class=cl>            Collection&lt;DeferredResult&lt;String&gt;&gt; deferredResults = watchRequests.get(id);
+</span></span><span class=line><span class=cl>            for (DeferredResult&lt;String&gt; deferredResult : deferredResults) {
+</span></span><span class=line><span class=cl>                deferredResult.setResult(&#34;我更新了&#34; + new Date());
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>        return &#34;success&#34;;
+</span></span><span class=line><span class=cl>    }
+</span></span></code></pre></td></tr></table></div></div><p>当请求超过设置的超时时间，会抛出<code>AsyncRequestTimeoutException</code>异常，这里直接用<code>@ControllerAdvice</code>全局捕获统一返回即可，前端获取约定好的状态码后再次发起长轮询请求，如此往复调用。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@ControllerAdvice
+</span></span><span class=line><span class=cl>public class AsyncRequestTimeoutHandler {
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    @ResponseStatus(HttpStatus.NOT_MODIFIED)
+</span></span><span class=line><span class=cl>    @ResponseBody
+</span></span><span class=line><span class=cl>    @ExceptionHandler(AsyncRequestTimeoutException.class)
+</span></span><span class=line><span class=cl>    public String asyncRequestTimeoutHandler(AsyncRequestTimeoutException e) {
+</span></span><span class=line><span class=cl>        System.out.println(&#34;异步请求超时&#34;);
+</span></span><span class=line><span class=cl>        return &#34;304&#34;;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>我们来测试一下，首先页面发起长轮询请求<code>/polling/watch/10086</code>监听消息更变，请求被挂起，不变更数据直至超时，再次发起了长轮询请求；紧接着手动变更数据<code>/polling/publish/10086</code>，长轮询得到响应，前端处理业务逻辑完成后再次发起请求，如此循环往复。</p><p>长轮询相比于短轮询在性能上提升了很多，但依然会产生较多的请求，这是它的一点不完美的地方。</p><h3 id=iframe-流-iframe-流><a rel=noopener class="internal-link broken" data-src=#iframe-%e6%b5%81>#</a> iframe 流</h3><p>iframe 流就是在页面中插入一个隐藏的<code>&lt;iframe></code>标签，通过在<code>src</code>中请求消息数量 API 接口，由此在服务端和客户端之间创建一条长连接，服务端持续向<code>iframe</code>传输数据。</p><p>传输的数据通常是 HTML、或是内嵌的 JavaScript 脚本，来达到实时更新页面的效果。</p><p><img src=https://googoo-s.github.io//statistic/iframe_%E6%B5%81%E7%A4%BA%E6%84%8F%E5%9B%BE.png width=auto alt="iframe 流示意图"></p><p>iframe 流示意图</p><p>这种方式实现简单，前端只要一个<code>&lt;iframe></code>标签搞定了</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;iframe src=&#34;/iframe/message&#34; style=&#34;display:none&#34;&gt;&lt;/iframe&gt;
+</span></span></code></pre></td></tr></table></div></div><p>服务端直接组装 HTML、JS 脚本数据向 response 写入就行了</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@Controller
+</span></span><span class=line><span class=cl>@RequestMapping(&#34;/iframe&#34;)
+</span></span><span class=line><span class=cl>public class IframeController {
+</span></span><span class=line><span class=cl>    @GetMapping(path = &#34;message&#34;)
+</span></span><span class=line><span class=cl>    public void message(HttpServletResponse response) throws IOException, InterruptedException {
+</span></span><span class=line><span class=cl>        while (true) {
+</span></span><span class=line><span class=cl>            response.setHeader(&#34;Pragma&#34;, &#34;no-cache&#34;);
+</span></span><span class=line><span class=cl>            response.setDateHeader(&#34;Expires&#34;, 0);
+</span></span><span class=line><span class=cl>            response.setHeader(&#34;Cache-Control&#34;, &#34;no-cache,no-store&#34;);
+</span></span><span class=line><span class=cl>            response.setStatus(HttpServletResponse.SC_OK);
+</span></span><span class=line><span class=cl>            response.getWriter().print(&#34; &lt;script type=\&#34;text/javascript\&#34;&gt;\n&#34; +
+</span></span><span class=line><span class=cl>                    &#34;parent.document.getElementById(&#39;clock&#39;).innerHTML = \&#34;&#34; + count.get() + &#34;\&#34;;&#34; +
+</span></span><span class=line><span class=cl>                    &#34;parent.document.getElementById(&#39;count&#39;).innerHTML = \&#34;&#34; + count.get() + &#34;\&#34;;&#34; +
+</span></span><span class=line><span class=cl>                    &#34;&lt;/script&gt;&#34;);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>iframe 流的服务器开销很大，而且 IE、Chrome 等浏览器一直会处于 loading 状态，图标会不停旋转，简直是强迫症杀手。</p><p><img src=https://googoo-s.github.io//statistic/iframe_%E6%B5%81%E6%95%88%E6%9E%9C.gif width=auto alt="iframe 流效果"></p><p>iframe 流效果</p><p>iframe 流非常不友好，强烈不推荐。</p><h3 id=sse-我的方式-sse-我的方式><a rel=noopener class="internal-link broken" data-src=#sse-%e6%88%91%e7%9a%84%e6%96%b9%e5%bc%8f>#</a> SSE (我的方式)</h3><p>很多人可能不知道，服务端向客户端推送消息，其实除了可以用<code>WebSocket</code>这种耳熟能详的机制外，还有一种服务器发送事件(Server-Sent Events)，简称 SSE。这是一种服务器端到客户端(浏览器)的单向消息推送。</p><p>SSE 基于 HTTP 协议的，我们知道一般意义上的 HTTP 协议是无法做到服务端主动向客户端推送消息的，但 SSE 是个例外，它变换了一种思路。</p><p><img src=https://googoo-s.github.io//statistic/1460000042192390.png width=auto alt></p><p>SSE 在服务器和客户端之间打开一个单向通道，服务端响应的不再是一次性的数据包而是<code>text/event-stream</code>类型的数据流信息，在有数据变更时从服务器流式传输到客户端。</p><p>整体的实现思路有点类似于在线视频播放，视频流会连续不断的推送到浏览器，你也可以理解成，客户端在完成一次用时很长（网络不畅）的下载。</p><p><img src=https://googoo-s.github.io//statistic/SSE_%E7%A4%BA%E6%84%8F%E5%9B%BE.png width=auto alt="SSE 示意图"></p><p>SSE 示意图</p><p>SSE 与 WebSocket 作用相似，都可以建立服务端与浏览器之间的通信，实现服务端向客户端推送消息，但还是有些许不同：</p><ul><li>SSE 是基于 HTTP 协议的，它们不需要特殊的协议或服务器实现即可工作；WebSocket 需单独服务器来处理协议。</li><li>SSE 单向通信，只能由服务端向客户端单向通信；WebSocket 全双工通信，即通信的双方可以同时发送和接受信息。</li><li>SSE 实现简单开发成本低，无需引入其他组件；WebSocket 传输数据需做二次解析，开发门槛高一些。</li><li>SSE 默认支持断线重连；WebSocket 则需要自己实现。</li><li>SSE 只能传送文本消息，二进制数据需要经过编码后传送；WebSocket 默认支持传送二进制数据。</li></ul><p><strong>SSE 与 WebSocket 该如何选择？</strong></p><blockquote><p>技术并没有好坏之分，只有哪个更合适</p></blockquote><p>SSE 好像一直不被大家所熟知，一部分原因是出现了 WebSocket，这个提供了更丰富的协议来执行双向、全双工通信。对于游戏、即时通信以及需要双向近乎实时更新的场景，拥有双向通道更具吸引力。</p><p>但是，在某些情况下，不需要从客户端发送数据。而你只需要一些服务器操作的更新。比如：站内信、未读消息数、状态更新、股票行情、监控数量等场景，SEE 不管是从实现的难易和成本上都更加有优势。此外，SSE 具有 WebSocket 在设计上缺乏的多种功能，例如：自动重新连接、事件 ID 和发送任意事件的能力。</p><p>前端只需进行一次 HTTP 请求，带上唯一 ID，打开事件流，监听服务端推送的事件就可以了</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;script&gt;
+</span></span><span class=line><span class=cl>    let source = null;
+</span></span><span class=line><span class=cl>    let userId = 7777
+</span></span><span class=line><span class=cl>    if (window.EventSource) {
+</span></span><span class=line><span class=cl>        // 建立连接
+</span></span><span class=line><span class=cl>        source = new EventSource(&#39;http://localhost:7777/sse/sub/&#39;+userId);
+</span></span><span class=line><span class=cl>        setMessageInnerHTML(&#34;连接用户=&#34; + userId);
+</span></span><span class=line><span class=cl>        /**
+</span></span><span class=line><span class=cl>         * 连接一旦建立，就会触发open事件
+</span></span><span class=line><span class=cl>         * 另一种写法：source.onopen = function (event) {}
+</span></span><span class=line><span class=cl>         */
+</span></span><span class=line><span class=cl>        source.addEventListener(&#39;open&#39;, function (e) {
+</span></span><span class=line><span class=cl>            setMessageInnerHTML(&#34;建立连接。。。&#34;);
+</span></span><span class=line><span class=cl>        }, false);
+</span></span><span class=line><span class=cl>        /**
+</span></span><span class=line><span class=cl>         * 客户端收到服务器发来的数据
+</span></span><span class=line><span class=cl>         * 另一种写法：source.onmessage = function (event) {}
+</span></span><span class=line><span class=cl>         */
+</span></span><span class=line><span class=cl>        source.addEventListener(&#39;message&#39;, function (e) {
+</span></span><span class=line><span class=cl>            setMessageInnerHTML(e.data);
+</span></span><span class=line><span class=cl>        });
+</span></span><span class=line><span class=cl>    } else {
+</span></span><span class=line><span class=cl>        setMessageInnerHTML(&#34;你的浏览器不支持SSE&#34;);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>&lt;/script&gt;
+</span></span></code></pre></td></tr></table></div></div><p>服务端的实现更简单，创建一个<code>SseEmitter</code>对象放入<code>sseEmitterMap</code>进行管理</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>private static Map&lt;String, SseEmitter&gt; sseEmitterMap = new ConcurrentHashMap&lt;&gt;();
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>/**
+</span></span><span class=line><span class=cl> * 创建连接
+</span></span><span class=line><span class=cl> */
+</span></span><span class=line><span class=cl>public static SseEmitter connect(String userId) {
+</span></span><span class=line><span class=cl>    try {
+</span></span><span class=line><span class=cl>        // 设置超时时间，0表示不过期。默认30秒
+</span></span><span class=line><span class=cl>        SseEmitter sseEmitter = new SseEmitter(0L);
+</span></span><span class=line><span class=cl>        // 注册回调
+</span></span><span class=line><span class=cl>        sseEmitter.onCompletion(completionCallBack(userId));
+</span></span><span class=line><span class=cl>        sseEmitter.onError(errorCallBack(userId));
+</span></span><span class=line><span class=cl>        sseEmitter.onTimeout(timeoutCallBack(userId));
+</span></span><span class=line><span class=cl>        sseEmitterMap.put(userId, sseEmitter);
+</span></span><span class=line><span class=cl>        count.getAndIncrement();
+</span></span><span class=line><span class=cl>        return sseEmitter;
+</span></span><span class=line><span class=cl>    } catch (Exception e) {
+</span></span><span class=line><span class=cl>        log.info(&#34;创建新的sse连接异常，当前用户：{}&#34;, userId);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    return null;
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>/**
+</span></span><span class=line><span class=cl> * 给指定用户发送消息
+</span></span><span class=line><span class=cl> */
+</span></span><span class=line><span class=cl>public static void sendMessage(String userId, String message) {
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    if (sseEmitterMap.containsKey(userId)) {
+</span></span><span class=line><span class=cl>        try {
+</span></span><span class=line><span class=cl>            sseEmitterMap.get(userId).send(message);
+</span></span><span class=line><span class=cl>        } catch (IOException e) {
+</span></span><span class=line><span class=cl>            log.error(&#34;用户[{}]推送异常:{}&#34;, userId, e.getMessage());
+</span></span><span class=line><span class=cl>            removeUser(userId);
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><strong>注意：</strong> SSE 不支持 IE 浏览器，对其他主流浏览器兼容性做的还不错。</p><p><img src=https://googoo-s.github.io//statistic/SSE_%E5%85%BC%E5%AE%B9%E6%80%A7.png width=auto alt="SSE 兼容性"></p><p>SSE 兼容性</p><h3 id=websocket-websocket><a rel=noopener class="internal-link broken" data-src=#websocket>#</a> Websocket</h3><p>Websocket 应该是大家都比较熟悉的一种实现消息推送的方式，上边我们在讲 SSE 的时候也和 Websocket 进行过比较。</p><p>是一种在 TCP 连接上进行全双工通信的协议，建立客户端和服务器之间的通信渠道。浏览器和服务器仅需一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。</p><p><img src=https://googoo-s.github.io//statistic/Websocket_%E7%A4%BA%E6%84%8F%E5%9B%BE.png width=auto alt="Websocket 示意图"></p><p>Websocket 示意图</p><p>SpringBoot 整合 Websocket，先引入 Websocket 相关的工具包，和 SSE 相比额外的开发成本。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;!-- 引入websocket --&gt;
+</span></span><span class=line><span class=cl>&lt;dependency&gt;
+</span></span><span class=line><span class=cl>    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+</span></span><span class=line><span class=cl>    &lt;artifactId&gt;spring-boot-starter-websocket&lt;/artifactId&gt;
+</span></span><span class=line><span class=cl>&lt;/dependency&gt;
+</span></span></code></pre></td></tr></table></div></div><p>服务端使用<code>@ServerEndpoint</code>注解标注当前类为一个 WebSocket 服务器，客户端可以通过<code>ws://localhost:7777/webSocket/10086</code>来连接到 WebSocket 服务器端。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@Component
+</span></span><span class=line><span class=cl>@Slf4j
+</span></span><span class=line><span class=cl>@ServerEndpoint(&#34;/websocket/{userId}&#34;)
+</span></span><span class=line><span class=cl>public class WebSocketServer {
+</span></span><span class=line><span class=cl>    //与某个客户端的连接会话，需要通过它来给客户端发送数据
+</span></span><span class=line><span class=cl>    private Session session;
+</span></span><span class=line><span class=cl>    private static final CopyOnWriteArraySet&lt;WebSocketServer&gt; webSockets = new CopyOnWriteArraySet&lt;&gt;();
+</span></span><span class=line><span class=cl>    // 用来存在线连接数
+</span></span><span class=line><span class=cl>    private static final Map&lt;String, Session&gt; sessionPool = new HashMap&lt;String, Session&gt;();
+</span></span><span class=line><span class=cl>    /**
+</span></span><span class=line><span class=cl>     * 链接成功调用的方法
+</span></span><span class=line><span class=cl>     */
+</span></span><span class=line><span class=cl>    @OnOpen
+</span></span><span class=line><span class=cl>    public void onOpen(Session session, @PathParam(value = &#34;userId&#34;) String userId) {
+</span></span><span class=line><span class=cl>        try {
+</span></span><span class=line><span class=cl>            this.session = session;
+</span></span><span class=line><span class=cl>            webSockets.add(this);
+</span></span><span class=line><span class=cl>            sessionPool.put(userId, session);
+</span></span><span class=line><span class=cl>            log.info(&#34;websocket消息: 有新的连接，总数为:&#34; + webSockets.size());
+</span></span><span class=line><span class=cl>        } catch (Exception e) {
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    /**
+</span></span><span class=line><span class=cl>     * 收到客户端消息后调用的方法
+</span></span><span class=line><span class=cl>     */
+</span></span><span class=line><span class=cl>    @OnMessage
+</span></span><span class=line><span class=cl>    public void onMessage(String message) {
+</span></span><span class=line><span class=cl>        log.info(&#34;websocket消息: 收到客户端消息:&#34; + message);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    /**
+</span></span><span class=line><span class=cl>     * 此为单点消息
+</span></span><span class=line><span class=cl>     */
+</span></span><span class=line><span class=cl>    public void sendOneMessage(String userId, String message) {
+</span></span><span class=line><span class=cl>        Session session = sessionPool.get(userId);
+</span></span><span class=line><span class=cl>        if (session != null &amp;&amp; session.isOpen()) {
+</span></span><span class=line><span class=cl>            try {
+</span></span><span class=line><span class=cl>                log.info(&#34;websocket消: 单点消息:&#34; + message);
+</span></span><span class=line><span class=cl>                session.getAsyncRemote().sendText(message);
+</span></span><span class=line><span class=cl>            } catch (Exception e) {
+</span></span><span class=line><span class=cl>                e.printStackTrace();
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>前端初始化打开 WebSocket 连接，并监听连接状态，接收服务端数据或向服务端发送数据。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>&lt;script&gt;
+</span></span><span class=line><span class=cl>    var ws = new WebSocket(&#39;ws://localhost:7777/webSocket/10086&#39;);
+</span></span><span class=line><span class=cl>    // 获取连接状态
+</span></span><span class=line><span class=cl>    console.log(&#39;ws连接状态：&#39; + ws.readyState);
+</span></span><span class=line><span class=cl>    //监听是否连接成功
+</span></span><span class=line><span class=cl>    ws.onopen = function () {
+</span></span><span class=line><span class=cl>        console.log(&#39;ws连接状态：&#39; + ws.readyState);
+</span></span><span class=line><span class=cl>        //连接成功则发送一个数据
+</span></span><span class=line><span class=cl>        ws.send(&#39;test1&#39;);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    // 接听服务器发回的信息并处理展示
+</span></span><span class=line><span class=cl>    ws.onmessage = function (data) {
+</span></span><span class=line><span class=cl>        console.log(&#39;接收到来自服务器的消息：&#39;);
+</span></span><span class=line><span class=cl>        console.log(data);
+</span></span><span class=line><span class=cl>        //完成通信后关闭WebSocket连接
+</span></span><span class=line><span class=cl>        ws.close();
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    // 监听连接关闭事件
+</span></span><span class=line><span class=cl>    ws.onclose = function () {
+</span></span><span class=line><span class=cl>        // 监听整个过程中websocket的状态
+</span></span><span class=line><span class=cl>        console.log(&#39;ws连接状态：&#39; + ws.readyState);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    // 监听并处理error事件
+</span></span><span class=line><span class=cl>    ws.onerror = function (error) {
+</span></span><span class=line><span class=cl>        console.log(error);
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    function sendMessage() {
+</span></span><span class=line><span class=cl>        var content = $(&#34;#message&#34;).val();
+</span></span><span class=line><span class=cl>        $.ajax({
+</span></span><span class=line><span class=cl>            url: &#39;/socket/publish?userId=10086&amp;message=&#39; + content,
+</span></span><span class=line><span class=cl>            type: &#39;GET&#39;,
+</span></span><span class=line><span class=cl>            data: { &#34;id&#34;: &#34;7777&#34;, &#34;content&#34;: content },
+</span></span><span class=line><span class=cl>            success: function (data) {
+</span></span><span class=line><span class=cl>                console.log(data)
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        })
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>&lt;/script&gt;
+</span></span></code></pre></td></tr></table></div></div><p>页面初始化建立 WebSocket 连接，之后就可以进行双向通信了，效果还不错。</p><p><img src=https://googoo-s.github.io//statistic/1460000042192395.png width=auto alt></p><h3 id=mqtt-mqtt><a rel=noopener class="internal-link broken" data-src=#mqtt>#</a> MQTT</h3><p><strong>什么是 MQTT 协议？</strong></p><p>MQTT (Message Queue Telemetry Transport)是一种基于发布/订阅（publish/subscribe）模式的轻量级通讯协议，通过订阅相应的主题来获取消息，是物联网（Internet of Thing）中的一个标准传输协议。</p><p>该协议将消息的发布者（publisher）与订阅者（subscriber）进行分离，因此可以在不可靠的网络环境中，为远程连接的设备提供可靠的消息服务，使用方式与传统的 MQ 有点类似。</p><p><img src=https://googoo-s.github.io//statistic/MQTT_%E5%8D%8F%E8%AE%AE%E7%A4%BA%E4%BE%8B.png width=auto alt="MQTT 协议示例"></p><p>MQTT 协议示例</p><p>TCP 协议位于传输层，MQTT 协议位于应用层，MQTT 协议构建于 TCP/IP 协议上，也就是说只要支持 TCP/IP 协议栈的地方，都可以使用 MQTT 协议。</p><p><strong>为什么要用 MQTT 协议？</strong></p><p>MQTT 协议为什么在物联网（IOT）中如此受偏爱？而不是其它协议，比如我们更为熟悉的 HTTP 协议呢？</p><ul><li>首先 HTTP 协议它是一种同步协议，客户端请求后需要等待服务器的响应。而在物联网（IOT）环境中，设备会很受制于环境的影响，比如带宽低、网络延迟高、网络通信不稳定等，显然异步消息协议更为适合 IOT 应用程序。</li><li>HTTP 是单向的，如果要获取消息客户端必须发起连接，而在物联网（IOT）应用程序中，设备或传感器往往都是客户端，这意味着它们无法被动地接收来自网络的命令。</li><li>通常需要将一条命令或者消息，发送到网络上的所有设备上。HTTP 要实现这样的功能不但很困难，而且成本极高。</li></ul><p>具体的 MQTT 协议介绍和实践，这里我就不再赘述了，大家可以参考我之前的两篇文章，里边写的也都很详细了。</p><ul><li>MQTT 协议的介绍：
+<a href=https://mp.weixin.qq.com/s/udFE6k9pPetIWsa6KeErrA rel=noopener>我也没想到 SpringBoot + RabbitMQ 做智能家居，会这么简单open in new window</a></li><li>MQTT 实现消息推送：
+<a href=https://mp.weixin.qq.com/s/U-fUGr9i1MVa4PoVyiDFCg rel=noopener>未读消息（小红点），前端 与 RabbitMQ 实时消息推送实践，贼简单~open in new window</a></li></ul><h2 id=总结-总结><a rel=noopener class="internal-link broken" data-src=#%e6%80%bb%e7%bb%93>#</a> 总结</h2><p><img src=https://googoo-s.github.io//statistic/Pasted%20image%2020230802002008.png width=auto alt></p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>

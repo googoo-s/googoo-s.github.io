@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Netties on</title><link>https://googoo-s.github.io/netty/</link><description>Recent content in Netties on</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://googoo-s.github.io/netty/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://googoo-s.github.io/netty/BootStrap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/BootStrap/</guid><description>简单来说，引导一个应用程序是指对它进行配置，并使它运行起来的过程—尽管该过程的具体细节可能并不如它的定义那样简单，尤其是对于一个网络应用程序来说
+Netty处理引导的方式使你的应用程序和网络层相隔离，无论它是客户端还是服务器
+BootStrap类 引导类的层次结构包括一个抽象的父类和两个具体的引导子类
+相对于将具体的引导类分别看作用于服务器和客户端的引导来说，记住它们的本意是用来支撑不同的应用程序的功能的将有所裨益。
+服务器致力于使用一个父 Channel 来接受来自客户端的连接，并创建子 Channel 以用于它们之间的通信
+而客户端将最可能只需要一个单独的、没有父 Channel 的 Channel 来用于所有的网络交互</description></item><item><title/><link>https://googoo-s.github.io/netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/ByteBuf/</guid><description>网络数据的基本单位总是字节。Java NIO 提供了 ByteBuffer 作为它的字节容器，但是这个类使用起来过于复杂，而且也有些繁琐。
+Netty 的 ByteBuffer 替代品是 ByteBuf，一个强大的实现，既解决了 JDK API 的局限性，又为网络应用程序的开发者提供了更好的 API。
+ByteBuf 的优点 Netty 的数据处理 API 通过两个组件暴露——abstract class ByteBuf 和 interface ByteBufHolder。</description></item><item><title/><link>https://googoo-s.github.io/netty/ChannelHandlerChannelPipelineChannelContext/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/ChannelHandlerChannelPipelineChannelContext/</guid><description>当我们在本章中探讨 Netty 的数据流以及处理组件
+在 ChannelPipeline 中将 ChannelHandler 链接在一起以组织处理逻辑。我们将会研究涉及这些类的各种用例，以及一个重要的关系—ChannelHandlerContext
+ChannelHandler Channel 的生命周期 ChannelHandler的生命周期
+Netty定义了两个重要的ChannelHandler
+ ChannelInboundHandler——处理入站数据以及各种状态变化；</description></item><item><title/><link>https://googoo-s.github.io/netty/EventLoop-%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/EventLoop-%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/</guid><description>常见的线程模型 基本的线程池化模式
+从池的空闲线程列表中选择一个 Thread，并且指派它去运行一个已提交的任务（一个 Runnable 的实现）；
+当任务完成时，将该 Thread 返回给该列表，使其可被重用
+虽然池化和重用线程相对于简单地为每个任务都创建和销毁线程是一种进步，但是它并不能消除由上下文切换所带来的开销
+EventLoop 运行任务来处理在连接的生命周期内发生的事件是任何网络框架的基本功能。与之相应的编程上的构造通常被称为事件循环—一个 Netty 使用了 interface io.</description></item><item><title/><link>https://googoo-s.github.io/netty/%E4%BC%A0%E8%BE%93%E5%92%8CChannel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/%E4%BC%A0%E8%BE%93%E5%92%8CChannel/</guid><description>在某些时候，你需要支撑比预期多很多的并发连接。如果你随后尝试从阻塞传输切换到非阻塞传输，那么你可能会因为这两种网络 API 的截然不同而遇到问题。
+Netty 为它所有的传输实现提供了一个通用 API，这使得这种转换比你直接使用 JDK 所能够达到的简单得多。
+传输方式 OIO
+NIO
+AIO
+Channel 传输 API 的核心是 interface Channel，它被用于所有的 I/O 操作</description></item><item><title/><link>https://googoo-s.github.io/netty/%E6%A6%82%E5%BF%B5%E5%92%8C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/%E6%A6%82%E5%BF%B5%E5%92%8C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</guid><description>IO 模型 IO模型详解
+Java 网络编程 最早期的 Java API（java.net）只支持由本地系统套接字库提供的所谓的阻塞函数
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 // 创建一个新的 ServerSocket，用以 监听指定端口上的连接请求 ServerSocket serverSocket = new ServerSocket(portNumber); // 对accept 阻塞，知道创建一个 Socket clientSocket = serverSocket.</description></item><item><title/><link>https://googoo-s.github.io/netty/%E7%BC%96%E8%A7%A3%E7%A0%81%E5%99%A8/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/%E7%BC%96%E8%A7%A3%E7%A0%81%E5%99%A8/</guid><description>每个网络应用程序都必须定义如何解析在
+两个节点之间来回传输的原始字节
+其和 目标应用程序的数据格式做相互转换
+编码器是将消息转换为适合于传输的格式（最有可能的就是字节流）；
+而对应的解码器则是将网络字节流转换回应用程序的消息格式
+解码器 因为解码器是负责将入站数据从一种格式转换到另一种格式的，所以知道 Netty 的解码器实现了 ChannelInboundHandler 也不会让你感到意外。</description></item></channel></rss>

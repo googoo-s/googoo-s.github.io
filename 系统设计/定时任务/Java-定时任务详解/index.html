@@ -1,0 +1,207 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="为什么需要定时任务？ 我们来看一下几个非常常见的业务场景：
+ 某系统凌晨要进行数据备份。 某电商平台，用户下单半个小时未支付的情况下需要自动取消订单。 某媒体聚合平台，每 10 分钟动态抓取某某网站的数据为自己所用。 某博客平台，支持定时发送文章。 某基金平台，每晚定时计算用户当日收益情况并推送给用户最新的数据。 &mldr;&mldr;  这些场景往往都要求我们在某个特定的时间去做某个事情。
+# 单机定时任务技术选型 # Timer java.util.Timer是 JDK 1.3 开始就已经支持的一种定时任务的实现方式。"><meta property="og:title" content><meta property="og:description" content="为什么需要定时任务？ 我们来看一下几个非常常见的业务场景：
+ 某系统凌晨要进行数据备份。 某电商平台，用户下单半个小时未支付的情况下需要自动取消订单。 某媒体聚合平台，每 10 分钟动态抓取某某网站的数据为自己所用。 某博客平台，支持定时发送文章。 某基金平台，每晚定时计算用户当日收益情况并推送给用户最新的数据。 &mldr;&mldr;  这些场景往往都要求我们在某个特定的时间去做某个事情。
+# 单机定时任务技术选型 # Timer java.util.Timer是 JDK 1.3 开始就已经支持的一种定时任务的实现方式。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/Java-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E8%AF%A6%E8%A7%A3/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="为什么需要定时任务？ 我们来看一下几个非常常见的业务场景：
+ 某系统凌晨要进行数据备份。 某电商平台，用户下单半个小时未支付的情况下需要自动取消订单。 某媒体聚合平台，每 10 分钟动态抓取某某网站的数据为自己所用。 某博客平台，支持定时发送文章。 某基金平台，每晚定时计算用户当日收益情况并推送给用户最新的数据。 &mldr;&mldr;  这些场景往往都要求我们在某个特定的时间去做某个事情。
+# 单机定时任务技术选型 # Timer java.util.Timer是 JDK 1.3 开始就已经支持的一种定时任务的实现方式。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.42375ba996c43a74314996d90dacfb87.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.4994776ff53419a01429d7b1a0de2e9f.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><ol><li><a href=#为什么需要定时任务>为什么需要定时任务？</a></li><li><a href=#单机定时任务技术选型-单机定时任务技术选型><a href=#%E5%8D%95%E6%9C%BA%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B>#</a> 单机定时任务技术选型</a><ol><li><a href=#timer-timer><a href=#timer>#</a> Timer</a></li><li><a href=#scheduledexecutorservice-scheduledexecutorservice><a href=#scheduledexecutorservice>#</a> ScheduledExecutorService</a></li><li><a href=#spring-task-spring-task><a href=#spring-task>#</a> Spring Task</a></li><li><a href=#时间轮-时间轮><a href=#%E6%97%B6%E9%97%B4%E8%BD%AE>#</a> 时间轮</a></li></ol></li><li><a href=#分布式定时任务技术选型-分布式定时任务技术选型><a href=#%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B>#</a> 分布式定时任务技术选型</a><ol><li><a href=#quartz-quartz><a href=#quartz>#</a> Quartz</a></li><li><a href=#elastic-job-elastic-job><a href=#elastic-job>#</a> Elastic-Job</a></li><li><a href=#xxl-job-xxl-job><a href=#xxl-job>#</a> XXL-JOB</a></li><li><a href=#powerjob-powerjob><a href=#powerjob>#</a> PowerJob</a></li></ol></li><li><a href=#总结-总结><a href=#%E6%80%BB%E7%BB%93>#</a> 总结</a></li></ol></li></ol></nav></details></aside><a href=#为什么需要定时任务><h2 id=为什么需要定时任务><span class=hanchor arialabel=Anchor># </span>为什么需要定时任务？</h2></a><p>我们来看一下几个非常常见的业务场景：</p><ol><li>某系统凌晨要进行数据备份。</li><li>某电商平台，用户下单半个小时未支付的情况下需要自动取消订单。</li><li>某媒体聚合平台，每 10 分钟动态抓取某某网站的数据为自己所用。</li><li>某博客平台，支持定时发送文章。</li><li>某基金平台，每晚定时计算用户当日收益情况并推送给用户最新的数据。</li><li>&mldr;&mldr;</li></ol><p>这些场景往往都要求我们在某个特定的时间去做某个事情。</p><h2 id=单机定时任务技术选型-单机定时任务技术选型><a rel=noopener class="internal-link broken" data-src=#%e5%8d%95%e6%9c%ba%e5%ae%9a%e6%97%b6%e4%bb%bb%e5%8a%a1%e6%8a%80%e6%9c%af%e9%80%89%e5%9e%8b>#</a> 单机定时任务技术选型</h2><h3 id=timer-timer><a rel=noopener class="internal-link broken" data-src=#timer>#</a> Timer</h3><p><code>java.util.Timer</code>是 JDK 1.3 开始就已经支持的一种定时任务的实现方式。</p><p><code>Timer</code> 内部使用一个叫做 <code>TaskQueue</code> 的类存放定时任务，它是一个基于最小堆实现的优先级队列。<code>TaskQueue</code> 会按照任务距离下一次执行时间的大小将任务排序，保证在堆顶的任务最先执行。这样在需要执行任务时，每次只需要取出堆顶的任务运行即可！</p><p><code>Timer</code> 使用起来比较简单，通过下面的方式我们就能创建一个 1s 之后执行的定时任务。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>// 示例代码：
+</span></span><span class=line><span class=cl>TimerTask task = new TimerTask() {
+</span></span><span class=line><span class=cl>    public void run() {
+</span></span><span class=line><span class=cl>        System.out.println(&#34;当前时间: &#34; + new Date() + &#34;n&#34; +
+</span></span><span class=line><span class=cl>                &#34;线程名称: &#34; + Thread.currentThread().getName());
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>};
+</span></span><span class=line><span class=cl>System.out.println(&#34;当前时间: &#34; + new Date() + &#34;n&#34; +
+</span></span><span class=line><span class=cl>        &#34;线程名称: &#34; + Thread.currentThread().getName());
+</span></span><span class=line><span class=cl>Timer timer = new Timer(&#34;Timer&#34;);
+</span></span><span class=line><span class=cl>long delay = 1000L;
+</span></span><span class=line><span class=cl>timer.schedule(task, delay);
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>//输出：
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:18:47 CST 2021n线程名称: main
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:18:48 CST 2021n线程名称: Timer
+</span></span></code></pre></td></tr></table></div></div><p>不过其缺陷较多，比如一个 <code>Timer</code> 一个线程，这就导致 <code>Timer</code> 的任务的执行只能串行执行，一个任务执行时间过长的话会影响其他任务（性能非常差），再比如发生异常时任务直接停止（<code>Timer</code> 只捕获了 <code>InterruptedException</code> ）。</p><p><code>Timer</code> 类上的有一段注释是这样写的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl> <span class=o>*</span> <span class=nx>This</span> <span class=nx>class</span> <span class=nx>does</span> <span class=nx>not</span> <span class=nx>offer</span> <span class=nx>real</span><span class=o>-</span><span class=nx>time</span> <span class=nx>guarantees</span><span class=p>:</span> <span class=nx>it</span> <span class=nx>schedules</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>tasks</span> <span class=nx>using</span> <span class=nx>the</span> <span class=p>&lt;</span><span class=nx>tt</span><span class=p>&gt;</span><span class=nx>Object</span><span class=p>.</span><span class=nf>wait</span><span class=p>(</span><span class=nx>long</span><span class=p>)&lt;</span><span class=o>/</span><span class=nx>tt</span><span class=p>&gt;</span> <span class=nx>method</span><span class=p>.</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span><span class=nx>Java</span> <span class=mf>5.0</span> <span class=nx>introduced</span> <span class=nx>the</span> <span class=p>{</span><span class=err>@</span><span class=nx>code</span> <span class=nx>java</span><span class=p>.</span><span class=nx>util</span><span class=p>.</span><span class=nx>concurrent</span><span class=p>}</span> <span class=kn>package</span> <span class=nx>and</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>one</span> <span class=nx>of</span> <span class=nx>the</span> <span class=nx>concurrency</span> <span class=nx>utilities</span> <span class=nx>therein</span> <span class=nx>is</span> <span class=nx>the</span> <span class=p>{</span><span class=err>@</span><span class=nx>link</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>java</span><span class=p>.</span><span class=nx>util</span><span class=p>.</span><span class=nx>concurrent</span><span class=p>.</span><span class=nx>ScheduledThreadPoolExecutor</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>ScheduledThreadPoolExecutor</span><span class=p>}</span> <span class=nx>which</span> <span class=nx>is</span> <span class=nx>a</span> <span class=nx>thread</span> <span class=nx>pool</span> <span class=k>for</span> <span class=nx>repeatedly</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>executing</span> <span class=nx>tasks</span> <span class=nx>at</span> <span class=nx>a</span> <span class=nx>given</span> <span class=nx>rate</span> <span class=nx>or</span> <span class=nx>delay</span><span class=p>.</span>  <span class=nx>It</span> <span class=nx>is</span> <span class=nx>effectively</span> <span class=nx>a</span> <span class=nx>more</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>versatile</span> <span class=nx>replacement</span> <span class=k>for</span> <span class=nx>the</span> <span class=p>{</span><span class=err>@</span><span class=nx>code</span> <span class=nx>Timer</span><span class=p>}</span><span class=o>/</span><span class=p>{</span><span class=err>@</span><span class=nx>code</span> <span class=nx>TimerTask</span><span class=p>}</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>combination</span><span class=p>,</span> <span class=nx>as</span> <span class=nx>it</span> <span class=nx>allows</span> <span class=nx>multiple</span> <span class=nx>service</span> <span class=nx>threads</span><span class=p>,</span> <span class=nx>accepts</span> <span class=nx>various</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>time</span> <span class=nx>units</span><span class=p>,</span> <span class=nx>and</span> <span class=nx>doesn</span><span class=err>&#39;</span><span class=nx>t</span> <span class=nx>require</span> <span class=nx>subclassing</span> <span class=p>{</span><span class=err>@</span><span class=nx>code</span> <span class=nx>TimerTask</span><span class=p>}</span> <span class=p>(</span><span class=nx>just</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>implement</span> <span class=p>{</span><span class=err>@</span><span class=nx>code</span> <span class=nx>Runnable</span><span class=p>}).</span>  <span class=nx>Configuring</span> <span class=p>{</span><span class=err>@</span><span class=nx>code</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=nx>ScheduledThreadPoolExecutor</span><span class=p>}</span> <span class=nx>with</span> <span class=nx>one</span> <span class=nx>thread</span> <span class=nx>makes</span> <span class=nx>it</span> <span class=nx>equivalent</span> <span class=nx>to</span>
+</span></span><span class=line><span class=cl> <span class=o>*</span> <span class=p>{</span><span class=err>@</span><span class=nx>code</span> <span class=nx>Timer</span><span class=p>}.</span>
+</span></span></code></pre></td></tr></table></div></div><p>大概的意思就是：<code>ScheduledThreadPoolExecutor</code> 支持多线程执行定时任务并且功能更强大，是 <code>Timer</code> 的替代品。</p><h3 id=scheduledexecutorservice-scheduledexecutorservice><a rel=noopener class="internal-link broken" data-src=#scheduledexecutorservice>#</a> ScheduledExecutorService</h3><p><code>ScheduledExecutorService</code> 是一个接口，有多个实现类，比较常用的是 <code>ScheduledThreadPoolExecutor</code> 。</p><p><img src=https://oss.javaguide.cn/javaguide/20210607154324712.png width=auto alt></p><p><code>ScheduledThreadPoolExecutor</code> 本身就是一个线程池，支持任务并发执行。并且，其内部使用 <code>DelayedWorkQueue</code> 作为任务队列。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>// 示例代码：
+</span></span><span class=line><span class=cl>TimerTask repeatedTask = new TimerTask() {
+</span></span><span class=line><span class=cl>    @SneakyThrows
+</span></span><span class=line><span class=cl>    public void run() {
+</span></span><span class=line><span class=cl>        System.out.println(&#34;当前时间: &#34; + new Date() + &#34;n&#34; +
+</span></span><span class=line><span class=cl>                &#34;线程名称: &#34; + Thread.currentThread().getName());
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>};
+</span></span><span class=line><span class=cl>System.out.println(&#34;当前时间: &#34; + new Date() + &#34;n&#34; +
+</span></span><span class=line><span class=cl>        &#34;线程名称: &#34; + Thread.currentThread().getName());
+</span></span><span class=line><span class=cl>ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+</span></span><span class=line><span class=cl>long delay  = 1000L;
+</span></span><span class=line><span class=cl>long period = 1000L;
+</span></span><span class=line><span class=cl>executor.scheduleAtFixedRate(repeatedTask, delay, period, TimeUnit.MILLISECONDS);
+</span></span><span class=line><span class=cl>Thread.sleep(delay + period * 5);
+</span></span><span class=line><span class=cl>executor.shutdown();
+</span></span><span class=line><span class=cl>//输出：
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:46 CST 2021n线程名称: main
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:47 CST 2021n线程名称: pool-1-thread-1
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:48 CST 2021n线程名称: pool-1-thread-1
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:49 CST 2021n线程名称: pool-1-thread-2
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:50 CST 2021n线程名称: pool-1-thread-2
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:51 CST 2021n线程名称: pool-1-thread-2
+</span></span><span class=line><span class=cl>当前时间: Fri May 28 15:40:52 CST 2021n线程名称: pool-1-thread-2
+</span></span></code></pre></td></tr></table></div></div><p>不论是使用 <code>Timer</code> 还是 <code>ScheduledExecutorService</code> 都无法使用 Cron 表达式指定任务执行的具体时间。</p><h3 id=spring-task-spring-task><a rel=noopener class="internal-link broken" data-src=#spring-task>#</a> Spring Task</h3><p>我们直接通过 Spring 提供的 <code>@Scheduled</code> 注解即可定义定时任务，非常方便！</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>/**
+</span></span><span class=line><span class=cl> * cron：使用Cron表达式。　每分钟的1，2秒运行
+</span></span><span class=line><span class=cl> */
+</span></span><span class=line><span class=cl>@Scheduled(cron = &#34;1-2 * * * * ? &#34;)
+</span></span><span class=line><span class=cl>public void reportCurrentTimeWithCronExpression() {
+</span></span><span class=line><span class=cl>  log.info(&#34;Cron Expression: The time is now {}&#34;, dateFormat.format(new Date()));
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>我在大学那会做的一个 SSM 的企业级项目，就是用的 Spring Task 来做的定时任务。</p><p>并且，Spring Task 还是支持 <strong>Cron 表达式</strong> 的。Cron 表达式主要用于定时作业(定时任务)系统定义执行时间或执行频率的表达式，非常厉害，你可以通过 Cron 表达式进行设置定时任务每天或者每个月什么时候执行等等操作。咱们要学习定时任务的话，Cron 表达式是一定是要重点关注的。推荐一个在线 Cron 表达式生成器：
+<a href=http://cron.qqe2.com/ rel=noopener>http://cron.qqe2.com/open in new window</a> 。</p><p>但是，Spring 自带的定时调度只支持单机，并且提供的功能比较单一。之前写过一篇文章:
+<a href="https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485563&idx=1&sn=7419341f04036a10b141b74624a3f8c9&chksm=cea247b0f9d5cea6440759e6d49b4e77d06f4c99470243a10c1463834e873ca90266413fbc92&token=2133161636&lang=zh_CN#rd" rel=noopener>《5 分钟搞懂如何在 Spring Boot 中 Schedule Tasks》open in new window</a> ，不了解的小伙伴可以参考一下。</p><p>Spring Task 底层是基于 JDK 的 <code>ScheduledThreadPoolExecutor</code> 线程池来实现的。</p><p><strong>优缺点总结：</strong></p><ul><li>优点：简单，轻量，支持 Cron 表达式</li><li>缺点：功能单一</li></ul><h3 id=时间轮-时间轮><a rel=noopener class="internal-link broken" data-src=#%e6%97%b6%e9%97%b4%e8%bd%ae>#</a> 时间轮</h3><p>Kafka、Dubbo、ZooKeeper、Netty、Caffeine、Akka 中都有对时间轮的实现。</p><p>时间轮简单来说就是一个环形的队列（底层一般基于数组实现），队列中的每一个元素（时间格）都可以存放一个定时任务列表。</p><p>时间轮中的每个时间格代表了时间轮的基本时间跨度或者说时间精度，假如时间一秒走一个时间格的话，那么这个时间轮的最高精度就是 1 秒（也就是说 3 s 和 3.9s 会在同一个时间格中）。</p><p>下图是一个有 12 个时间格的时间轮，转完一圈需要 12 s。当我们需要新建一个 3s 后执行的定时任务，只需要将定时任务放在下标为 3 的时间格中即可。当我们需要新建一个 9s 后执行的定时任务，只需要将定时任务放在下标为 9 的时间格中即可。</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/one-layers-of-time-wheel.png width=auto alt></p><p>那当我们需要创建一个 13s 后执行的定时任务怎么办呢？这个时候可以引入一叫做 <strong>圈数/轮数</strong> 的概念，也就是说这个任务还是放在下标为 3 的时间格中， 不过它的圈数为 2 。</p><p>除了增加圈数这种方法之外，还有一种 <strong>多层次时间轮</strong> （类似手表），Kafka 采用的就是这种方案。</p><p>针对下图的时间轮，我来举一个例子便于大家理解。</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/three-layers-of-time-wheel.png width=auto alt></p><p>上图的时间轮，第 1 层的时间精度为 1 ，第 2 层的时间精度为 20 ，第 3 层的时间精度为 400。假如我们需要添加一个 350s 后执行的任务 A 的话（当前时间是 0s），这个任务会被放在第 2 层（因为第二层的时间跨度为 20*20=400>350）的第 350/20=17 个时间格子。</p><p>当第一层转了 17 圈之后，时间过去了 340s ，第 2 层的指针此时来到第 17 个时间格子。此时，第 2 层第 17 个格子的任务会被移动到第 1 层。</p><p>任务 A 当前是 10s 之后执行，因此它会被移动到第 1 层的第 10 个时间格子。</p><p>这里在层与层之间的移动也叫做时间轮的升降级。参考手表来理解就好！</p><p><strong>时间轮比较适合任务数量比较多的定时任务场景，它的任务写入和执行的时间复杂度都是 0（1）。</strong></p><h2 id=分布式定时任务技术选型-分布式定时任务技术选型><a rel=noopener class="internal-link broken" data-src=#%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9a%e6%97%b6%e4%bb%bb%e5%8a%a1%e6%8a%80%e6%9c%af%e9%80%89%e5%9e%8b>#</a> 分布式定时任务技术选型</h2><p>上面提到的一些定时任务的解决方案都是在单机下执行的，适用于比较简单的定时任务场景比如每天凌晨备份一次数据。</p><p>如果我们需要一些高级特性比如支持任务在分布式场景下的分片和高可用的话，我们就需要用到分布式任务调度框架了。</p><p>通常情况下，一个定时任务的执行往往涉及到下面这些角色：</p><ul><li><strong>任务</strong>：首先肯定是要执行的任务，这个任务就是具体的业务逻辑比如定时发送文章。</li><li><strong>调度器</strong>：其次是调度中心，调度中心主要负责任务管理，会分配任务给执行器。</li><li><strong>执行器</strong>：最后就是执行器，执行器接收调度器分派的任务并执行。</li></ul><h3 id=quartz-quartz><a rel=noopener class="internal-link broken" data-src=#quartz>#</a> Quartz</h3><p>一个很火的开源任务调度框架，完全由Java写成。Quartz 可以说是 Java 定时任务领域的老大哥或者说参考标准，其他的任务调度框架基本都是基于 Quartz 开发的，比如当当网的<code>elastic-job</code>就是基于Quartz二次开发之后的分布式调度解决方案。</p><p>使用 Quartz 可以很方便地与 Spring集成，并且支持动态添加任务和集群。但是，Quartz 使用起来也比较麻烦，API 繁琐。</p><p>并且，Quartz 并没有内置 UI 管理控制台，不过你可以使用
+<a href=https://github.com/zhaopeiym/quartzui rel=noopener>quartzuiopen in new window</a> 这个开源项目来解决这个问题。</p><p>另外，Quartz 虽然也支持分布式任务。但是，它是在数据库层面，通过数据库的锁机制做的，有非常多的弊端比如系统侵入性严重、节点负载不均衡。有点伪分布式的味道。</p><p><strong>优缺点总结：</strong></p><ul><li>优点：可以与 Spring集成，并且支持动态添加任务和集群。</li><li>缺点：分布式支持不友好，没有内置 UI 管理控制台、使用麻烦（相比于其他同类型框架来说）</li></ul><h3 id=elastic-job-elastic-job><a rel=noopener class="internal-link broken" data-src=#elastic-job>#</a> Elastic-Job</h3><p>ElasticJob 当当网开源的一个面向互联网生态和海量任务的分布式调度解决方案，由两个相互独立的子项目 ElasticJob-Lite 和 ElasticJob-Cloud 组成。</p><p>ElasticJob-Lite 和 ElasticJob-Cloud 两者的对比如下：</p><table><thead><tr><th>ElasticJob-Lite</th><th>ElasticJob-Cloud</th><th></th></tr></thead><tbody><tr><td>无中心化</td><td>是</td><td>否</td></tr><tr><td>资源分配</td><td>不支持</td><td>支持</td></tr><tr><td>作业模式</td><td>常驻</td><td>常驻 + 瞬时</td></tr><tr><td>部署依赖</td><td>ZooKeeper</td><td>ZooKeeper + Mesos</td></tr></tbody></table><p><code>ElasticJob</code> 支持任务在分布式场景下的分片和高可用、任务可视化管理等功能。</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/elasticjob-feature-list.png width=auto alt></p><p>ElasticJob-Lite 的架构设计如下图所示：</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/elasticjob-lite-architecture-design.png width=auto alt="ElasticJob-Lite 的架构设计"></p><p>ElasticJob-Lite 的架构设计</p><p>从上图可以看出，Elastic-Job没有调度中心这一概念，而是使用 ZooKeeper 作为注册中心，注册中心负责协调分配任务到不同的节点上。</p><p>Elastic-Job 中的定时调度都是由执行器自行触发，这种设计也被称为去中心化设计（调度和处理都是执行器单独完成）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@Component
+</span></span><span class=line><span class=cl>@ElasticJobConf(name = &#34;dayJob&#34;, cron = &#34;0/10 * * * * ?&#34;, shardingTotalCount = 2,
+</span></span><span class=line><span class=cl>        shardingItemParameters = &#34;0=AAAA,1=BBBB&#34;, description = &#34;简单任务&#34;, failover = true)
+</span></span><span class=line><span class=cl>public class TestJob implements SimpleJob {
+</span></span><span class=line><span class=cl>    @Override
+</span></span><span class=line><span class=cl>    public void execute(ShardingContext shardingContext) {
+</span></span><span class=line><span class=cl>        log.info(&#34;TestJob任务名：【{}】, 片数：【{}】, param=【{}】&#34;, shardingContext.getJobName(), shardingContext.getShardingTotalCount(),
+</span></span><span class=line><span class=cl>                shardingContext.getShardingParameter());
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><strong>相关地址：</strong></p><ul><li>GitHub 地址：
+<a href=https://github.com/apache/shardingsphere-elasticjob%E3%80%82 rel=noopener>https://github.com/apache/shardingsphere-elasticjob。open in new window</a></li><li>官方网站：
+<a href=https://shardingsphere.apache.org/elasticjob/index_zh.html rel=noopener>https://shardingsphere.apache.org/elasticjob/index_zh.htmlopen in new window</a> 。</li></ul><p><strong>优缺点总结：</strong></p><ul><li>优点：可以与 Spring集成、支持分布式、支持集群、性能不错</li><li>缺点：依赖了额外的中间件比如 Zookeeper（复杂度增加，可靠性降低、维护成本变高）</li></ul><h3 id=xxl-job-xxl-job><a rel=noopener class="internal-link broken" data-src=#xxl-job>#</a> XXL-JOB</h3><p><code>XXL-JOB</code> 于 2015 年开源，是一款优秀的轻量级分布式任务调度框架，支持任务可视化管理、弹性扩容缩容、任务失败重试和告警、任务分片等功能，</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/xxljob-feature-list.png width=auto alt></p><p>根据 <code>XXL-JOB</code> 官网介绍，其解决了很多 Quartz 的不足。</p><blockquote><p>Quartz作为开源作业调度中的佼佼者，是作业调度的首选。但是集群环境中Quartz采用API的方式对任务进行管理，从而可以避免上述问题，但是同样存在以下问题：</p><ul><li>问题一：调用API的的方式操作任务，不人性化；</li><li>问题二：需要持久化业务QuartzJobBean到底层数据表中，系统侵入性相当严重。</li><li>问题三：调度逻辑和QuartzJobBean耦合在同一个项目中，这将导致一个问题，在调度任务数量逐渐增多，同时调度任务逻辑逐渐加重的情况下，此时调度系统的性能将大大受限于业务；</li><li>问题四：quartz底层以“抢占式”获取DB锁并由抢占成功节点负责运行任务，会导致节点负载悬殊非常大；而XXL-JOB通过执行器实现“协同分配式”运行任务，充分发挥集群优势，负载各节点均衡。</li></ul><p>XXL-JOB弥补了quartz的上述不足之处。</p></blockquote><p><code>XXL-JOB</code> 的架构设计如下图所示：</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/xxljob-architecture-design-v2.1.0.png width=auto alt></p><p>从上图可以看出，<code>XXL-JOB</code> 由 <strong>调度中心</strong> 和 <strong>执行器</strong> 两大部分组成。调度中心主要负责任务管理、执行器管理以及日志管理。执行器主要是接收调度信号并处理。另外，调度中心进行任务调度时，是通过自研 RPC 来实现的。</p><p>不同于 Elastic-Job的去中心化设计， <code>XXL-JOB</code> 的这种设计也被称为中心化设计（调度中心调度多个执行器执行任务）。</p><p>和 <code>Quzrtz</code> 类似 <code>XXL-JOB</code> 也是基于数据库锁调度任务，存在性能瓶颈。不过，一般在任务量不是特别大的情况下，没有什么影响的，可以满足绝大部分公司的要求。</p><p>不要被 <code>XXL-JOB</code> 的架构图给吓着了，实际上，我们要用 <code>XXL-JOB</code> 的话，只需要重写 <code>IJobHandler</code> 自定义任务执行逻辑就可以了，非常易用！</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@JobHandler(value=&#34;myApiJobHandler&#34;)
+</span></span><span class=line><span class=cl>@Component
+</span></span><span class=line><span class=cl>public class MyApiJobHandler extends IJobHandler {
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    @Override
+</span></span><span class=line><span class=cl>    public ReturnT&lt;String&gt; execute(String param) throws Exception {
+</span></span><span class=line><span class=cl>        //......
+</span></span><span class=line><span class=cl>        return ReturnT.SUCCESS;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>还可以直接基于注解定义任务。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>@XxlJob(&#34;myAnnotationJobHandler&#34;)
+</span></span><span class=line><span class=cl>public ReturnT&lt;String&gt; myAnnotationJobHandler(String param) throws Exception {
+</span></span><span class=line><span class=cl>  //......
+</span></span><span class=line><span class=cl>  return ReturnT.SUCCESS;
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/xxljob-admin-task-management.png width=auto alt></p><p><strong>相关地址：</strong></p><ul><li>GitHub 地址：
+<a href=https://github.com/xuxueli/xxl-job/%E3%80%82 rel=noopener>https://github.com/xuxueli/xxl-job/。open in new window</a></li><li>官方介绍：
+<a href=https://www.xuxueli.com/xxl-job/ rel=noopener>https://www.xuxueli.com/xxl-job/open in new window</a> 。</li></ul><p><strong>优缺点总结：</strong></p><ul><li>优点：开箱即用（学习成本比较低）、与 Spring 集成、支持分布式、支持集群、内置了 UI 管理控制台。</li><li>缺点：不支持动态添加任务（如果一定想要动态创建任务也是支持的，参见：
+<a href=https://github.com/xuxueli/xxl-job/issues/277 rel=noopener>xxl-job issue277open in new window</a>）。</li></ul><h3 id=powerjob-powerjob><a rel=noopener class="internal-link broken" data-src=#powerjob>#</a> PowerJob</h3><p>非常值得关注的一个分布式任务调度框架，分布式任务调度领域的新星。目前，已经有很多公司接入比如 OPPO、京东、中通、思科。</p><p>这个框架的诞生也挺有意思的，PowerJob 的作者当时在阿里巴巴实习过，阿里巴巴那会使用的是内部自研的 SchedulerX（阿里云付费产品）。实习期满之后，PowerJob 的作者离开了阿里巴巴。想着说自研一个 SchedulerX，防止哪天 SchedulerX 满足不了需求，于是 PowerJob 就诞生了。</p><p>更多关于 PowerJob 的故事，小伙伴们可以去看看 PowerJob 作者的视频
+<a href=https://www.bilibili.com/video/BV1SK411A7F3/ rel=noopener>《我和我的任务调度中间件》open in new window</a>。简单点概括就是：“游戏没啥意思了，我要扛起了新一代分布式任务调度与计算框架的大旗！”。</p><p>由于 SchedulerX 属于人民币产品，我这里就不过多介绍。PowerJob 官方也对比过其和 QuartZ、XXL-JOB 以及 SchedulerX。</p><p><img src=https://oss.javaguide.cn/github/javaguide/system-design/schedule-task/quartz-xxljob-schedulerx2.0-powerjob-comparison.png width=auto alt></p><h2 id=总结-总结><a rel=noopener class="internal-link broken" data-src=#%e6%80%bb%e7%bb%93>#</a> 总结</h2><p>这篇文章中，我主要介绍了：</p><ul><li><strong>定时任务的相关概念</strong>：为什么需要定时任务、定时任务中的核心角色、分布式定时任务。</li><li><strong>定时任务的技术选型</strong>：XXL-JOB 2015 年推出，已经经过了很多年的考验。XXL-JOB 轻量级，并且使用起来非常简单。虽然存在性能瓶颈，但是，在绝大多数情况下，对于企业的基本需求来说是没有影响的。PowerJob 属于分布式任务调度领域里的新星，其稳定性还有待继续考察。ElasticJob 由于在架构设计上是基于 Zookeeper ，而 XXL-JOB 是基于数据库，性能方面的话，ElasticJob 略胜一筹。</li></ul><p>这篇文章并没有介绍到实际使用，但是，并不代表实际使用不重要。我在写这篇文章之前，已经动手写过相应的 Demo。像 Quartz，我在大学那会就用过。不过，当时用的是 Spring 。为了能够更好地体验，我自己又在 Spring Boot 上实际体验了一下。如果你并没有实际使用某个框架，就直接说它并不好用的话，是站不住脚的。</p><p>最后，这篇文章要感谢艿艿的帮助，写这篇文章的时候向艿艿询问过一些问题。推荐一篇艿艿写的偏实战类型的硬核文章：
+<a href="https://mp.weixin.qq.com/s?__biz=MzUzMTA2NTU2Ng==&mid=2247490679&idx=1&sn=25374dbdcca95311d41be5d7b7db454d&chksm=fa4963c6cd3eead055bb9cd10cca13224bb35d0f7373a27aa22a55495f71e24b8273a7603314&scene=27#wechat_redirect" rel=noopener>《Spring Job？Quartz？XXL-Job？年轻人才做选择，艿艿全莽~》open in new window</a></p><hr><p>著作权归Guide所有 原文链接：https://javaguide.cn/system-design/schedule-task.html#powerjob</p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>
