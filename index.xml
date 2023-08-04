@@ -14,7 +14,7 @@ setmetatable(table, metatable)：此方法用于为一个表设置元表。</des
 安抚心态
 如果你陷入精神内耗或者自我怀疑，不然看看下面这些内容：</description></item><item><title/><link>https://googoo-s.github.io/elastic/KQL/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/elastic/KQL/</guid><description>Kibana Query Language
 https://juejin.cn/post/7003201901382598686
-https://www.elastic.co/guide/en/kibana/7.14/kuery-query.html#kuery-query</description></item><item><title/><link>https://googoo-s.github.io/netty/BootStrap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/BootStrap/</guid><description>简单来说，引导一个应用程序是指对它进行配置，并使它运行起来的过程—尽管该过程的具体细节可能并不如它的定义那样简单，尤其是对于一个网络应用程序来说
+https://www.elastic.co/guide/en/kibana/7.14/kuery-query.html#kuery-query</description></item><item><title/><link>https://googoo-s.github.io/lua/%E7%94%A8Go%E5%AE%9E%E7%8E%B0Lua/%E5%89%8D%E8%A8%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/lua/%E7%94%A8Go%E5%AE%9E%E7%8E%B0Lua/%E5%89%8D%E8%A8%80/</guid><description>参考资料 * 自己动手实现Lua:虚拟机、编译器和标准库 《Programming in Lua, Fourth Edition》 《Lua 5.3 Reference Manual》 《The Evolution of Lua》 《The Implementation of Lua 5.</description></item><item><title/><link>https://googoo-s.github.io/netty/BootStrap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googoo-s.github.io/netty/BootStrap/</guid><description>简单来说，引导一个应用程序是指对它进行配置，并使它运行起来的过程—尽管该过程的具体细节可能并不如它的定义那样简单，尤其是对于一个网络应用程序来说
 Netty处理引导的方式使你的应用程序和网络层相隔离，无论它是客户端还是服务器
 BootStrap类 引导类的层次结构包括一个抽象的父类和两个具体的引导子类
 相对于将具体的引导类分别看作用于服务器和客户端的引导来说，记住它们的本意是用来支撑不同的应用程序的功能的将有所裨益。
