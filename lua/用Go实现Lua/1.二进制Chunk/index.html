@@ -1,0 +1,337 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="什么是二进制 chunk Lua 脚本并.不是直接被 Lua 解释器解释执行，而是类似 Java 语言那样，先由 Lua 编译器编译为字节码，然后再交给 Lua 虚拟机去执行
+Lua 字节码需要一个载体，这个载体就是二进制 chunk，对 Java 虚拟机比较熟悉的读者可以把二进制 chunk 看作 Lua 版的 class 文件"><meta property="og:title" content><meta property="og:description" content="什么是二进制 chunk Lua 脚本并.不是直接被 Lua 解释器解释执行，而是类似 Java 语言那样，先由 Lua 编译器编译为字节码，然后再交给 Lua 虚拟机去执行
+Lua 字节码需要一个载体，这个载体就是二进制 chunk，对 Java 虚拟机比较熟悉的读者可以把二进制 chunk 看作 Lua 版的 class 文件"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/lua/%E7%94%A8Go%E5%AE%9E%E7%8E%B0Lua/1.%E4%BA%8C%E8%BF%9B%E5%88%B6Chunk/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="什么是二进制 chunk Lua 脚本并.不是直接被 Lua 解释器解释执行，而是类似 Java 语言那样，先由 Lua 编译器编译为字节码，然后再交给 Lua 虚拟机去执行
+Lua 字节码需要一个载体，这个载体就是二进制 chunk，对 Java 虚拟机比较熟悉的读者可以把二进制 chunk 看作 Lua 版的 class 文件"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.f65387078bd3afa8657e01f74a9355e6.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.4faf65b59f471201f737f1e5a6b86fe9.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#什么是二进制-chunk>什么是二进制 chunk</a></li><li><a href=#lunc-命令>lunc 命令</a><ol><li><a href=#编译-lua-源文件>编译 lua 源文件</a></li><li><a href=#luac-的简单工作原理>Luac 的简单工作原理</a></li><li><a href=#反编译二进制-chunk>反编译二进制 chunk</a></li><li><a href=#二进制-chunk-的格式>二进制 chunk 的格式</a><ol><li><a href=#数据类型>数据类型</a></li><li><a href=#总体结果>总体结果</a></li><li><a href=#头部>头部</a></li><li><a href=#函数原型>函数原型</a></li></ol></li><li><a href=#解析二进制-chunk>解析二进制 chunk</a><ol><li><a href=#读取基本数据类型>读取基本数据类型</a></li><li><a href=#检查头部>检查头部</a></li><li><a href=#读取函数原型>读取函数原型</a></li></ol></li></ol></li></ol></nav></details></aside><a href=#什么是二进制-chunk><h1 id=什么是二进制-chunk><span class=hanchor arialabel=Anchor># </span>什么是二进制 chunk</h1></a><p>Lua 脚本并.不是直接被 Lua 解释器解释执行，而是类似 Java 语言那样，先由 Lua 编译器编译为字节码，然后再交给 Lua 虚拟机去执行</p><p>Lua 字节码需要一个载体，这个载体就是二进制 chunk，对 Java 虚拟机比较熟悉的读者可以把二进制 chunk 看作 Lua 版的 class 文件</p><a href=#lunc-命令><h1 id=lunc-命令><span class=hanchor arialabel=Anchor># </span>lunc 命令</h1></a><p>Luac 命令主要有两个用途：</p><ul><li>第一，作为编译器，把 Lua 源文件编译成二进制 chunk 文件：</li><li>第二，作为反编译器，分析二进制 chunk，将信息输出到控制台</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>➜  will ~ luac
+</span></span><span class=line><span class=cl>C:\Program Files (x86)\Lua\5.1\luac.exe: no input files given
+</span></span><span class=line><span class=cl>usage: C:\Program Files (x86)\Lua\5.1\luac.exe [options] [filenames].
+</span></span><span class=line><span class=cl>Available options are:
+</span></span><span class=line><span class=cl>  -        process stdin
+</span></span><span class=line><span class=cl>  -l       list
+</span></span><span class=line><span class=cl>  -o name  output to file &#39;name&#39; (default is &#34;luac.out&#34;)
+</span></span><span class=line><span class=cl>  -p       parse only
+</span></span><span class=line><span class=cl>  -s       strip debug information
+</span></span><span class=line><span class=cl>  -v       show version information
+</span></span><span class=line><span class=cl>  --       stop handling options
+</span></span></code></pre></td></tr></table></div></div><a href=#编译-lua-源文件><h2 id=编译-lua-源文件><span class=hanchor arialabel=Anchor># </span>编译 lua 源文件</h2></a><p>将一个或者多个文件名作为参数调用 luac 命令就可以编译指定的 Lua 源文件，如果编译成功，在当前目录下会出现 luac. Out 文件，里面的内容就是对应的二进制 chunk</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ luac hello_world.lua              # 生成luac.out
+</span></span><span class=line><span class=cl>$ luac -o hw.luac hello_world.lua   # 生成hw.luac
+</span></span><span class=line><span class=cl>$ luac -s hello_world.lua           # 不包含调试信息
+</span></span><span class=line><span class=cl>$ luac -p hello_world.lua           # 只进行语法检查
+</span></span></code></pre></td></tr></table></div></div><a href=#luac-的简单工作原理><h2 id=luac-的简单工作原理><span class=hanchor arialabel=Anchor># </span>Luac 的简单工作原理</h2></a><p>Lua 编译器以函数为单位进行编译，每一个函数都会被 Lua 编译器编译为一个内部结构，这个结构叫作“原型”（Prototype）。原型主要包含 6 部分内容，分别是：</p><ul><li>函数基本信息（包括参数数量、局部变量数量等）</li><li>字节码</li><li>常量表</li><li>Upvalue 表</li><li>调式信息</li><li>子函数原型列表</li></ul><p><strong>函数原型是一种递归结构</strong>，并且 Lua 源码中函数的嵌套关系会直接反映在编译后的原型里</p><p>对于脚本，<strong>Lua 编译器会自动为我们的脚本添加一个 main 函数</strong>（后文称其为主函数），并且把整个程序都放进这个函数里，然后再以它为起点进行编译，那么自然就把整个程序都编译出来了</p><p>综上所述，函数原型和二进制 chunk 的内部结构</p><p><img src=https://googoo-s.github.io//statistic/Pasted%20image%2020230805015642.png width=auto alt></p><a href=#反编译二进制-chunk><h2 id=反编译二进制-chunk><span class=hanchor arialabel=Anchor># </span>反编译二进制 chunk</h2></a><p>Luc 命令兼具编译和反编译功能，使用“-l”选项可以将 luac 切换到反编译模式。正如 javap 命令是查看 class 文件的利器，luac 命令搭配“-l”选项则是查看二进制 chunk 的利器</p><p>以前面编译出来的 hello_world. Luac 文件为例，其反编译输出如下。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ luac -l hello_world.luac
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>main &lt;hello_world.lua:0,0&gt; (4 instructions at 0x7fb4dbc030f0)
+</span></span><span class=line><span class=cl>0+ params, 2 slots, 1 upvalue, 0 locals, 2 constants, 0 functions
+</span></span><span class=line><span class=cl>	1    [1]GETTABUP  0 0-1 ; _ENV &#34;print&#34;
+</span></span><span class=line><span class=cl>	2    [1]LOADK      1-2       ; &#34;Hello, World! &#34;
+</span></span><span class=line><span class=cl>	3    [1]CALL       0 2 1
+</span></span><span class=line><span class=cl>	4    [1]RETURN     0 1
+</span></span></code></pre></td></tr></table></div></div><p>由于“Hello, World! ”程序只有一条打印语句，所以编译出来的二进制 chunk 里也只有一个主函数原型（没有子函数），因此反编译输出里也只有主函数信息</p><p>多函数的 lua</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>function foo()
+</span></span><span class=line><span class=cl>	function bar() end
+</span></span><span class=line><span class=cl>end
+</span></span></code></pre></td></tr></table></div></div><p>反编译结果，反编译输出中会依次包含 main、foo 和 bar 函数的信息，如下所示。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ luac -l foo_bar.lua
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>main &lt;foo_bar.lua:0,0&gt; (3 instructions at 0x7fc43fc02b20)
+</span></span><span class=line><span class=cl>0+ params, 2 slots, 1 upvalue, 0 locals, 1 constant, 1 function
+</span></span><span class=line><span class=cl>	1  [4] CLOSURE    0 0     ; 0x7fc43fc02cc0
+</span></span><span class=line><span class=cl>	2  [1] SETTABUP  0-1 0 ; _ENV &#34;foo&#34;
+</span></span><span class=line><span class=cl>	3  [4] RETURN     0 1
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>function &lt;foo_bar.lua:1,4&gt; (3 instructions at 0x7fc43fc02cc0)
+</span></span><span class=line><span class=cl>0 params, 2 slots, 1 upvalue, 0 locals, 1 constant, 1 function
+</span></span><span class=line><span class=cl>	1  [3] CLOSURE    0 0     ; 0x7fc43fc02e40
+</span></span><span class=line><span class=cl>	2  [2] SETTABUP  0-1 0 ; _ENV &#34;bar&#34;
+</span></span><span class=line><span class=cl>	3  [4] RETURN     0 1
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>function &lt;foo_bar.lua:2,3&gt; (1 instruction at 0x7fc43fc02e40)
+</span></span><span class=line><span class=cl>0 params, 2 slots, 0 upvalues, 0 locals, 0 constants, 0 functions
+</span></span><span class=line><span class=cl>	1  [3] RETURN     0 1
+</span></span></code></pre></td></tr></table></div></div><p>反编译打印出的函数信息包含两个部分：</p><ul><li>前面两行是函数基本信息，<ul><li>第一行<ul><li>如果以 main 开头，说明这是编译器为我们生成的主函数，以 function 开头，说明这是一个普通函数</li><li>接着是定义函数的源文件名和函数在文件里的<strong>起止行号</strong>（对于主函数，起止行号都是 0），然后是指令数量和函数地址。</li></ul></li><li>第二行依次给出<ul><li>函数的固定参数数量（如果有+号，表示这是一个 vararg 函数）</li><li>运行函数所必要的寄存器数量</li><li>upvalue 数量</li><li>局部变量数量</li><li>常量数量</li><li>子函数数量</li></ul></li></ul></li><li>后面是指令列表。每一条都包含<ul><li>指令序号</li><li>对应行号</li><li>操作码</li><li>操作数</li><li>分号后面是 luac 根据指令操作数生成的注释，以便于我们理解指令</li></ul></li></ul><a href=#二进制-chunk-的格式><h2 id=二进制-chunk-的格式><span class=hanchor arialabel=Anchor># </span>二进制 chunk 的格式</h2></a><p>和 Java 的 class 文件类似，Lua 的二进制 chunk 本质上也是一个字节流</p><ul><li>二进制 chunk 格式（包括 Lua 虚拟机指令）属于 Lua 虚拟机内部实现细节，并没有标准化，也没有任何官方文档对其进行说明，一切以 Lua 官方实现的源代码为准</li><li><strong>二进制 chunk 格式的设计没有考虑跨平台的需求</strong>，使用超过一个字节表示的数据，必须要考虑大小端（Endianness）问题。<ul><li>Lua 官方实现的做法比较简单：编译 Lua 脚本时，<strong>直接按照本机的大小端方式</strong>生成二进制 chunk 文件，当加载二进制 chunk 文件时，会探测被加载文件的大小端方式，如果和本机不匹配，就拒绝加载</li></ul></li><li>二进制 chunk 格式的设计也没有考虑不同 Lua 版本之间的兼容问题<ul><li>编译 Lua 脚本时，直接按照当时的 Lua 版本生成二进制 chunk 文件，当加载二进制 chunk 文件时，会检测被加载文件的版本号，如果和当前 Lua 版本不匹配，则拒绝加载</li></ul></li><li>二进制 chunk 格式并没有被刻意设计得很紧凑<ul><li>lua 脚本预编译成二进制 chunk 的主要目的是为了获得更快的加载速度，所以这也不是什么大问题。</li></ul></li></ul><a href=#数据类型><h3 id=数据类型><span class=hanchor arialabel=Anchor># </span>数据类型</h3></a><p>在讨论二进制 chunk 格式时，我们称这种被编码为一个或多个字节的信息单位为数据类型
+由于 Lua 官方实现是用 C 语言编写的，所以 <strong>C 语言的一些数据类型（比如 size_t）会直接反映在二进制 chunk 的格式</strong>里</p><p>二进制 chunk 内部使用的数据类型大致可以分为<strong>数字、字符串和列表</strong>三种。</p><a href=#数字><h4 id=数字><span class=hanchor arialabel=Anchor># </span>数字</h4></a><p>数字类型主要包括<strong>字节、C 语言整型（后文简称 cint）、C 语言 size_t 类型（简称 size_t）、Lua 整数、Lua 浮点数</strong>五种</p><ul><li>字节类型用来存放一些比较小的整数值，比如 Lua 版本号、函数的参数个数等；</li><li>cint 类型主要用来表示列表长度；</li><li>size_t 则主要用来表示长字符串长度；</li><li>Lua 整数和 Lua 浮点数则主要在常量表里出现，记录 Lua 脚本中出现的整数和浮点数字面量</li></ul><p>数字类型在二进制 chunk 里都按照固定长度存储。除字节类型外，其余四种数字类型都会占用多个字节，具体占用几个字节则会记录在头部里</p><p>Lua 官方实现（64 位平台）里对应的 C 语言类型、在本书中使用的 Go 语言类型，以及占用的字节数</p><p><img src=https://googoo-s.github.io//statistic/Pasted%20image%2020230805155327.png width=auto alt></p><a href=#字符串><h4 id=字符串><span class=hanchor arialabel=Anchor># </span>字符串</h4></a><p>字符串在二进制 chunk 里，其实就是一个<strong>字节数组</strong>。</p><p>因为字符串长度是不固定的，所以需要把字节数组的长度也记录到二进制 chunk 里。<strong>作为优化，字符串类型又可以进一步分为短字符串和长字符串两种，具体有三种情况</strong></p><ul><li>对于 NULL 字符串，只用 0 x 00 表示就可以了。</li><li>对于长度小于等于 253（0 xFD）的字符串，<strong>先使用一个字节记录长度+1</strong>，然后是字节数组。</li><li>对于长度大于等于 254（0 xFE）的字符串，<strong>第一个字节是 0 xFF，后面跟一个 size_t 记录长度+1</strong>，最后是字节数组。</li></ul><p><img src=https://googoo-s.github.io//statistic/Pasted%20image%2020230805155714.png width=auto alt></p><a href=#列表><h4 id=列表><span class=hanchor arialabel=Anchor># </span>列表</h4></a><p>在二进制 chunk 内部，<strong>指令表、常量表、子函数原型表等信息都是按照列表的方式存储的</strong>。</p><ul><li>用一个 cint 类型记录列表长度，</li><li>然后紧接着存储 n 个列表元素，</li><li>至于列表元素如何存储那就要具体情况具体分析了</li></ul><a href=#总体结果><h3 id=总体结果><span class=hanchor arialabel=Anchor># </span>总体结果</h3></a><p>总体而言，二进制 chunk 分为头部和主函数原型两部分</p><p><img src=https://googoo-s.github.io//statistic/Pasted%20image%2020230805015642.png width=auto alt></p><p>定义结构体 binaryChunk</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type binaryChunk struct {
+</span></span><span class=line><span class=cl>    // 头部
+</span></span><span class=line><span class=cl>    header
+</span></span><span class=line><span class=cl>    // 主函数upvalues 和闭包有关
+</span></span><span class=line><span class=cl>    sizeUpvalues byte
+</span></span><span class=line><span class=cl>    // 主函数原型
+</span></span><span class=line><span class=cl>    mainFunc *Prototype
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#头部><h3 id=头部><span class=hanchor arialabel=Anchor># </span>头部</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type header struct {
+</span></span><span class=line><span class=cl>	// 签名，相对于Java的模式,主要起快速识别文件格式的作用
+</span></span><span class=line><span class=cl>	signature [4]byte
+</span></span><span class=line><span class=cl>	// 版本号，记录二进制chunk文件所对应的Lua版本号
+</span></span><span class=line><span class=cl>	version byte
+</span></span><span class=line><span class=cl>	// 格式号，如果和虚拟机本身的格式号不匹配，就拒绝加载该文件
+</span></span><span class=line><span class=cl>	format          byte
+</span></span><span class=line><span class=cl>	// LUAC_DATA 格式号之后的6个字节在Lua官方实现里叫作LUAC_DATA。
+</span></span><span class=line><span class=cl>	// 其中前两个字节是0x1993，这是Lua 1.0发布的年份；
+</span></span><span class=line><span class=cl>	// 后四个字节依次是回车符（0x0D）、换行符（0x0A）、替换符（0x1A）和另一个换行符
+</span></span><span class=line><span class=cl>	// 6个字节主要起进一步校验的作用。如果Lua虚拟机在加载二进制chunk时发现这6个字节和预期的不一样，就会认为文件已经损坏，拒绝加载
+</span></span><span class=line><span class=cl>	luacData        [6]byte
+</span></span><span class=line><span class=cl>	// 接下来的5个字节分别记录cint、size_t、Lua虚拟机指令、Lua整数和Lua浮点数这5种数据类型在二进制chunk里占用的字节数
+</span></span><span class=line><span class=cl>	cintSize        byte
+</span></span><span class=line><span class=cl>	sizetSize       byte
+</span></span><span class=line><span class=cl>	instructionSize byte
+</span></span><span class=line><span class=cl>	luaIntegerSize  byte
+</span></span><span class=line><span class=cl>	luaNumberSize   byte
+</span></span><span class=line><span class=cl>	// LUAC_INT， n个字节存放Lua整数值0x5678，存储这个Lua整数的目的是为了检测二进制chunk的大小端方式
+</span></span><span class=line><span class=cl>	luacInt         int64
+</span></span><span class=line><span class=cl>	// LUAC_NUM，头部的最后n个字节存放Lua浮点数370.5，头部的最后n个字节存放Lua浮点数370.5
+</span></span><span class=line><span class=cl>	luacNum         float64
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#函数原型><h3 id=函数原型><span class=hanchor arialabel=Anchor># </span>函数原型</h3></a><p>函数原型主要包含函数基本信息、指令表、常量表、upvalue 表、子函数原型表以及调试信息；</p><ul><li>基本信息<ul><li>源文件名、起止行号、固定参数个数、是否是 vararg 函数以及运行函数所必要的寄存器数量；</li><li>调试信息又包括行号表、局部变量表以及 upvalue 名列表。</li></ul></li></ul><p><img src=https://googoo-s.github.io//statistic/Pasted%20image%2020230805162248.png width=auto alt></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type Prototype struct {
+</span></span><span class=line><span class=cl>	// 源文件名，只有在主函数原型里，该字段才真正有值，在其他嵌套的函数原型里，该字段存放空字符串
+</span></span><span class=line><span class=cl>	Source string
+</span></span><span class=line><span class=cl>	// Prototype,用于记录原型对应的函数在源文件中的起止行号。如果是普通的函数，起止行号都应该大于0；
+</span></span><span class=line><span class=cl>	//  如果是主函数，则起止行号都是0
+</span></span><span class=line><span class=cl>	LineDefined     uint32
+</span></span><span class=line><span class=cl>	LastLineDefined uint32
+</span></span><span class=line><span class=cl>	// 函数固定参数个数。这里的固定参数，是相对于变长参数（Vararg）而言的
+</span></span><span class=line><span class=cl>	NumParams byte
+</span></span><span class=line><span class=cl>	// 用来记录函数是否为Vararg函数，即是否有变长参数
+</span></span><span class=line><span class=cl>	IsVararg byte
+</span></span><span class=line><span class=cl>	// 记录的是寄存器数量。Lua编译器会在编译函数时将这个数量计算好，并以字节类型保存在函数原型
+</span></span><span class=line><span class=cl>	MaxStackSize byte
+</span></span><span class=line><span class=cl>	// 函数基本信息之后是指令表
+</span></span><span class=line><span class=cl>	Code []uint32
+</span></span><span class=line><span class=cl>	// 指令表之后是常量表。常量表用于存放Lua代码里出现的字面量，包括nil、布尔值、整数、浮点数和字符串五种。
+</span></span><span class=line><span class=cl>	// 每个常量都以1字节tag开头，用来标识后续存储的是哪种类型的常量值。常量tag值,tag类型为TAG_NIL，TAG_BOOLEAN，，
+</span></span><span class=line><span class=cl>	Constants []interface{}
+</span></span><span class=line><span class=cl>	// Upvalues 占有两个字节
+</span></span><span class=line><span class=cl>	Upvalues []Upvalue
+</span></span><span class=line><span class=cl>	// 子函数原型表
+</span></span><span class=line><span class=cl>	Protos []*Prototype
+</span></span><span class=line><span class=cl>	// 行号表 子函数原型表之后是行号表，其中行号按cint类型存储。行号表中的行号和指令表中的指令一一对应
+</span></span><span class=line><span class=cl>	LineInfo []uint32
+</span></span><span class=line><span class=cl>	// 号表之后是局部变量表，用于记录局部变量名，
+</span></span><span class=line><span class=cl>	// 表中每个元素都包含变量名（按字符串类型存储）和起止指令索引（按cint类型存储
+</span></span><span class=line><span class=cl>	LocVars []LocVar
+</span></span><span class=line><span class=cl>	// 数原型的最后一部分内容是Upvalue名列表。该列表中的元素（按字符串类型存储）
+</span></span><span class=line><span class=cl>	// 和前面Upvalue表中的元素一一对应，分别记录每个Upvalue在源代码中的名字
+</span></span><span class=line><span class=cl>	UpvalueNames []string
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type LocVar struct {
+</span></span><span class=line><span class=cl>	VarName string
+</span></span><span class=line><span class=cl>	StartPC uint32
+</span></span><span class=line><span class=cl>	EndPC   uint32
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// Upvalue 和闭包相关
+</span></span><span class=line><span class=cl>type Upvalue struct {
+</span></span><span class=line><span class=cl>	Instack byte
+</span></span><span class=line><span class=cl>	Inx     byte
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// 常量类型
+</span></span><span class=line><span class=cl>const (
+</span></span><span class=line><span class=cl>	TAG_NIL       = 0x00
+</span></span><span class=line><span class=cl>	TAG_BOOLEAN   = 0x01
+</span></span><span class=line><span class=cl>	TAG_NUMBER    = 0x03
+</span></span><span class=line><span class=cl>	TAG_INTEGER   = 0x13
+</span></span><span class=line><span class=cl>	TAG_SHORT_STR = 0x04
+</span></span><span class=line><span class=cl>	TAG_LONG_STR  = 0x14
+</span></span><span class=line><span class=cl>)
+</span></span></code></pre></td></tr></table></div></div><a href=#解析二进制-chunk><h2 id=解析二进制-chunk><span class=hanchor arialabel=Anchor># </span>解析二进制 chunk</h2></a><p>在 <code>binary_chunk.go</code> 中定义了 chunk 的解析函数<code>Undump</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func Undump(data []byte) * Prototype {
+</span></span><span class=line><span class=cl>	reader := &amp;reader{data}
+</span></span><span class=line><span class=cl>	reader.checkHeader()
+</span></span><span class=line><span class=cl>	reader.readByte()
+</span></span><span class=line><span class=cl>	
+</span></span><span class=line><span class=cl>	reader.readProto(&#34;&#34;)
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>解析 chunk 主要看 reader ，定义 <code>binchunk/reader.go</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>binchunk</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;encoding/binary&#34;</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;math&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>reader</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>data</span> <span class=p>[]</span><span class=kt>byte</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#读取基本数据类型><h3 id=读取基本数据类型><span class=hanchor arialabel=Anchor># </span>读取基本数据类型</h3></a><p>定义了 7 种读取数据类型的方法</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>// readByte 从字节流里读取一个字节
+</span></span><span class=line><span class=cl>func (self *reader) readByte() byte 
+</span></span><span class=line><span class=cl>// readUint32 使用小端方式从字节流里读取一个cint存储类型（占4个字节，映射为Go语言uint32类型）的整数
+</span></span><span class=line><span class=cl>func (self *reader) readUint32() uint32 
+</span></span><span class=line><span class=cl>// readUint64 使用小端方式从字节流里读取一个cint存储类型（占4个字节，映射为Go语言uint32类型）的整数
+</span></span><span class=line><span class=cl>func (self *reader) readUint64() uint64 
+</span></span><span class=line><span class=cl>// readLuaInteger 从字节流里读取一个Lua整数（占8个字节，映射为Go语言int64类型
+</span></span><span class=line><span class=cl>func (self *reader) readLuaInteger() int64 
+</span></span><span class=line><span class=cl>// readLuaNumber 从字节流里读取一个Lua浮点数（占8个字节，映射为Go语言float64类型）
+</span></span><span class=line><span class=cl>func (self *reader) readLuaNumber() float64 
+</span></span><span class=line><span class=cl>// readString()方法从字节流里读取字符串（映射为Go语言string类型）
+</span></span><span class=line><span class=cl>func (self *reader) readString() string 
+</span></span><span class=line><span class=cl>// readBytes()方法从字节流里读取n个字节
+</span></span><span class=line><span class=cl>func (self *reader) readBytes(n uint) []byte 
+</span></span></code></pre></td></tr></table></div></div><a href=#检查头部><h3 id=检查头部><span class=hanchor arialabel=Anchor># </span>检查头部</h3></a><p>CheckHeader ()方法从字节流里读取并检查二进制 chunk 头部的各个字段，如果发现某个字段和期望不符，则调用 panic 函数终止加载</p><a href=#读取函数原型><h3 id=读取函数原型><span class=hanchor arialabel=Anchor># </span>读取函数原型</h3></a><p>ReadProto ()方法从字节流里读取函数原型</p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>
