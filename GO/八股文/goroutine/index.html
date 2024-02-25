@@ -1,0 +1,1263 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="Go goroutine 的底层实现原理？ 概念 Goroutine 可以理解为一种 Go 语言的协程（轻量级线程），是 Go 支持高并发的基础，属于用户态的线程，由 Go runtime 管理而不是操作系统。
+底层数据结构 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  type g struct { goid int64 // 唯一的goroutine的ID sched gobuf // goroutine切换时，用于保存g的上下文 stack stack // 栈 gopc // pc of go statement that created this goroutine startpc uintptr // pc of goroutine function ."><meta property="og:title" content><meta property="og:description" content="Go goroutine 的底层实现原理？ 概念 Goroutine 可以理解为一种 Go 语言的协程（轻量级线程），是 Go 支持高并发的基础，属于用户态的线程，由 Go runtime 管理而不是操作系统。
+底层数据结构 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  type g struct { goid int64 // 唯一的goroutine的ID sched gobuf // goroutine切换时，用于保存g的上下文 stack stack // 栈 gopc // pc of go statement that created this goroutine startpc uintptr // pc of goroutine function ."><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/goroutine/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="Go goroutine 的底层实现原理？ 概念 Goroutine 可以理解为一种 Go 语言的协程（轻量级线程），是 Go 支持高并发的基础，属于用户态的线程，由 Go runtime 管理而不是操作系统。
+底层数据结构 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  type g struct { goid int64 // 唯一的goroutine的ID sched gobuf // goroutine切换时，用于保存g的上下文 stack stack // 栈 gopc // pc of go statement that created this goroutine startpc uintptr // pc of goroutine function ."><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.3bfb24158f5e9d4aff66ae07a3a8bd0d.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.8972f3e1fb9ffb8fdb949f104473fa8d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#go-goroutine-的底层实现原理>Go goroutine 的底层实现原理？</a><ol><li><a href=#概念>概念</a></li><li><a href=#底层数据结构>底层数据结构</a></li><li><a href=#状态流转>状态流转</a></li><li><a href=#创建>创建</a></li><li><a href=#运行>运行</a></li><li><a href=#阻塞>阻塞</a></li><li><a href=#唤醒>唤醒</a></li><li><a href=#退出>退出</a></li></ol></li><li><a href=#go-goroutine-和线程的区别>Go goroutine 和线程的区别?</a></li><li><a href=#go-goroutine-泄露的场景>Go goroutine 泄露的场景?</a><ol><li><a href=#泄露原因>泄露原因</a></li><li><a href=#泄露场景>泄露场景</a></li><li><a href=#如何排查>如何排查</a></li></ol></li><li><a href=#go-如何查看正在执行的-goroutine-数量>Go 如何查看正在执行的 goroutine 数量?</a><ol><li><a href=#程序中引入-pprof-package>程序中引入 pprof package</a></li><li><a href=#分析-goroutine-文件>分析 goroutine 文件</a></li></ol></li><li><a href=#go-如何控制并发的-goroutine-数量>Go 如何控制并发的 goroutine 数量?</a><ol><li><a href=#为什么要控制-goroutine-并发的数量><strong>为什么要控制 goroutine 并发的数量？</strong></a></li><li><a href=#用什么方法控制-goroutine-并发的数量><strong>用什么方法控制 goroutine 并发的数量？</strong></a></li></ol></li><li><a href=#开五个协程全部执行一个函数怎么保证协程执行完全部打印>开五个协程，全部执行一个函数，怎么保证协程执行完全部打印</a></li><li><a href=#用-channel-和两个协程实现数组相加>用 Channel 和两个协程实现数组相加</a></li><li><a href=#2-个协程交替打印字母和数字>2 个协程交替打印字母和数字</a></li><li><a href=#为什么不要大量使用-goroutine>为什么不要大量使用 goroutine</a></li><li><a href=#golang-中除了加-mutex-锁以外还有哪些方式安全读写共享变量>Golang 中除了加 Mutex 锁以外还有哪些方式安全读写共享变量？</a></li><li><a href=#golang-panic-子-goroutine-发生-panic主进程会-panic-吗>Golang Panic 子 Goroutine 发生 panic，主进程会 panic 吗？</a></li><li><a href=#并行-goroutine-如何实现>并行 goroutine 如何实现</a></li><li><a href=#协程中参数直接使用和传参的区别是什么为什么会造成这种结果>协程中参数直接使用，和传参的区别是什么，为什么会造成这种结果</a></li><li><a href=#go-中用-for-遍历多次执行-goroutine-会存在什么问题>Go 中用 for 遍历多次执行 goroutine 会存在什么问题</a></li><li><a href=#go-里面一个协程能保证绑定在一个内核线程上面的>Go 里面一个协程能保证绑定在一个内核线程上面的。</a></li><li><a href=#协程池的使用>协程池的使用</a></li><li><a href=#go-源码协程栈>Go 源码：协程栈</a></li><li><a href=#go-如何关闭-goroutine>Go 如何关闭 goroutine</a></li><li><a href=#父-goroutine-退出如何使得子-goroutine-也退出>父 goroutine 退出，如何使得子 goroutine 也退出？</a></li><li><a href=#一个线程打印奇数一个线程打印偶数交替打印>一个线程打印奇数一个线程打印偶数交替打印</a></li><li><a href=#goroutine-和-kernel-thread-之间是什么关系>Goroutine 和 kernel thread 之间是什么关系？</a></li><li><a href=#协程实现顺序打印-123>协程实现顺序打印 123</a></li><li><a href=#两个协程交替打印-1-到-20>两个协程交替打印 1 到 20</a></li><li><a href=#两个协程交替打印一个数组使数组中的数据按顺序输出>两个协程交替打印一个数组，使数组中的数据按顺序输出</a></li></ol></nav></details></aside><a href=#go-goroutine-的底层实现原理><h1 id=go-goroutine-的底层实现原理><span class=hanchor arialabel=Anchor># </span>Go goroutine 的底层实现原理？</h1></a><a href=#概念><h2 id=概念><span class=hanchor arialabel=Anchor># </span>概念</h2></a><p>Goroutine 可以理解为一种 Go 语言的协程（轻量级线程），是 Go 支持高并发的基础，属于用户态的线程，由 Go runtime 管理而不是操作系统。</p><a href=#底层数据结构><h2 id=底层数据结构><span class=hanchor arialabel=Anchor># </span>底层数据结构</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type g struct {
+</span></span><span class=line><span class=cl>    goid    int64 // 唯一的goroutine的ID
+</span></span><span class=line><span class=cl>    sched gobuf // goroutine切换时，用于保存g的上下文
+</span></span><span class=line><span class=cl>    stack stack // 栈
+</span></span><span class=line><span class=cl>  gopc        // pc of go statement that created this goroutine
+</span></span><span class=line><span class=cl>    startpc    uintptr // pc of goroutine function
+</span></span><span class=line><span class=cl>    ...
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type gobuf struct {
+</span></span><span class=line><span class=cl>    sp   uintptr // 栈指针位置
+</span></span><span class=line><span class=cl>    pc   uintptr // 运行到的程序位置
+</span></span><span class=line><span class=cl>    g    guintptr // 指向 goroutine
+</span></span><span class=line><span class=cl>    ret  uintptr  // 保存系统调用的返回值
+</span></span><span class=line><span class=cl>    ...
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type stack struct {
+</span></span><span class=line><span class=cl>    lo uintptr // 栈的下界内存地址
+</span></span><span class=line><span class=cl>    hi uintptr // 栈的上界内存地址
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>最终有一个 runtime. G 对象放入调度队列</p><a href=#状态流转><h2 id=状态流转><span class=hanchor arialabel=Anchor># </span>状态流转</h2></a><table><thead><tr><th>状态</th><th></th><th>含义</th></tr></thead><tbody><tr><td>空闲中</td><td>Gidle</td><td>G 刚刚新建, 仍未初始化</td></tr><tr><td>待运行</td><td>Grunnable</td><td>就绪状态，G 在运行队列中, 等待 M 取出并运行</td></tr><tr><td>运行中</td><td>Grunning</td><td>M 正在运行这个 G, 这时候 M 会拥有一个 P</td></tr><tr><td>系统调用中</td><td>Gsyscall</td><td>M 正在运行这个 G 发起的系统调用, 这时候 M 并不拥有 P</td></tr><tr><td>等待中</td><td>Gwaiting</td><td>G 在等待某些条件完成, 这时候 G 不在运行也不在运行队列中 (可能在 channel 的等待队列中)</td></tr><tr><td>已中止</td><td>Gdead</td><td>G 未被使用, 可能已执行完毕</td></tr><tr><td>栈复制中</td><td>Gcopystack</td><td>G 正在获取一个新的栈空间并把原来的内容复制过去 (用于防止 GC 扫描)</td></tr><tr><td><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226000754.png width=auto alt=image.png></td><td></td><td></td></tr></tbody></table><a href=#创建><h2 id=创建><span class=hanchor arialabel=Anchor># </span>创建</h2></a><p>通过 <code>go</code> 关键字调用底层函数 <code>runtime.newproc()</code> 创建一个 <code>goroutine</code></p><p>当调用该函数之后，goroutine 会被设置成 <code>runnable</code> 状态</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>   go func() {
+</span></span><span class=line><span class=cl>    fmt.Println(&#34;func routine&#34;)
+</span></span><span class=line><span class=cl>   }()
+</span></span><span class=line><span class=cl>   fmt.Println(&#34;main goroutine&#34;)
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>创建好的这个 goroutine 会新建一个自己的栈空间，同时在 G 的 sched 中维护栈地址与程序计数器这些信息。</p><p>每个 G 在被创建之后，都会被优先放入到本地队列中，如果本地队列已经满了，就会被放入到全局队列中。</p><a href=#运行><h2 id=运行><span class=hanchor arialabel=Anchor># </span>运行</h2></a><p>Goroutine 本身只是一个数据结构，真正让 goroutine 运行起来的是<strong>调度器</strong>。Go 实现了一个用户态的调度器（GMP 模型），这个调度器充分利用现代计算机的多核特性，同时让多个 goroutine 运行，同时 goroutine 设计的很轻量级，调度和上下文切换的代价都比较小。</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226000930.png width=auto alt=image.png></p><p><strong>调度时机：</strong></p><ul><li>新起一个协程和协程执行完毕</li><li>会阻塞的系统调用，比如文件 io、网络 io</li><li>Channel、mutex 等阻塞操作</li><li>Time. Sleep</li><li>垃圾回收之后</li><li>主动调用 runtime.Gosched ()</li><li>运行过久或系统调用过久等等</li></ul><p>每个 M 开始执行 P 的本地队列中的 G 时，goroutine 会被设置成 <code>running</code> 状态</p><p>如果某个 M 把本地队列中的 G 都执行完成之后，然后就会去全局队列中拿 G，这里需要注意，每次去全局队列拿 G 的时候，都需要上锁，避免同样的任务被多次拿。</p><p>如果全局队列都被拿完了，而当前 M 也没有更多的 G 可以执行的时候，它就会去其他 P 的本地队列中拿任务，这个机制被称之为 work stealing 机制，每次会拿走一半的任务，向下取整，比如另一个 P 中有 3 个任务，那一半就是一个任务。</p><p>当全局队列为空，M 也没办法从其他的 P 中拿任务的时候，就会让自身进入自选状态，等待有新的 G 进来。最多只会有 GOMAXPROCS 个 M 在自旋状态，过多 M 的自旋会浪费 CPU 资源。</p><a href=#阻塞><h2 id=阻塞><span class=hanchor arialabel=Anchor># </span>阻塞</h2></a><p>channel 的读写操作、等待锁、等待网络数据、系统调用等都有可能发生阻塞，会调用底层函数 <code>runtime.gopark()</code>，会让出 CPU 时间片，让调度器安排其它等待的任务运行，并在下次某个时候从该位置恢复执行。</p><p>当调用该函数之后，goroutine 会被设置成 <code>waiting</code> 状态</p><a href=#唤醒><h2 id=唤醒><span class=hanchor arialabel=Anchor># </span>唤醒</h2></a><p>处于 waiting 状态的 goroutine，在调用 <code>runtime.goready()</code> 函数之后会被唤醒，唤醒的 goroutine 会被重新放到 M 对应的上下文 P 对应的 runqueue 中，等待被调度。</p><p>当调用该函数之后，goroutine 会被设置成 <code>runnable</code> 状态</p><a href=#退出><h2 id=退出><span class=hanchor arialabel=Anchor># </span>退出</h2></a><p>当 goroutine 执行完成后，会调用底层函数 <code>runtime.Goexit()</code></p><p>当调用该函数之后，goroutine 会被设置成 <code>dead</code> 状态</p><a href=#go-goroutine-和线程的区别><h1 id=go-goroutine-和线程的区别><span class=hanchor arialabel=Anchor># </span>Go goroutine 和线程的区别?</h1></a><table><thead><tr><th style=text-align:center>goroutine</th><th>线程</th><th></th></tr></thead><tbody><tr><td style=text-align:center>内存占用</td><td>创建一个 goroutine 的栈内存消耗为 2 KB，实际运行过程中，如果栈空间不够用，会自动进行扩容</td><td>创建一个线程的栈内存消耗为 1 MB</td></tr><tr><td style=text-align:center>创建和销毀</td><td>goroutine 因为是由 Go runtime 负责管理的，创建和销毁的消耗非常小，是用户级。</td><td>线程创建和销毀都会有巨大的消耗，因为要和操作系统打交道，是内核级的，通常解决的办法就是线程池</td></tr><tr><td style=text-align:center>切换</td><td>goroutines 切换只需保存三个寄存器：PC、SP、BP goroutine 的切换约为 200 ns，相当于 2400-3600 条指令。</td><td>当线程切换时，需要保存各种寄存器，以便恢复现场。线程切换会消耗 1000-1500 ns，相当于 12000-18000 条指令。</td></tr></tbody></table><a href=#go-goroutine-泄露的场景><h1 id=go-goroutine-泄露的场景><span class=hanchor arialabel=Anchor># </span>Go goroutine 泄露的场景?</h1></a><a href=#泄露原因><h2 id=泄露原因><span class=hanchor arialabel=Anchor># </span>泄露原因</h2></a><ul><li>Goroutine 内进行 channel/mutex 等读写操作被一直阻塞。</li><li>Goroutine 内的业务逻辑进入死循环，资源一直无法释放。</li><li>Goroutine 内的业务逻辑进入长时间等待，有不断新增的 Goroutine 进入等待</li></ul><a href=#泄露场景><h2 id=泄露场景><span class=hanchor arialabel=Anchor># </span>泄露场景</h2></a><p>如果输出的 goroutines 数量是在不断增加的，就说明存在泄漏</p><p><strong>nil channel</strong></p><p>Channel 如果忘记初始化，那么无论你是读，还是写操作，都会造成阻塞。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    fmt.Println(&#34;before goroutines: &#34;, runtime.NumGoroutine())
+</span></span><span class=line><span class=cl>    block1()
+</span></span><span class=line><span class=cl>    time.Sleep(time.Second * 1)
+</span></span><span class=line><span class=cl>    fmt.Println(&#34;after goroutines: &#34;, runtime.NumGoroutine())
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func block1() {
+</span></span><span class=line><span class=cl>    var ch chan int
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>            &lt;-ch
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>输出结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>before goroutines:  1
+</span></span><span class=line><span class=cl>after goroutines:  11
+</span></span></code></pre></td></tr></table></div></div><p><strong>发送不接收</strong></p><p>Channel 发送数量超过 channel 接收数量，就会造成阻塞</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func block2() {
+</span></span><span class=line><span class=cl>    ch := make(chan int)
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>            ch &lt;- 1
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><strong>接收不发送</strong></p><p>Channel 接收数量超过 channel 发送数量，也会造成阻塞</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func block3() {
+</span></span><span class=line><span class=cl>    ch := make(chan int)
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>            &lt;-ch
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><strong>http request body 未关闭</strong></p><p><code>resp.Body.Close()</code> 未被调用时，goroutine 不会退出</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func requestWithNoClose() {
+</span></span><span class=line><span class=cl>    _, err := http.Get(&#34;https://www.baidu.com&#34;)
+</span></span><span class=line><span class=cl>    if err != nil {
+</span></span><span class=line><span class=cl>        fmt.Println(&#34;error occurred while fetching page, error: %s&#34;, err.Error())
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func requestWithClose() {
+</span></span><span class=line><span class=cl>    resp, err := http.Get(&#34;https://www.baidu.com&#34;)
+</span></span><span class=line><span class=cl>    if err != nil {
+</span></span><span class=line><span class=cl>        fmt.Println(&#34;error occurred while fetching page, error: %s&#34;, err.Error())
+</span></span><span class=line><span class=cl>        return
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    defer resp.Body.Close()
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func block4() {
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        wg.Add(1)
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>                defer wg.Done()
+</span></span><span class=line><span class=cl>                requestWithNoClose()
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>var wg = sync.WaitGroup{}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    block4()
+</span></span><span class=line><span class=cl>    wg.Wait()
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>一般发起 http 请求时，需要确保关闭 body</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>defer resp.Body.Close()
+</span></span></code></pre></td></tr></table></div></div><p><strong>互斥锁忘记解锁</strong></p><p>第一个协程获取 <code>sync.Mutex</code> 加锁了，但是他可能在处理业务逻辑，又或是忘记 <code>Unlock</code> 了。</p><p>因此导致后面的协程想加锁，却因锁未释放被阻塞了</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func block5() {
+</span></span><span class=line><span class=cl>    var mutex sync.Mutex
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>            mutex.Lock()
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><strong>sync. WaitGroup 使用不当</strong></p><p>由于 <code>wg.Add</code> 的数量与 <code>wg.Done</code> 数量并不匹配，因此在调用 <code>wg.Wait</code> 方法后一直阻塞等待</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func block6() {
+</span></span><span class=line><span class=cl>    var wg sync.WaitGroup
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>            wg.Add(2)
+</span></span><span class=line><span class=cl>            wg.Done()
+</span></span><span class=line><span class=cl>            wg.Wait()
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#如何排查><h2 id=如何排查><span class=hanchor arialabel=Anchor># </span>如何排查</h2></a><p>单个函数：调用 <code>runtime.NumGoroutine</code> 方法来打印执行代码前后 Goroutine 的运行数量，进行前后比较，就能知道有没有泄露了。</p><p>生产/测试环境：使用 <code>PProf</code> 实时监测 Goroutine 的数量</p><a href=#go-如何查看正在执行的-goroutine-数量><h1 id=go-如何查看正在执行的-goroutine-数量><span class=hanchor arialabel=Anchor># </span>Go 如何查看正在执行的 goroutine 数量?</h1></a><a href=#程序中引入-pprof-package><h2 id=程序中引入-pprof-package><span class=hanchor arialabel=Anchor># </span>程序中引入 pprof package</h2></a><p>在程序中引入 pprof package：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>import _ &#34;net/http/pprof&#34;
+</span></span></code></pre></td></tr></table></div></div><p>程序中开启 HTTP 监听服务：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;net/http&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=nx>_</span> <span class=s>&#34;net/http/pprof&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>100</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>select</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>http</span><span class=p>.</span><span class=nf>ListenAndServe</span><span class=p>(</span><span class=s>&#34;localhost:6060&#34;</span><span class=p>,</span> <span class=kc>nil</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>select</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#分析-goroutine-文件><h2 id=分析-goroutine-文件><span class=hanchor arialabel=Anchor># </span>分析 goroutine 文件</h2></a><p>在命令行下执行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>go tool pprof -http=:1248 http://127.0.0.1:6060/debug/pprof/goroutine
+</span></span></code></pre></td></tr></table></div></div><p>会自动打开浏览器页面如下图所示
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226001403.png width=auto alt=image.png></p><p>在图中可以清晰的看到 goroutine 的数量以及调用关系，可以看到有 103 个 goroutine</p><a href=#go-如何控制并发的-goroutine-数量><h1 id=go-如何控制并发的-goroutine-数量><span class=hanchor arialabel=Anchor># </span>Go 如何控制并发的 goroutine 数量?</h1></a><a href=#为什么要控制-goroutine-并发的数量><h2 id=为什么要控制-goroutine-并发的数量><span class=hanchor arialabel=Anchor># </span><strong>为什么要控制 goroutine 并发的数量？</strong></h2></a><p>在开发过程中，如果不对 goroutine 加以控制而进行滥用的话，可能会导致服务整体崩溃。比如耗尽系统资源导致程序崩溃，或者 CPU 使用率过高导致系统忙不过来。</p><a href=#用什么方法控制-goroutine-并发的数量><h2 id=用什么方法控制-goroutine-并发的数量><span class=hanchor arialabel=Anchor># </span><strong>用什么方法控制 goroutine 并发的数量？</strong></h2></a><p><strong>有缓冲 channel</strong></p><p>利用缓冲满时发送阻塞的特性</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>wg</span> <span class=p>=</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 模拟用户请求数量
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>requestCount</span> <span class=o>:=</span> <span class=mi>10</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;goroutine_num&#34;</span><span class=p>,</span> <span class=nx>runtime</span><span class=p>.</span><span class=nf>NumGoroutine</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 管道长度即最大并发数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>ch</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>bool</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>requestCount</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nx>ch</span> <span class=o>&lt;-</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=nf>Read</span><span class=p>(</span><span class=nx>ch</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>     <span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>Read</span><span class=p>(</span><span class=nx>ch</span> <span class=kd>chan</span> <span class=kt>bool</span><span class=p>,</span> <span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;goroutine_num: %d, go func: %d\n&#34;</span><span class=p>,</span> <span class=nx>runtime</span><span class=p>.</span><span class=nf>NumGoroutine</span><span class=p>(),</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=o>&lt;-</span><span class=nx>ch</span>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>输出结果：默认最多不超过 3（4-1）个 goroutine 并发执行</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>goroutine_num 1
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 1
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 3
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 2
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 0
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 4
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 5
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 6
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 8
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 9
+</span></span><span class=line><span class=cl>goroutine_num: 4, go func: 7
+</span></span></code></pre></td></tr></table></div></div><p><strong>无缓冲 channel</strong></p><p>任务发送和执行分离，指定消费者并发协程数</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>wg</span> <span class=p>=</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 模拟用户请求数量
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>requestCount</span> <span class=o>:=</span> <span class=mi>10</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;goroutine_num&#34;</span><span class=p>,</span> <span class=nx>runtime</span><span class=p>.</span><span class=nf>NumGoroutine</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=nx>ch</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>bool</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>3</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=nf>Read</span><span class=p>(</span><span class=nx>ch</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>requestCount</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nx>ch</span> <span class=o>&lt;-</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>Read</span><span class=p>(</span><span class=nx>ch</span> <span class=kd>chan</span> <span class=kt>bool</span><span class=p>,</span> <span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>_</span> <span class=p>=</span> <span class=k>range</span> <span class=nx>ch</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;goroutine_num: %d, go func: %d\n&#34;</span><span class=p>,</span> <span class=nx>runtime</span><span class=p>.</span><span class=nf>NumGoroutine</span><span class=p>(),</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#开五个协程全部执行一个函数怎么保证协程执行完全部打印><h1 id=开五个协程全部执行一个函数怎么保证协程执行完全部打印><span class=hanchor arialabel=Anchor># </span>开五个协程，全部执行一个函数，怎么保证协程执行完全部打印</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>wg</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span> <span class=c1>// 设置等待的协程数量
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>5</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>go</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span> <span class=c1>// 每个协程执行完成后调用 wg.Done() 减少计数
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>			<span class=c1>// 执行你的函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=c1>// 这里可以替换为你的具体函数逻辑
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;执行协程&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>}(</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span> <span class=c1>// 等待所有协程执行完成
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;所有协程执行完毕&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#用-channel-和两个协程实现数组相加><h1 id=用-channel-和两个协程实现数组相加><span class=hanchor arialabel=Anchor># </span>用 Channel 和两个协程实现数组相加</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>//用channel和两个goroutine实现数组相加
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>add</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=p>[]</span><span class=kt>int</span><span class=p>)</span> <span class=p>[]</span><span class=kt>int</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ch</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>c</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>int</span><span class=p>,</span><span class=nb>len</span><span class=p>(</span><span class=nx>a</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>_</span><span class=p>,</span><span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>a</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ch</span> <span class=o>&lt;-</span> <span class=nx>v</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>i</span><span class=p>,</span><span class=nx>t</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>b</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>temp</span> <span class=o>:=</span> <span class=o>&lt;-</span> <span class=nx>ch</span>
+</span></span><span class=line><span class=cl>			<span class=nx>c</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>=</span> <span class=nx>temp</span><span class=o>+</span><span class=nx>t</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>c</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>a</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>2</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>8</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>b</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>7</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ans</span> <span class=o>:=</span> <span class=nf>add</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span><span class=nx>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>ans</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#2-个协程交替打印字母和数字><h1 id=2-个协程交替打印字母和数字><span class=hanchor arialabel=Anchor># </span>2 个协程交替打印字母和数字</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>limit</span> <span class=o>:=</span> <span class=mi>26</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>numChan</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>charChan</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>mainChan</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>charChan</span> <span class=o>&lt;-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>limit</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=o>&lt;-</span><span class=nx>charChan</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%c\n&#34;</span><span class=p>,</span> <span class=sc>&#39;a&#39;</span><span class=o>+</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=nx>numChan</span> <span class=o>&lt;-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>limit</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=o>&lt;-</span><span class=nx>numChan</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=nx>charChan</span> <span class=o>&lt;-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>mainChan</span> <span class=o>&lt;-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=o>&lt;-</span><span class=nx>mainChan</span>
+</span></span><span class=line><span class=cl>	<span class=nb>close</span><span class=p>(</span><span class=nx>charChan</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nb>close</span><span class=p>(</span><span class=nx>numChan</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nb>close</span><span class=p>(</span><span class=nx>mainChan</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#为什么不要大量使用-goroutine><h1 id=为什么不要大量使用-goroutine><span class=hanchor arialabel=Anchor># </span>为什么不要大量使用 goroutine</h1></a><p>1、过多会占有太多的 cpu 资源和内存，可能使系统资源耗尽</p><p>2、因为 GMP, M 和 P 都是有数量限制的，如果调度队列过长，也会影响性能；</p><p>3、频繁 GC 也会影响性能；</p><p>4、内存占用, 不好管理，容易资源泄漏或者死锁</p><a href=#golang-中除了加-mutex-锁以外还有哪些方式安全读写共享变量><h1 id=golang-中除了加-mutex-锁以外还有哪些方式安全读写共享变量><span class=hanchor arialabel=Anchor># </span>Golang 中除了加 Mutex 锁以外还有哪些方式安全读写共享变量？</h1></a><p>Golang 中 Goroutine 可以通过 Channel 进行安全读写共享变量。</p><a href=#golang-panic-子-goroutine-发生-panic主进程会-panic-吗><h1 id=golang-panic-子-goroutine-发生-panic主进程会-panic-吗><span class=hanchor arialabel=Anchor># </span>Golang Panic 子 Goroutine 发生 panic，主进程会 panic 吗？</h1></a><p>虽然 Goroutine 能够实现高并发，但是如果某个 Goroutine panic 了，而且这个 Goroutine 里面没有捕获 recover，那么整个进程就会挂掉。</p><a href=#并行-goroutine-如何实现><h1 id=并行-goroutine-如何实现><span class=hanchor arialabel=Anchor># </span>并行 goroutine 如何实现</h1></a><p>通过设置最大的可同时使用的 CPU 核数，例如同时执行两个 goroutine, 设置 runtime.GOMAXPROCS (2), 用来实现 goroutine 并行。</p><a href=#协程中参数直接使用和传参的区别是什么为什么会造成这种结果><h1 id=协程中参数直接使用和传参的区别是什么为什么会造成这种结果><span class=hanchor arialabel=Anchor># </span>协程中参数直接使用，和传参的区别是什么，为什么会造成这种结果</h1></a><p>以一个例子说明</p><p><strong>直接使用</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    wg := sync.WaitGroup{}
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        wg.Add(1)
+</span></span><span class=line><span class=cl>        go func(ctx,func(ctx context.Context) {
+</span></span><span class=line><span class=cl>            fmt.Println(i)
+</span></span><span class=line><span class=cl>            wg.Done()
+</span></span><span class=line><span class=cl>    	})
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    wg.Wait()
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>执行输出结果</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>10 10 10 10 10 10 10 10 10 10
+</span></span></code></pre></td></tr></table></div></div><p><strong>传参使用</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    wg := sync.WaitGroup{}
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>    wg.Add(1)
+</span></span><span class=line><span class=cl>    go func(ctx,func(ctx context.Context) {
+</span></span><span class=line><span class=cl>        fmt.Println(i)
+</span></span><span class=line><span class=cl>        wg.Done()
+</span></span><span class=line><span class=cl>        })(i)
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>   wg.Wait()
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>执行输出结果</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>0 9 3 4 5 6 7 8 1 2
+</span></span></code></pre></td></tr></table></div></div><p>产生这种结果的原因是，对于一部协程来说，函数在执行异步执行注册时，该函数并未真正开始执行注册时只在 goroutine 的栈中保存了变量 i 的内存地址，而一旦开始执行函数时才会去读取变量 i 的值，而这时变量 i 的值已经自增到了 10，改进的方案就是在注册异步执行函数的时候，把变量的值也一并传递获取，或者吧当前变量 i 的值赋值给一个不会改变的临时变量中，在函数中使用该临时变量而不是直接使用 i</p><a href=#go-中用-for-遍历多次执行-goroutine-会存在什么问题><h1 id=go-中用-for-遍历多次执行-goroutine-会存在什么问题><span class=hanchor arialabel=Anchor># </span>Go 中用 for 遍历多次执行 goroutine 会存在什么问题</h1></a><p>程序会 panic: too many open files<br>解决的方法: 通过带缓冲的 channel 和 sync. Waitgroup 控制协程并发量。</p><a href=#go-里面一个协程能保证绑定在一个内核线程上面的><h1 id=go-里面一个协程能保证绑定在一个内核线程上面的><span class=hanchor arialabel=Anchor># </span>Go 里面一个协程能保证绑定在一个内核线程上面的。</h1></a><p>协程是用户级的线程，对内核是透明的，系统并不知道协程的存在，并且协程是非抢占式调度，无法实现公平的任务调用，通常只进行协作式调度，需要协程自己主动把控制权转让出去之后，其他协程才能被执行到。<br>Go Scheduler 会把 goroutine 调度到逻辑处理器上运行，逻辑处理器会一对一的绑定到操作系统的线程。当 goroutine 可以运行时，会被放入一个逻辑处理器的待执行队列中；当 goroutine 遇到长时间执行或执行了一个阻塞的系统调用时（如打开文件），Go Scheduler 会将这个逻辑处理器与线程分离，并将另一个线程绑定到这个逻辑处理器，之后从待执行队列中选择下一个 goroutine 来运行，原来的 goroutine 保存到待执行队列等待调用（逻辑处理器是不动的）。</p><a href=#协程池的使用><h1 id=协程池的使用><span class=hanchor arialabel=Anchor># </span>协程池的使用</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>var (
+</span></span><span class=line><span class=cl>    ctx = gctx.New()
+</span></span><span class=line><span class=cl>)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    wg := sync.WaitGroup{}
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 10; i++ {
+</span></span><span class=line><span class=cl>        wg.Add(1)
+</span></span><span class=line><span class=cl>        v := i
+</span></span><span class=line><span class=cl>        grpool.Add(ctx, func(ctx context.Context) {
+</span></span><span class=line><span class=cl>            fmt.Println(v)
+</span></span><span class=line><span class=cl>            wg.Done()
+</span></span><span class=line><span class=cl>        })
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    wg.Wait()
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p><strong>自主实现</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>  <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=s>&#34;runtime&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Task 任务接口
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>Task</span> <span class=kd>interface</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nf>Execute</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Pool 协程池
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>Pool</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>TaskChannel</span> <span class=kd>chan</span> <span class=nx>Task</span> <span class=c1>// 任务队列
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// NewPool 创建一个协程池
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>NewPool</span><span class=p>(</span><span class=nx>cap</span> <span class=o>...</span><span class=kt>int</span><span class=p>)</span> <span class=o>*</span><span class=nx>Pool</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// 获取 worker 数量
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=kd>var</span> <span class=nx>n</span> <span class=kt>int</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>cap</span><span class=p>)</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>n</span> <span class=p>=</span> <span class=nx>cap</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>n</span> <span class=p>=</span> <span class=nx>runtime</span><span class=p>.</span><span class=nf>NumCPU</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>Pool</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>TaskChannel</span><span class=p>:</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=nx>Task</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c1>// 创建指定数量 worker 从任务队列取出任务执行
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>n</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=k>for</span> <span class=nx>task</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>p</span><span class=p>.</span><span class=nx>TaskChannel</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>task</span><span class=p>.</span><span class=nf>Execute</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}()</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nx>p</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Submit 提交任务
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Pool</span><span class=p>)</span> <span class=nf>Submit</span><span class=p>(</span><span class=nx>t</span> <span class=nx>Task</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span><span class=p>.</span><span class=nx>TaskChannel</span> <span class=o>&lt;-</span> <span class=nx>t</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// EatFood 吃饭任务
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>EatFood</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>wg</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=o>*</span><span class=nx>EatFood</span><span class=p>)</span> <span class=nf>Execute</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>defer</span> <span class=nx>e</span><span class=p>.</span><span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;eat cost 3 seconds&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>3</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// WashFeet 洗脚任务
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>WashFeet</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>wg</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>w</span> <span class=o>*</span><span class=nx>WashFeet</span><span class=p>)</span> <span class=nf>Execute</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>defer</span> <span class=nx>w</span><span class=p>.</span><span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;wash feet cost 3 seconds&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>3</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// WatchTV 看电视任务
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>WatchTV</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>wg</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>w</span> <span class=o>*</span><span class=nx>WatchTV</span><span class=p>)</span> <span class=nf>Execute</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>defer</span> <span class=nx>w</span><span class=p>.</span><span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;watch tv cost 3 seconds&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>3</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span> <span class=o>:=</span> <span class=nf>NewPool</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>var</span> <span class=nx>wg</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl>  <span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>task1</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>EatFood</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>:</span> <span class=o>&amp;</span><span class=nx>wg</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=nx>task2</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>WashFeet</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>:</span> <span class=o>&amp;</span><span class=nx>wg</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=nx>task3</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>WatchTV</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>:</span> <span class=o>&amp;</span><span class=nx>wg</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span><span class=p>.</span><span class=nf>Submit</span><span class=p>(</span><span class=nx>task1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span><span class=p>.</span><span class=nf>Submit</span><span class=p>(</span><span class=nx>task2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=nx>p</span><span class=p>.</span><span class=nf>Submit</span><span class=p>(</span><span class=nx>task3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// 等待所有任务执行完成
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#go-源码协程栈><h1 id=go-源码协程栈><span class=hanchor arialabel=Anchor># </span>Go 源码：协程栈</h1></a><p><a href=https://segmentfault.com/a/1190000019570427 rel=noopener>https://segmentfault.com/a/1190000019570427</a> </p><a href=#go-如何关闭-goroutine><h1 id=go-如何关闭-goroutine><span class=hanchor arialabel=Anchor># </span>Go 如何关闭 goroutine</h1></a><ol><li>关闭 channel</li></ol><p>第一种方法，就是借助 channel 的 close 机制来完成对 goroutine 的精确控制。<br>在 Go 语言的 channel 中，channel 接受数据有两种方法：<br>Msg := &lt;-ch<br>Msg, ok := &lt;-ch<br>这两种方式对应着不同的 runtime 方法，我们可以利用其第二个参数进行判别，当关闭 channel 时，就根据其返回结果跳出。</p><ol start=2><li>定期轮询 channel</li></ol><p>第二种方法，是更为精细的方法，其结合了第一种方法和类似信号量的处理方式。<br>而 goroutine 的关闭是不知道什么时候发生的，因此在 Go 语言中会利用 for-loop 结合 select 关键字进行监听，再进行完毕相关的业务处理后，再调用 close 方法正式关闭 channel。<br>若程序逻辑比较简单结构化，也可以不调用 close 方法，因为 goroutine 会自然结束，也就不需要手动关闭了。</p><ol start=3><li>使用 context</li></ol><p>可以借助 Go 语言的上下文（context）来做 goroutine 的控制和关闭。<br>在 context 中，我们可以借助 ctx. Done 获取一个只读的 channel，类型为结构体。可用于识别当前 channel 是否已经被关闭，其原因可能是到期，也可能是被取消了。<br>因此 context 对于跨 goroutine 控制有自己的灵活之处，可以调用 context. WithTimeout 来根据时间控制，也可以自己主动地调用 cancel 方法来手动关闭。</p><a href=#父-goroutine-退出如何使得子-goroutine-也退出><h1 id=父-goroutine-退出如何使得子-goroutine-也退出><span class=hanchor arialabel=Anchor># </span>父 goroutine 退出，如何使得子 goroutine 也退出？</h1></a><p>父子协程的退出分为两种情况：</p><ul><li>当父协程是 main 协程时，父协程退出，父协程下的所有子协程也会跟着退出；</li><li>当父协程不是 main 协程时，父协程退出，父协程下的所有子协程并不会跟着退出（子协程直到自己的所有逻辑执行完或者是 main 协程结束才结束）</li></ul><p>这时候就需要使子协程退出，<code>context</code> 就登场了：<br><code>context</code> 主要用于父子任务之间的同步取消信号，本质上是一种协程调度的方式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type Context interface {
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    Deadline() (deadline time.Time, ok bool)
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    Done() &lt;-chan struct{}
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    Err() error
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    Value(key interface{}) interface{}
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>Context. Context 是 Go 语言在 1.7 版本中引入标准库的接口，该接口定义了四个需要实现的方法，其中包括：</p><ol><li>Deadline — 返回 context. Context 被取消的时间，也就是完成工作的截止日期；</li><li>Done — 返回一个 Channel，这个 Channel 会在当前工作完成或者上下文被取消后关闭，多次调用 Done 方法会返回同一个 Channel；<ol><li>Err — 返回 context. Context 结束的原因，它只会在 Done 方法对应的 Channel 关闭时返回非空的值；</li><li>如果 context. Context 被取消，会返回 Canceled 错误；</li></ol></li><li>如果 context. Context 超时，会返回 DeadlineExceeded 错误；</li><li>Value — 从 context. Context 中获取键对应的值，对于同一个上下文来说，多次调用 Value 并传入相同的 Key 会返回相同的结果，该方法可以用来传递请求特定的数据；</li></ol><a href=#一个线程打印奇数一个线程打印偶数交替打印><h1 id=一个线程打印奇数一个线程打印偶数交替打印><span class=hanchor arialabel=Anchor># </span>一个线程打印奇数一个线程打印偶数交替打印</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>num</span> <span class=p>=</span> <span class=mi>100</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>goroutine1</span><span class=p>(</span><span class=nx>p</span> <span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=nx>num</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>p</span> <span class=o>&lt;-</span> <span class=nx>i</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=nx>i</span><span class=o>%</span><span class=mi>2</span> <span class=o>==</span> <span class=mi>1</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;goroutine-1:&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>goroutine2</span><span class=p>(</span><span class=nx>p</span> <span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=nx>num</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=o>&lt;-</span><span class=nx>p</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=nx>i</span><span class=o>%</span><span class=mi>2</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;goroutine-2:&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>msg</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=nf>goroutine1</span><span class=p>(</span><span class=nx>msg</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=nf>goroutine2</span><span class=p>(</span><span class=nx>msg</span><span class=p>)</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span> <span class=o>*</span> <span class=mi>1</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#goroutine-和-kernel-thread-之间是什么关系><h1 id=goroutine-和-kernel-thread-之间是什么关系><span class=hanchor arialabel=Anchor># </span>Goroutine 和 kernel thread 之间是什么关系？</h1></a><p>在进程被划分为更小的线程后，线程成为了<strong>最小的调度单元</strong>，也是在 CPU 上<strong>执行的最小单元</strong></p><p>操作系统将内存空间划分为<strong>内核空间</strong>和<strong>用户空间</strong>，</p><p>由于<strong>用户级线程</strong>一般使用线程库来模拟线程且<strong>对操作系统保持透明</strong>，因此对操作系统而言只能调度内核空间中的<strong>内核级线程</strong></p><p>内核级线程 <strong>kernel thread</strong> 简称 <strong>KSE</strong></p><p>由此可以将内核级线程视作用户级线程上 CPU 运行的<strong>机会</strong></p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticnone.png width=auto alt=none></p><p>对于传统的内核级线程和用户线程，有<strong>一对一</strong>、<strong>一对多</strong>和<strong>多对多</strong>三种模型</p><p>对于同一进程内的用户级线程切换，不需要切换上下文也无需额外开销</p><p>对于不同进程内的用户级线程切换，要切换进程的上下文，开销较大</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20220417135413988.png width=auto alt=image-20220417135413988></p><p>在 go 中使用 goroutine，而 goroutine 是 go 中实现的<strong>用户级线程</strong></p><p>因此一般来看 go 中的线程调度应该如左图所示</p><p>在 go 中使用 GMP 模型，其中 P (processor) 专门管理一个 goroutine 的队列，实际情况如右图所示</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticnone-1.png width=auto alt=none></p><p>总结：goroutine 依靠 kernel thread 执行</p><a href=#协程实现顺序打印-123><h1 id=协程实现顺序打印-123><span class=hanchor arialabel=Anchor># </span>协程实现顺序打印 123</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>one</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>struct</span><span class=p>{},</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>two</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>struct</span><span class=p>{},</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>three</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>struct</span><span class=p>{},</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>done</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>struct</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>PrintOne</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nb>close</span><span class=p>(</span><span class=nx>one</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=o>&lt;-</span><span class=nx>three</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;1&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>one</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>PrintTwo</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nb>close</span><span class=p>(</span><span class=nx>two</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=o>&lt;-</span><span class=nx>one</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;2&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>two</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>PrintThere</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nb>close</span><span class=p>(</span><span class=nx>three</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=o>&lt;-</span><span class=nx>two</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;3&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>three</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>done</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nb>close</span><span class=p>(</span><span class=nx>done</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>three</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>PrintOne</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>PrintTwo</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>PrintThere</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=o>&lt;-</span><span class=nx>done</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#两个协程交替打印-1-到-20><h1 id=两个协程交替打印-1-到-20><span class=hanchor arialabel=Anchor># </span>两个协程交替打印 1 到 20</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ch1</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ch2</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>say</span><span class=p>(</span><span class=nx>wg</span><span class=p>,</span> <span class=nx>ch2</span><span class=p>,</span> <span class=nx>ch1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>say1</span><span class=p>(</span><span class=nx>wg</span><span class=p>,</span> <span class=nx>ch1</span><span class=p>,</span> <span class=nx>ch2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>1</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>say</span><span class=p>(</span><span class=nx>wg</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span><span class=p>,</span> <span class=nx>ch2</span> <span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>ch1</span> <span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ch2</span> <span class=o>&lt;-</span> <span class=mi>2</span><span class=o>*</span><span class=nx>i</span> <span class=o>-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=o>&lt;-</span><span class=nx>ch1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>say1</span><span class=p>(</span><span class=nx>wg</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span><span class=p>,</span> <span class=nx>ch1</span> <span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>ch2</span> <span class=kd>chan</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=o>&lt;-</span><span class=nx>ch2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ch1</span> <span class=o>&lt;-</span> <span class=mi>2</span> <span class=o>*</span> <span class=nx>i</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#两个协程交替打印一个数组使数组中的数据按顺序输出><h1 id=两个协程交替打印一个数组使数组中的数据按顺序输出><span class=hanchor arialabel=Anchor># </span>两个协程交替打印一个数组，使数组中的数据按顺序输出</h1></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>wg</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>worker1</span><span class=p>(</span><span class=nx>ch</span> <span class=kd>chan</span> <span class=kd>struct</span><span class=p>{},</span> <span class=nx>data</span> <span class=kd>chan</span> <span class=kd>interface</span><span class=p>{})</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ch</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>			<span class=nx>tmp</span> <span class=o>:=</span> <span class=o>&lt;-</span><span class=nx>data</span>
+</span></span><span class=line><span class=cl>			<span class=c1>//更清楚看见输出！
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span> <span class=o>*</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v &#34;</span><span class=p>,</span> <span class=nx>tmp</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ch</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span> <span class=c1>//发送信号
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>worker2</span><span class=p>(</span><span class=nx>ch</span> <span class=kd>chan</span> <span class=kd>struct</span><span class=p>{},</span> <span class=nx>data</span> <span class=kd>chan</span> <span class=kd>interface</span><span class=p>{})</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ch</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span> <span class=c1>// 先发送信号
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ch</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>			<span class=nx>tmp</span> <span class=o>:=</span> <span class=o>&lt;-</span><span class=nx>data</span>
+</span></span><span class=line><span class=cl>			<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span> <span class=o>*</span> <span class=mi>1</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v &#34;</span><span class=p>,</span> <span class=nx>tmp</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ch</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span> <span class=c1>//发送信号
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>done</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>struct</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>data</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>interface</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>		<span class=cm>/*s1 := []int{1, 2, 3, 4, 5, 6}*/</span>
+</span></span><span class=line><span class=cl>		<span class=nx>s1</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;a&#34;</span><span class=p>,</span> <span class=s>&#34;b&#34;</span><span class=p>,</span> <span class=s>&#34;c&#34;</span><span class=p>,</span> <span class=s>&#34;d&#34;</span><span class=p>,</span> <span class=s>&#34;e&#34;</span><span class=p>,</span> <span class=s>&#34;f&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>s1</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>data</span> <span class=o>&lt;-</span> <span class=nx>v</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>worker1</span><span class=p>(</span><span class=nx>done</span><span class=p>,</span> <span class=nx>data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>worker2</span><span class=p>(</span><span class=nx>done</span><span class=p>,</span> <span class=nx>data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2024</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>

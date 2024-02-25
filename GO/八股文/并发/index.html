@@ -1,0 +1,1344 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="下面哪个不是 Go 语言中的并发原语?  Channel Mutex WaitGroup Semaphore  什么是 sync. Once Once 可以用来执行且仅仅执行一次动作，常常用于单例对象的初始化场景。
+Once 常常用来初始化单例资源，或者并发访问只需初始化⼀次的共享资源，或者在测试的时候初始化⼀次测试资源。
+Sync. Once 只暴露了⼀个⽅法 Do，你可以多次调⽤ Do ⽅法，但是只有第⼀次调⽤ Do 方法时 f 参数才会执行，这⾥的 f 是⼀个无参数无返回值的函数。"><meta property="og:title" content><meta property="og:description" content="下面哪个不是 Go 语言中的并发原语?  Channel Mutex WaitGroup Semaphore  什么是 sync. Once Once 可以用来执行且仅仅执行一次动作，常常用于单例对象的初始化场景。
+Once 常常用来初始化单例资源，或者并发访问只需初始化⼀次的共享资源，或者在测试的时候初始化⼀次测试资源。
+Sync. Once 只暴露了⼀个⽅法 Do，你可以多次调⽤ Do ⽅法，但是只有第⼀次调⽤ Do 方法时 f 参数才会执行，这⾥的 f 是⼀个无参数无返回值的函数。"><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/%E5%B9%B6%E5%8F%91/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="下面哪个不是 Go 语言中的并发原语?  Channel Mutex WaitGroup Semaphore  什么是 sync. Once Once 可以用来执行且仅仅执行一次动作，常常用于单例对象的初始化场景。
+Once 常常用来初始化单例资源，或者并发访问只需初始化⼀次的共享资源，或者在测试的时候初始化⼀次测试资源。
+Sync. Once 只暴露了⼀个⽅法 Do，你可以多次调⽤ Do ⽅法，但是只有第⼀次调⽤ Do 方法时 f 参数才会执行，这⾥的 f 是⼀个无参数无返回值的函数。"><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>googoo-s 😄😸😎</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.3bfb24158f5e9d4aff66ae07a3a8bd0d.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.8972f3e1fb9ffb8fdb949f104473fa8d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#下面哪个不是-go-语言中的并发原语>下面哪个不是 Go 语言中的并发原语?</a></li><li><a href=#什么是sync-once><strong>什么是</strong> sync. Once</a></li><li><a href=#golang-除了-goroutine-还有什么处理并发的方法>Golang 除了 goroutine 还有什么处理并发的方法</a></li><li><a href=#select-可以用于什么>select 可以用于什么</a></li><li><a href=#waitgroup-的坑>WaitGroup 的坑</a></li><li><a href=#深入理解-sync-waitgroup>深入理解 sync. Waitgroup</a></li><li><a href=#data-race-问题怎么解决能不能不加锁解决这个问题>Data Race 问题怎么解决？能不能不加锁解决这个问题？</a></li><li><a href=#runtime-提供常见的方法>runtime 提供常见的方法</a></li><li><a href=#go-语言怎么做的连接复用怎么支持的并发请求>Go 语言怎么做的连接复用，怎么支持的并发请求</a></li><li><a href=#go-为啥使用-csp-模型来实现并发>Go 为啥使用 CSP 模型来实现并发?</a></li><li><a href=#sync-pool-有什么用>sync. Pool 有什么用</a></li><li><a href=#有没有什么线程安全的办法>有没有什么线程安全的办法？</a></li><li><a href=#go-常用的并发模型>Go 常用的并发模型？</a><ol><li><a href=#线程间通信方式>线程间通信方式</a><ol><li><a href=#共享内存><strong>共享内存</strong></a></li><li><a href=#发送消息><strong>发送消息</strong></a></li></ol></li><li><a href=#共享内存并发模型>共享内存并发模型</a></li><li><a href=#csp-并发模型>CSP 并发模型</a></li></ol></li><li><a href=#go-有哪些并发同步原语>Go 有哪些并发同步原语？</a><ol><li><a href=#原子操作>原子操作</a></li><li><a href=#channel>Channel</a></li><li><a href=#基本并发原语>基本并发原语</a><ol><li><a href=#sync-mutex><strong>sync. Mutex</strong></a></li><li><a href=#sync-rwmutex>sync. RWMutex</a></li><li><a href=#sync-waitgroup><strong>sync. WaitGroup</strong></a></li><li><a href=#sync-cond><strong>sync. Cond</strong></a></li><li><a href=#sync-once><strong>sync. Once</strong></a></li><li><a href=#sync-pool><strong>sync. Pool</strong></a></li><li><a href=#sync-map><strong>sync. Map</strong></a></li></ol></li><li><a href=#扩展并发原语>扩展并发原语</a><ol><li><a href=#errgroup><strong>ErrGroup</strong></a></li><li><a href=#semaphore><strong>Semaphore</strong></a></li><li><a href=#singleflight><strong>SingleFlight</strong></a></li></ol></li></ol></li><li><a href=#go-waitgroup-实现原理>Go WaitGroup 实现原理？</a><ol><li><a href=#概念>概念</a></li><li><a href=#底层数据结构>底层数据结构</a></li><li><a href=#使用方法>使用方法</a></li></ol></li><li><a href=#go-cond-实现原理>Go Cond 实现原理？</a><ol><li><a href=#概念-1>概念</a></li><li><a href=#底层数据结构-1>底层数据结构</a></li><li><a href=#使用方法-1>使用方法</a></li></ol></li><li><a href=#go-有哪些方式安全读写共享变量>Go 有哪些方式安全读写共享变量？</a></li><li><a href=#go-如何排查数据竞争问题>Go 如何排查数据竞争问题？</a><ol><li><a href=#概念-2>概念</a></li><li><a href=#排查方式>排查方式</a></li></ol></li></ol></nav></details></aside><a href=#下面哪个不是-go-语言中的并发原语><h1 id=下面哪个不是-go-语言中的并发原语><span class=hanchor arialabel=Anchor># </span>下面哪个不是 Go 语言中的并发原语?</h1></a><ul><li>Channel</li><li>Mutex</li><li>WaitGroup</li><li><del><strong>Semaphore</strong></del></li></ul><a href=#什么是sync-once><h1 id=什么是sync-once><span class=hanchor arialabel=Anchor># </span><strong>什么是</strong> sync. Once</h1></a><p>Once 可以用来执行且仅仅执行一次动作，常常用于单例对象的初始化场景。</p><p>Once 常常用来初始化单例资源，或者并发访问只需初始化⼀次的共享资源，或者在测试的时候初始化⼀次测试资源。</p><p>Sync. Once 只暴露了⼀个⽅法 Do，你可以多次调⽤ Do ⽅法，但是只有第⼀次调⽤ Do 方法时 f 参数才会执行，这⾥的 f 是⼀个无参数无返回值的函数。</p><p><strong>源码</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type Once struct {
+</span></span><span class=line><span class=cl>	m    Mutex
+</span></span><span class=line><span class=cl>	done uint32
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func (o *Once) Do(f func()) {
+</span></span><span class=line><span class=cl>	if atomic.LoadUint32(&amp;o.done) == 1 {
+</span></span><span class=line><span class=cl>		return
+</span></span><span class=line><span class=cl>	}
+</span></span><span class=line><span class=cl>	o.m.Lock()
+</span></span><span class=line><span class=cl>	defer o.m.Unlock()
+</span></span><span class=line><span class=cl>	if o.done == 0 {
+</span></span><span class=line><span class=cl>		defer atomic.StoreUint32(&amp;o.done, 1)
+</span></span><span class=line><span class=cl>		f()
+</span></span><span class=line><span class=cl>	}
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#golang-除了-goroutine-还有什么处理并发的方法><h1 id=golang-除了-goroutine-还有什么处理并发的方法><span class=hanchor arialabel=Anchor># </span>Golang 除了 goroutine 还有什么处理并发的方法</h1></a><p>处理并发的方法，主要使用 goroutine，还可以使用 channel + goroutine 以及使用 sync 包提供的并发锁以及经常用的信号量机制.</p><a href=#select-可以用于什么><h1 id=select-可以用于什么><span class=hanchor arialabel=Anchor># </span>select 可以用于什么</h1></a><p>Go 的通道有两种操作方式，一种是带 range 子句的 for 语句，另一种则是 select 语句，它是专门为了操作通道而存在的。这里主要介绍 select 的用法。</p><p>Select 的语法如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>select {
+</span></span><span class=line><span class=cl>   case &lt;-ch1 :
+</span></span><span class=line><span class=cl>     statement(s)   
+</span></span><span class=line><span class=cl>   case ch2 &lt;- 1 :
+</span></span><span class=line><span class=cl>      statement(s)
+</span></span><span class=line><span class=cl>    …
+</span></span><span class=line><span class=cl>   default : /* 可选 */
+</span></span><span class=line><span class=cl>      statement(s)
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>这里要注意：</p><ul><li>每个 case 都必须是一个通信。由于 select 语句是专为通道设计的，所以每个 case 表达式中都只能包含操作通道的表达式，比如接收表达式。</li><li>如果有多个 case 都可以运行，select 会随机公平地选出一个执行，其他不会执行。</li><li>如果多个 case 都不能运行，若有 default 子句，则执行该语句，反之，select 将阻塞，直到某个 case 可以运行。</li><li>所有 channel 表达式都会被求值。</li><li>Select 机制⽤来处理异步 IO 问题。</li><li>Select 机制最⼤的⼀条限制就是每个 case 语句⾥必须是⼀个 IO 操作。</li></ul><p><strong>实例</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;math/rand&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 准备好几个通道。
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>intChannels</span> <span class=o>:=</span> <span class=p>[</span><span class=mi>5</span><span class=p>]</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 随机选择一个通道，并向它发送元素值。
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>index</span> <span class=o>:=</span> <span class=nx>rand</span><span class=p>.</span><span class=nf>Intn</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The index: %d&#34;</span><span class=p>,</span> <span class=nx>index</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>intChannels</span><span class=p>[</span><span class=nx>index</span><span class=p>]</span> <span class=o>&lt;-</span> <span class=nx>index</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 哪一个通道中有可取的元素值，哪个对应的分支就会被执行。
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>intChannels</span><span class=p>[</span><span class=mi>0</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;The first candidate case is selected.&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>intChannels</span><span class=p>[</span><span class=mi>1</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;The second candidate case is selected.&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nx>elem</span> <span class=o>:=</span> <span class=o>&lt;-</span><span class=nx>intChannels</span><span class=p>[</span><span class=mi>2</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The third candidate case is selected. The element is %d.&#34;</span><span class=p>,</span> <span class=nx>elem</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;No candidate case is selected!&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>select 死锁</strong><br>Select 使用不当会发生死锁。如果通道没有数据发送，但 select 中有存在接收通道数据的语句，将发生死锁。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {  
+</span></span><span class=line><span class=cl>        ch := make(chan string)
+</span></span><span class=line><span class=cl>        select {
+</span></span><span class=line><span class=cl>            case &lt;-ch:
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>/*
+</span></span><span class=line><span class=cl>fatal error: all goroutines are asleep - deadlock!
+</span></span><span class=line><span class=cl>goroutine 1 [chan receive]:
+</span></span><span class=line><span class=cl>main.main()
+</span></span><span class=line><span class=cl>/workspace/src/test.go:5 +0x52
+</span></span><span class=line><span class=cl>exit status 2
+</span></span><span class=line><span class=cl>*/
+</span></span><span class=line><span class=cl>//可以添加 default 语句来避免产生死锁。
+</span></span></code></pre></td></tr></table></div></div><p><strong>空 select{}</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {  
+</span></span><span class=line><span class=cl>        select {}
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>/*
+</span></span><span class=line><span class=cl>fatal error: all goroutines are asleep - deadlock!
+</span></span><span class=line><span class=cl>goroutine 1 [select (no cases)]:
+</span></span><span class=line><span class=cl>main.main()
+</span></span><span class=line><span class=cl>	/workspace/src/test.go:3 +0x20
+</span></span><span class=line><span class=cl>exit status 2
+</span></span><span class=line><span class=cl>*/
+</span></span></code></pre></td></tr></table></div></div><p><strong>select 和 for 结合使用</strong></p><p>Select 语句只能对其中的每一个 case 表达式各求值一次。所以，如果想连续或定时地操作其中的通道的话，就需要通过在 for 语句中嵌入 select 语句的方式实现。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    tick := time.Tick(time.Second)
+</span></span><span class=line><span class=cl>    for {
+</span></span><span class=line><span class=cl>        select {
+</span></span><span class=line><span class=cl>            case t := &lt;-tick:
+</span></span><span class=line><span class=cl>                fmt.Println(t)
+</span></span><span class=line><span class=cl>                break
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>        fmt.Println(&#34;end&#34;)
+</span></span><span class=line><span class=cl>    }
+</span></span></code></pre></td></tr></table></div></div><p>你会发现 break 只跳出了 select，无法跳出 for。解决办法有两种：<br><strong>使用 goto 跳出循环</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    tick := time.Tick(time.Second)
+</span></span><span class=line><span class=cl>    for {
+</span></span><span class=line><span class=cl>        select {
+</span></span><span class=line><span class=cl>            case t := &lt;-tick:
+</span></span><span class=line><span class=cl>                fmt.Println(t)
+</span></span><span class=line><span class=cl>                //跳到指定位置
+</span></span><span class=line><span class=cl>                goto END
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>END:
+</span></span><span class=line><span class=cl>        fmt.Println(&#34;end&#34;)
+</span></span><span class=line><span class=cl>    }
+</span></span></code></pre></td></tr></table></div></div><p><strong>使用标签</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    tick := time.Tick(time.Second)
+</span></span><span class=line><span class=cl>//这是标签
+</span></span><span class=line><span class=cl>FOREND:
+</span></span><span class=line><span class=cl>    for {
+</span></span><span class=line><span class=cl>        select {
+</span></span><span class=line><span class=cl>            case t := &lt;-tick:
+</span></span><span class=line><span class=cl>                fmt.Println(t)
+</span></span><span class=line><span class=cl>                //跳出FOREND标签
+</span></span><span class=line><span class=cl>                break ForEnd
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>END:
+</span></span><span class=line><span class=cl>        fmt.Println(&#34;end&#34;)
+</span></span><span class=line><span class=cl>    }
+</span></span></code></pre></td></tr></table></div></div><p><strong>select 实现超时机制</strong><br>主要使用的 time. After 实现超时控制。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    ch := make(chan int)
+</span></span><span class=line><span class=cl>    quit := make(chan bool)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    go func() {
+</span></span><span class=line><span class=cl>        for {
+</span></span><span class=line><span class=cl>            select {
+</span></span><span class=line><span class=cl>                case num := &lt;-ch:  //如果有数据，下面打印。但是有可能ch一直没数据
+</span></span><span class=line><span class=cl>                fmt.Println(&#34;num = &#34;, num)
+</span></span><span class=line><span class=cl>                case &lt;-time.After(3 * time.Second): //上面的ch如果一直没数据会阻塞，那么select也会检测其他case条件，检测到后3秒超时
+</span></span><span class=line><span class=cl>                fmt.Println(&#34;超时&#34;)
+</span></span><span class=line><span class=cl>                quit &lt;- true  //写入
+</span></span><span class=line><span class=cl>            }
+</span></span><span class=line><span class=cl>        }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    }()
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    for i := 0; i &lt; 5; i++ {
+</span></span><span class=line><span class=cl>        ch &lt;- i
+</span></span><span class=line><span class=cl>        time.Sleep(time.Second)
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>    &lt;-quit //这里暂时阻塞，直到可读
+</span></span><span class=line><span class=cl>    fmt.Println(&#34;程序结束&#34;)
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>执行后，可以观察到：依次打印出 0-4，几秒过后打印出“超时”和“程序结束”，打印结果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>num =  0
+</span></span><span class=line><span class=cl>num =  1
+</span></span><span class=line><span class=cl>num =  2
+</span></span><span class=line><span class=cl>num =  3
+</span></span><span class=line><span class=cl>num =  4
+</span></span><span class=line><span class=cl>超时
+</span></span><span class=line><span class=cl>程序结束
+</span></span></code></pre></td></tr></table></div></div><p>select 的底层原理：
+<a href="https://juejin.cn/post/7123037385419407374?searchId=20230920141239DA74937FA19C8E97461E#heading-2" rel=noopener>Go select使用与底层原理</a> </p><a href=#waitgroup-的坑><h1 id=waitgroup-的坑><span class=hanchor arialabel=Anchor># </span>WaitGroup 的坑</h1></a><p>① Add 一个负数</p><p>如果计数器的值小于 0 会直接 panic</p><p>② Add 在 Wait 之后调用</p><p>比如一些子协程开头调用 Add 结束调用 Wait，这些 Wait 无法阻塞子协程。正确做法是在开启子协程之前先 Add 特定的值。</p><p>③ 未置为 0 就重用</p><p>WaitGroup 可以完成一次编排任务，计数值降为 0 后可以继续被其他任务所用，但是不要在还没使用完的时候就用于其他任务，这样由于带着计数值，很可能出问题。</p><p>④ 复制 waitgroup</p><p>WaitGroup 有 nocopy 字段，不能被复制。也意味着 WaitGroup 不能作为函数的参数。</p><a href=#深入理解-sync-waitgroup><h1 id=深入理解-sync-waitgroup><span class=hanchor arialabel=Anchor># </span>深入理解 sync. Waitgroup</h1></a><p><a href=https://juejin.cn/post/7181812988461252667 rel=noopener>https://juejin.cn/post/7181812988461252667</a> </p><a href=#data-race-问题怎么解决能不能不加锁解决这个问题><h1 id=data-race-问题怎么解决能不能不加锁解决这个问题><span class=hanchor arialabel=Anchor># </span>Data Race 问题怎么解决？能不能不加锁解决这个问题？</h1></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20230724164303002.png width=auto alt=image-20230724164303002></p><a href=#runtime-提供常见的方法><h1 id=runtime-提供常见的方法><span class=hanchor arialabel=Anchor># </span>runtime 提供常见的方法</h1></a><ol><li><strong>Gosched ()</strong>：让当前线程让出 cpu 以让其它线程运行，它不会挂起当前线程，因此当前线程未来会继续执行。</li><li><strong>NumCPU ()</strong>：返回当前系统的 CPU 核数量。</li><li><strong>GOMAXPROCS ()</strong>：设置最大的可同时使用的 CPU 核数。<br>通过 runtime. GOMAXPROCS 函数，应用程序可以设置运行时系统中的 P 最大数量。注意，如果在运行期间设置该值的话，会引起“Stop the World”。所以，应在应用程序最早期调用，并且最好是在运行 Go 程序之前设置好操作程序的环境变量 GOMAXPROCS，而不是在程序中调用 runtime. GOMAXPROCS 函数。</li></ol><p>无论我们传递给函数的整数值是什么值，运行时系统的 P 最大值总会在 1~256 之间。</p><p>Go 1.8 后，默认让程序运行在多个核上，可以不用设置了。</p><p>Go 1.8 前，还是要设置一下，可以更高效的利用 cpu。</p><ol><li>Goexit ()：退出当前 goroutine（但是 defer 语句会照常执行）。</li><li><strong>NumGoroutine</strong>：返回正在执行和排队的任务总数。<br>Runtime. NumGoroutine 函数在被调用后，会返回系统中的处于特定状态的 Goroutine 的数量。这里的特定状态是指 GrunnableGruningGsyscallGwaition。处于这些状态的 Goroutine 即被看做是活跃的或者说正在被调度。</li></ol><p>注意：垃圾回收所在 Goroutine 的状态也处于这个范围内的话，也会被纳入该计数器。</p><ol><li><strong>GOOS</strong>：查看目标操作系统。很多时候，我们会根据平台的不同实现不同的操作，就可以用 GOOS 来查看自己所在的操作系统。</li><li><strong>runtime. GC</strong>：会让运行时系统进行一次强制性的垃圾收集。<br>强制的垃圾回收：不管怎样，都要进行的垃圾回收。非强制的垃圾回收：只会在一定条件下进行的垃圾回收（即运行时，系统自上次垃圾回收之后新申请的堆内存的单元（也成为单元增量）达到指定的数值）。</li><li><strong>GOROOT ()</strong>：获取 goroot 目录。</li><li><strong>runtime. LockOSThread 和 runtime. UnlockOSThread 函数</strong>：前者调用会使调用他的 Goroutine 与当前运行它的 M 锁定到一起，后者调用会解除这样的锁定。</li></ol><a href=#go-语言怎么做的连接复用怎么支持的并发请求><h1 id=go-语言怎么做的连接复用怎么支持的并发请求><span class=hanchor arialabel=Anchor># </span>Go 语言怎么做的连接复用，怎么支持的并发请求</h1></a><p>Go 的 netpoll 是怎么实现的像阻塞 read 一样去使用底层的非阻塞 read</p><p><a href=https://www.cnblogs.com/luozhiyun/p/14390824.html rel=noopener>Golang的IO多路复用的netpoll模型</a> </p><p><strong>go 语言怎么做的连接复用</strong>
+Go 语言中 IO 多路复用使用 netpoll 模型
+Netpoll 本质上是对 I/O 多路复用技术的封装，所以自然也是和 epoll 一样脱离不了下面几步：</p><ol><li>Netpoll 创建及其初始化；</li><li>向 netpoll 中加入待监控的任务；</li><li>从 netpoll 获取触发的事件；
+在 go 中对 epoll 提供的三个函数进行了封装</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func netpollinit()
+</span></span><span class=line><span class=cl>func netpollopen(fd uintptr, pd *pollDesc) int32
+</span></span><span class=line><span class=cl>func netpoll(delay int64) gList
+</span></span></code></pre></td></tr></table></div></div><p>Netpollinit 函数负责初始化 netpoll；
+Netpollopen 负责监听文件描述符上的事件；
+Netpoll 会阻塞等待返回一组已经准备就绪的 Goroutine；</p><p><strong>go 语言怎么支持的并发请求</strong>
+<code>Go</code> 中有 goroutine，所以可以采用多协程来解决并发问题。Accept 连接后，将连接丢给 goroutine 处理后续的读写操作。在开发者看到的这个 goroutine 中业务逻辑是同步的，也不用考虑 IO 是否阻塞。</p><p>Golang 的协程通信有哪些方式</p><p>1）共享内存</p><ul><li>共享内存是指多个协程直接访问共享变量的方式，这种方式不需要显式地进行通信，但需要考虑并发访问时的竞态问题，需要使用互斥锁等机制来确保同步和一致性。</li></ul><p>2）通道</p><ul><li>通道是 Go 语言中一个重要的并发原语，它是一种线程安全的、带缓冲的 FIFO 队列。通道支持阻塞式读写，可以用来在不同的协程之间传递数据，也可以用来进行同步操作。通道在多个协程之间传递数据时，会自动进行同步，不需要程序员显式地进行加锁和解锁操作。</li></ul><p>3）选择器</p><ul><li>选择器是 Go 语言中的一种控制结构，可以同时监听多个通道的操作，并选择其中一个可以进行操作的通道。选择器可以用来实现非阻塞的通信操作，避免了因等待某个通道操作而导致的阻塞。选择器通常与通道配合使用，用于多个协程之间的协作和同步。</li></ul><p>4）条件变量（Cond）</p><ul><li>条件变量用于在协程之间进行复杂的通信和协调。在 Go 中，可以使用<code>sync</code>包中的<code>Cond</code>类型来实现条件变量。它通常与互斥锁一起使用，以便协程可以在特定条件下等待或被唤醒。</li></ul><p>5）原子操作（Atomic Operations）</p><ul><li>Go 语言提供了<code>sync/atomic</code>包，用于执行原子操作，这些操作通常用于共享资源的更新，以避免竞态条件。原子操作可以用于对变量的读取、写入、加法等操作，而不需要额外的锁定。</li></ul><p>总之，Go 协程之间的通信是非常重要的，不同的应用场景需要选择不同的通信方式，以确保程序的正确性和性能。共享内存通常用于需要高性能的并发场景，但需要注意线程安全和同步问题；通道是一种简单、安全、高效的通信方式，适用于大多数并发场景；选择器则适用于多通道协作和同步的场景。</p><a href=#go-为啥使用-csp-模型来实现并发><h1 id=go-为啥使用-csp-模型来实现并发><span class=hanchor arialabel=Anchor># </span>Go 为啥使用 CSP 模型来实现并发?</h1></a><p>Go 语言使用 CSP（Communicating Sequential Processes，通信顺序进程）模型来实现并发，这是由 Go 语言设计者选择的一种并发模型，有以下几个重要的原因：</p><ol><li><strong>简单性和清晰性</strong>：CSP 模型提供了一种清晰且直观的方式来表达并发程序。它基于协程之间的通信来进行协作，通过通道（channel）进行消息传递，使得并发程序的结构和逻辑更加简单和可读。</li><li><strong>避免共享状态</strong>：CSP 模型强调避免共享状态，而是通过通信共享数据。共享状态是许多并发程序中的错误和难点来源之一，而 CSP 模型可以减少竞态条件（race condition）等问题的出现。</li><li><strong>安全性</strong>：Go 的 CSP 模型通过通道提供了一种安全的并发机制。通道的发送和接收操作都是原子的，不需要额外的锁定，因此减少了程序中出现的锁定问题，如死锁和竞态条件。</li><li><strong>可扩展性</strong>：CSP 模型可以轻松扩展到大量的协程，因为通道和协程的创建成本相对较低。这使得 Go 非常适合构建高并发的系统，如 Web 服务器、分布式系统和网络服务。</li><li><strong>编译器和运行时支持</strong>：Go 编译器和运行时系统针对 CSP 模型进行了优化。Go 的并发原语在语言级别得到支持，而不是通过库的方式实现，这使得并发编程更加容易。</li></ol><p>总之，Go 选择 CSP 模型是为了提供一种简单、安全、高效和可扩展的并发编程模型，以便开发者能够更轻松地构建并发程序，同时避免共享状态和典型的并发问题。这使得 Go 成为了一个流行的选择，特别适用于需要高度并发性能的应用程序和系统。</p><a href=#sync-pool-有什么用><h1 id=sync-pool-有什么用><span class=hanchor arialabel=Anchor># </span>sync. Pool 有什么用</h1></a><p>对于很多需要重复分配、回收内存的地方，sync. Pool 是一个很好的选择。频繁地分配、回收内存会给 GC 带来一定的负担，严重的时候会引起 CPU 的毛刺，而 sync. Pool 可以将暂时不用的对象缓存起来，待下次需要的时候直接使用，不用再次经过内存分配，复用对象的内存，减轻 GC 的压力，提升系统的性能。</p><p><a href=https://zhuanlan.zhihu.com/p/399150710 rel=noopener>sync.Pool底层原理</a> </p><a href=#有没有什么线程安全的办法><h1 id=有没有什么线程安全的办法><span class=hanchor arialabel=Anchor># </span>有没有什么线程安全的办法？</h1></a><p>在 Go 语言中，线程安全一般指协程安全，因为 Go 一般使用协程进行调度；而 Go 中为了保证其协程安全，有以下几种机制：</p><p>1、互斥锁：在 Go 的标准库中有 sync 包，sync. Mutex 就是解决并发冲突导致的安全性问题的一种方式。</p><p>2、读写锁：是在互斥锁上的进一步升级版本，主要为了解决并发多写少读、少写多读两种高并发的情况</p><p>3、如果不是需要强制使用同一个对象，那么也可以采用创建对象副本的方式，每个协程独占一个对象，相互之间不关联，但是这显然不符合我们的要求。</p><p>综上，使用互斥锁或者读写锁就能很好的解决问题。</p><a href=#go-常用的并发模型><h1 id=go-常用的并发模型><span class=hanchor arialabel=Anchor># </span>Go 常用的并发模型？</h1></a><p>并发模型说的是系统中的线程如何协作完成并发任务，不同的并发模型，线程以不同的方式进行<strong>通信</strong>和协作。</p><a href=#线程间通信方式><h2 id=线程间通信方式><span class=hanchor arialabel=Anchor># </span>线程间通信方式</h2></a><p>线程间通信方式有两种：共享内存和消息传递，无论是哪种通信模型，线程或者协程最终都会从内存中获取数据，所以更为准确的说法是直接共享内存、发送消息的方式来同步信息</p><a href=#共享内存><h3 id=共享内存><span class=hanchor arialabel=Anchor># </span><strong>共享内存</strong></h3></a><p><strong>抽象层级</strong>：抽象层级低，当我们遇到对资源进行更细粒度的控制或者对性能有极高要求的场景才应该考虑抽象层级更低的方法</p><p><strong>耦合</strong>：高，线程需要在读取或者写入数据时先获取保护该资源的互斥锁</p><p><strong>线程竞争</strong>：需要加锁，才能避免线程竞争和数据冲突</p><a href=#发送消息><h3 id=发送消息><span class=hanchor arialabel=Anchor># </span><strong>发送消息</strong></h3></a><p><strong>抽象层级</strong>：抽象层级高，提供了更良好的封装和与领域更相关和契合的设计，比如 Go 语言中的 <code>Channel</code> 就提供了 Goroutine 之间用于传递信息的方式，它在内部实现时就广泛用到了共享内存和锁，通过对两者进行的组合提供了更高级的同步机制</p><p><strong>耦合</strong>：低，生产消费者模型</p><p><strong>线程竞争</strong>：保证同一时间只有一个活跃的线程能够访问数据，channel 维护所有被该 chanel 阻塞的协程，保证有资源的时候只唤醒一个协程，从而避免竞争</p><p>Go 语言中实现了两种并发模型，一种是共享内存并发模型，另一种则是 CSP 模型。</p><a href=#共享内存并发模型><h2 id=共享内存并发模型><span class=hanchor arialabel=Anchor># </span>共享内存并发模型</h2></a><p>通过直接共享内存 + 锁的方式同步信息，传统多线程并发</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226005141.png width=auto alt=image.png></p><a href=#csp-并发模型><h2 id=csp-并发模型><span class=hanchor arialabel=Anchor># </span>CSP 并发模型</h2></a><p>通过发送消息的方式来同步信息，Go 语言推荐使用的_通信顺序进程_（communicating sequential processes）并发模型，通过 goroutine 和 channel 来实现</p><ul><li><code>goroutine</code> 是 Go 语言中并发的执行单位，可以理解为”线程“</li><li><code>channel</code> 是 Go 语言中各个并发结构体 (<code>goroutine</code>)之前的通信机制。通俗的讲，就是各个 <code>goroutine</code> 之间通信的”管道“，类似于 Linux 中的管道</li></ul><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226005155.png width=auto alt=image.png></p><a href=#go-有哪些并发同步原语><h1 id=go-有哪些并发同步原语><span class=hanchor arialabel=Anchor># </span>Go 有哪些并发同步原语？</h1></a><p>Go 是一门以并发编程见长的语言，它提供了一系列的同步原语方便开发者使用</p><a href=#原子操作><h2 id=原子操作><span class=hanchor arialabel=Anchor># </span>原子操作</h2></a><p>Mutex、RWMutex 等并发原语的底层实现是通过 atomic 包中的一些原子操作来实现的，原子操作是最基础的并发原语
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226005223.png width=auto alt=image.png></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync/atomic&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>opts</span> <span class=kt>int64</span> <span class=p>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>add</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nf>load</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nf>compareAndSwap</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nf>swap</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>,</span> <span class=mi>5</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nf>store</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>,</span> <span class=mi>6</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>add</span><span class=p>(</span><span class=nx>addr</span> <span class=o>*</span><span class=kt>int64</span><span class=p>,</span> <span class=nx>delta</span> <span class=kt>int64</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>atomic</span><span class=p>.</span><span class=nf>AddInt64</span><span class=p>(</span><span class=nx>addr</span><span class=p>,</span> <span class=nx>delta</span><span class=p>)</span> <span class=c1>//加操作
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;add opts: &#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>addr</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>load</span><span class=p>(</span><span class=nx>addr</span> <span class=o>*</span><span class=kt>int64</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;load opts: &#34;</span><span class=p>,</span> <span class=nx>atomic</span><span class=p>.</span><span class=nf>LoadInt64</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>compareAndSwap</span><span class=p>(</span><span class=nx>addr</span> <span class=o>*</span><span class=kt>int64</span><span class=p>,</span> <span class=nx>oldValue</span> <span class=kt>int64</span><span class=p>,</span> <span class=nx>newValue</span> <span class=kt>int64</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>atomic</span><span class=p>.</span><span class=nf>CompareAndSwapInt64</span><span class=p>(</span><span class=nx>addr</span><span class=p>,</span> <span class=nx>oldValue</span><span class=p>,</span> <span class=nx>newValue</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;cas opts: &#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>addr</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>swap</span><span class=p>(</span><span class=nx>addr</span> <span class=o>*</span><span class=kt>int64</span><span class=p>,</span> <span class=nx>newValue</span> <span class=kt>int64</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>atomic</span><span class=p>.</span><span class=nf>SwapInt64</span><span class=p>(</span><span class=nx>addr</span><span class=p>,</span> <span class=nx>newValue</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;swap opts: &#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>addr</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>store</span><span class=p>(</span><span class=nx>addr</span> <span class=o>*</span><span class=kt>int64</span><span class=p>,</span> <span class=nx>newValue</span> <span class=kt>int64</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>atomic</span><span class=p>.</span><span class=nf>StoreInt64</span><span class=p>(</span><span class=nx>addr</span><span class=p>,</span> <span class=nx>newValue</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;store opts: &#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>addr</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#channel><h2 id=channel><span class=hanchor arialabel=Anchor># </span>Channel</h2></a><p><code>channel</code> 管道，高级同步原语，goroutine 之间通信的桥梁</p><p>使用场景：消息队列、数据传递、信号通知、任务编排、锁</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=kd>struct</span><span class=p>{},</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>c</span> <span class=o>&lt;-</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl>            <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>1</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;通过ch访问临界区&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=o>&lt;-</span><span class=nx>c</span>
+</span></span><span class=line><span class=cl>        <span class=p>}()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#基本并发原语><h2 id=基本并发原语><span class=hanchor arialabel=Anchor># </span>基本并发原语</h2></a><p>Go 语言在 <code>sync</code> 包中提供了用于同步的一些基本原语，这些基本原语提供了较为基础的同步功能，但是它们是一种相对原始的同步机制，在多数情况下，我们都应该使用抽象层级更高的 Channel 实现同步。</p><p>常见的并发原语如下：<code>sync.Mutex</code>、<code>sync.RWMutex</code>、<code>sync.WaitGroup</code>、<code>sync.Cond</code>、<code>sync.Once</code>、<code>sync.Pool</code>、<code>sync.Context</code></p><a href=#sync-mutex><h3 id=sync-mutex><span class=hanchor arialabel=Anchor># </span><strong>sync. Mutex</strong></h3></a><p><code>sync.Mutex</code> （互斥锁） 可以限制对临界资源的访问，保证只有一个 goroutine 访问共享资源</p><p>使用场景：大量读写，比如多个 goroutine 并发更新同一个资源，像计数器</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 封装好的计数器
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>var</span> <span class=nx>counter</span> <span class=nx>Counter</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>wg</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>gNum</span> <span class=p>=</span> <span class=mi>1000</span>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>gNum</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 启动10个goroutine
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>gNum</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>defer</span> <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>            <span class=nx>counter</span><span class=p>.</span><span class=nf>Incr</span><span class=p>()</span> <span class=c1>// 受到锁保护的方法
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=p>}()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>counter</span><span class=p>.</span><span class=nf>Count</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 线程安全的计数器类型
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>Counter</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>mu</span>    <span class=nx>sync</span><span class=p>.</span><span class=nx>Mutex</span>
+</span></span><span class=line><span class=cl>    <span class=nx>count</span> <span class=kt>uint64</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 加1的方法，内部使用互斥锁保护
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Counter</span><span class=p>)</span> <span class=nf>Incr</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>count</span><span class=o>++</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 得到计数器的值，也需要锁保护
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Counter</span><span class=p>)</span> <span class=nf>Count</span><span class=p>()</span> <span class=kt>uint64</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>defer</span> <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>c</span><span class=p>.</span><span class=nx>count</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#sync-rwmutex><h3 id=sync-rwmutex><span class=hanchor arialabel=Anchor># </span>sync. RWMutex</h3></a><p><code>sync.RWMutex</code> （读写锁） 可以限制对临界资源的访问，保证只有一个 goroutine 写共享资源，可以有多个 goroutine 读共享资源</p><p>使用场景：大量并发读，少量并发写，有强烈的性能要求</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 封装好的计数器
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>var</span> <span class=nx>counter</span> <span class=nx>Counter</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>gNum</span> <span class=p>=</span> <span class=mi>1000</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 启动10个goroutine
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>gNum</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>counter</span><span class=p>.</span><span class=nf>Count</span><span class=p>()</span> <span class=c1>// 受到锁保护的方法
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=p>}()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>{</span> <span class=c1>// 一个writer
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nx>counter</span><span class=p>.</span><span class=nf>Incr</span><span class=p>()</span> <span class=c1>// 计数器写操作
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;incr&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 线程安全的计数器类型
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>Counter</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>mu</span>    <span class=nx>sync</span><span class=p>.</span><span class=nx>RWMutex</span>
+</span></span><span class=line><span class=cl>    <span class=nx>count</span> <span class=kt>uint64</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 加1的方法，内部使用互斥锁保护
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Counter</span><span class=p>)</span> <span class=nf>Incr</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>count</span><span class=o>++</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 得到计数器的值，也需要锁保护
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Counter</span><span class=p>)</span> <span class=nf>Count</span><span class=p>()</span> <span class=kt>uint64</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>RLock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>defer</span> <span class=nx>c</span><span class=p>.</span><span class=nx>mu</span><span class=p>.</span><span class=nf>RUnlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>c</span><span class=p>.</span><span class=nx>count</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#sync-waitgroup><h3 id=sync-waitgroup><span class=hanchor arialabel=Anchor># </span><strong>sync. WaitGroup</strong></h3></a><p><code>sync.WaitGroup</code> 可以等待一组 Goroutine 的返回</p><p>使用场景：并发等待，任务编排，一个比较常见的使用场景是批量发出 RPC 或者 HTTP 请求</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>requests := []*Request{...}
+</span></span><span class=line><span class=cl>wg := &amp;sync.WaitGroup{}
+</span></span><span class=line><span class=cl>wg.Add(len(requests))
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>for _, request := range requests {
+</span></span><span class=line><span class=cl>    go func(r *Request) {
+</span></span><span class=line><span class=cl>        defer wg.Done()
+</span></span><span class=line><span class=cl>        // res, err := service.call(r)
+</span></span><span class=line><span class=cl>    }(request)
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>wg.Wait()
+</span></span></code></pre></td></tr></table></div></div><a href=#sync-cond><h3 id=sync-cond><span class=hanchor arialabel=Anchor># </span><strong>sync. Cond</strong></h3></a><p><code>sync.Cond</code> 可以让一组的 Goroutine 都在满足特定条件时被唤醒</p><p>使用场景：利用等待 / 通知机制实现阻塞或者唤醒</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync/atomic&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>status</span> <span class=kt>int64</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>sync</span><span class=p>.</span><span class=nf>NewCond</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Mutex</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=nf>listen</span><span class=p>(</span><span class=nx>c</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>1</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=nf>broadcast</span><span class=p>(</span><span class=nx>c</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>1</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>broadcast</span><span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Cond</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>L</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>atomic</span><span class=p>.</span><span class=nf>StoreInt64</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>status</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nf>Signal</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>L</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>listen</span><span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Cond</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>L</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>atomic</span><span class=p>.</span><span class=nf>LoadInt64</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>status</span><span class=p>)</span> <span class=o>!=</span> <span class=mi>1</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>c</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;listen&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>L</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#sync-once><h3 id=sync-once><span class=hanchor arialabel=Anchor># </span><strong>sync. Once</strong></h3></a><p><code>sync.Once</code> 可以保证在 Go 程序运行期间的某段代码只会执行一次</p><p>使用场景：常常用于单例对象的初始化场景</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>o</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Once</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>o</span><span class=p>.</span><span class=nf>Do</span><span class=p>(</span><span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;only once&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#sync-pool><h3 id=sync-pool><span class=hanchor arialabel=Anchor># </span><strong>sync. Pool</strong></h3></a><p><code>sync.Pool</code> 可以将暂时将不用的对象缓存起来，待下次需要的时候直接使用，不用再次经过内存分配，复用对象的内存，减轻 GC 的压力，提升系统的性能（频繁地分配、回收内存会给 GC 带来一定的负担，严重的时候会引起 CPU 的毛刺）</p><p>使用场景：对象池化， TCP 连接池、数据库连接池、Worker Pool</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>pool</span> <span class=o>:=</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>Pool</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>New</span><span class=p>:</span> <span class=kd>func</span><span class=p>()</span> <span class=kd>interface</span><span class=p>{}</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>v</span> <span class=o>:=</span> <span class=nx>pool</span><span class=p>.</span><span class=nf>Get</span><span class=p>().(</span><span class=kt>int</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>v</span><span class=p>)</span> <span class=c1>// 取出来的值是put进去的，对象复用；如果是新建对象，则取出来的值为0
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nx>pool</span><span class=p>.</span><span class=nf>Put</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#sync-map><h3 id=sync-map><span class=hanchor arialabel=Anchor># </span><strong>sync. Map</strong></h3></a><p><code>sync.Map</code> 线程安全的 map</p><p>使用场景：map 并发读写</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>scene</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>Map</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 将键值对保存到sync.Map
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>scene</span><span class=p>.</span><span class=nf>Store</span><span class=p>(</span><span class=s>&#34;1&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>scene</span><span class=p>.</span><span class=nf>Store</span><span class=p>(</span><span class=s>&#34;2&#34;</span><span class=p>,</span> <span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>scene</span><span class=p>.</span><span class=nf>Store</span><span class=p>(</span><span class=s>&#34;3&#34;</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 从sync.Map中根据键取值
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>scene</span><span class=p>.</span><span class=nf>Load</span><span class=p>(</span><span class=s>&#34;1&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 根据键删除对应的键值对
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>scene</span><span class=p>.</span><span class=nf>Delete</span><span class=p>(</span><span class=s>&#34;1&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 遍历所有sync.Map中的键值对
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>scene</span><span class=p>.</span><span class=nf>Range</span><span class=p>(</span><span class=kd>func</span><span class=p>(</span><span class=nx>k</span><span class=p>,</span> <span class=nx>v</span> <span class=kd>interface</span><span class=p>{})</span> <span class=kt>bool</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;iterate:&#34;</span><span class=p>,</span> <span class=nx>k</span><span class=p>,</span> <span class=nx>v</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>    <span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h5 id=-httpsyouandgentlenesscn20230828goe8afade8a880e99da2e8af95e9a298e7b2bee8aeb2sync-context-sync-contextsync-context><a href=https://youandgentleness.cn/2023/08/28/Go%E8%AF%AD%E8%A8%80%E9%9D%A2%E8%AF%95%E9%A2%98%E7%B2%BE%E8%AE%B2/#sync-Context rel=noopener></a><strong>sync. Context</strong></h5><p><code>sync.Context</code> 可以进行上下文信息传递、提供超时和取消机制、控制子 goroutine 的执行</p><p>使用场景：取消一个 goroutine 的执行</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithCancel</span><span class=p>(</span><span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;goroutine exit&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}()</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>ctx</span><span class=p>.</span><span class=nf>Done</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>                <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;receive cancel signal!&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span>
+</span></span><span class=line><span class=cl>            <span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;default&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nf>cancel</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>2</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#扩展并发原语><h2 id=扩展并发原语><span class=hanchor arialabel=Anchor># </span>扩展并发原语</h2></a><a href=#errgroup><h3 id=errgroup><span class=hanchor arialabel=Anchor># </span><strong>ErrGroup</strong></h3></a><p><code>errgroup</code> 可以在一组 Goroutine 中提供了同步、错误传播以及上下文取消的功能</p><p>使用场景：只要一个 goroutine 出错我们就不再等其他 goroutine 了，减少资源浪费，并且返回错误</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;net/http&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;golang.org/x/sync/errgroup&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>g</span> <span class=nx>errgroup</span><span class=p>.</span><span class=nx>Group</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>urls</span> <span class=p>=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;http://www.baidu.com/&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;https://www.sina.com.cn/&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>urls</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>url</span> <span class=o>:=</span> <span class=nx>urls</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=nx>g</span><span class=p>.</span><span class=nf>Go</span><span class=p>(</span><span class=kd>func</span><span class=p>()</span> <span class=kt>error</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>resp</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>url</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>resp</span><span class=p>.</span><span class=nx>Body</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>        <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>g</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Successfully fetched all URLs.&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;fetched error:&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#semaphore><h3 id=semaphore><span class=hanchor arialabel=Anchor># </span><strong>Semaphore</strong></h3></a><p><code>Semaphore</code> 带权重的信号量，控制多个 goroutine 同时访问资源</p><p>使用场景：控制 goroutine 的阻塞和唤醒</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;log&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;golang.org/x/sync/semaphore&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=nx>maxWorkers</span> <span class=p>=</span> <span class=nx>runtime</span><span class=p>.</span><span class=nf>GOMAXPROCS</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>sema</span>       <span class=p>=</span> <span class=nx>semaphore</span><span class=p>.</span><span class=nf>NewWeighted</span><span class=p>(</span><span class=nb>int64</span><span class=p>(</span><span class=nx>maxWorkers</span><span class=p>))</span> <span class=c1>//信号量
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>task</span>       <span class=p>=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>int</span><span class=p>,</span> <span class=nx>maxWorkers</span><span class=o>*</span><span class=mi>4</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 任务数，是worker的四
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>task</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 如果没有worker可用，会阻塞在这里，直到某个worker被释放
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sema</span><span class=p>.</span><span class=nf>Acquire</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 启动worker goroutine
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>go</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>defer</span> <span class=nx>sema</span><span class=p>.</span><span class=nf>Release</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>100</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Millisecond</span><span class=p>)</span> <span class=c1>// 模拟一个耗时操作
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=nx>task</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>=</span> <span class=nx>i</span> <span class=o>+</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>        <span class=p>}(</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 请求所有的worker,这样能确保前面的worker都执行完
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sema</span><span class=p>.</span><span class=nf>Acquire</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nb>int64</span><span class=p>(</span><span class=nx>maxWorkers</span><span class=p>));</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;获取所有的worker失败: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>maxWorkers</span><span class=p>,</span> <span class=nx>task</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#singleflight><h3 id=singleflight><span class=hanchor arialabel=Anchor># </span><strong>SingleFlight</strong></h3></a><p>用于抑制对下游的重复请求</p><p>使用场景：访问缓存、数据库等场景，缓存过期时只有一个请求去更新数据库</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync/atomic&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;golang.org/x/sync/singleflight&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 模拟从数据库读取
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>getArticle</span><span class=p>(</span><span class=nx>id</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=nx>article</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 假设这里会对数据库进行调用, 模拟不同并发下耗时不同
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>atomic</span><span class=p>.</span><span class=nf>AddInt32</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>count</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Duration</span><span class=p>(</span><span class=nx>count</span><span class=p>)</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Millisecond</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;article: %d&#34;</span><span class=p>,</span> <span class=nx>id</span><span class=p>),</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 模拟优先读缓存，缓存不存在读取数据库，并且只有一个请求读取数据库，其它请求等待
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>singleflightGetArticle</span><span class=p>(</span><span class=nx>sg</span> <span class=o>*</span><span class=nx>singleflight</span><span class=p>.</span><span class=nx>Group</span><span class=p>,</span> <span class=nx>id</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>v</span><span class=p>,</span> <span class=nx>err</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>sg</span><span class=p>.</span><span class=nf>Do</span><span class=p>(</span><span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%d&#34;</span><span class=p>,</span> <span class=nx>id</span><span class=p>),</span> <span class=kd>func</span><span class=p>()</span> <span class=p>(</span><span class=kd>interface</span><span class=p>{},</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nf>getArticle</span><span class=p>(</span><span class=nx>id</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>v</span><span class=p>.(</span><span class=kt>string</span><span class=p>),</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>count</span> <span class=kt>int32</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>AfterFunc</span><span class=p>(</span><span class=mi>1</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>,</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>atomic</span><span class=p>.</span><span class=nf>AddInt32</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>count</span><span class=p>,</span> <span class=o>-</span><span class=nx>count</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=nx>wg</span>  <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl>        <span class=nx>now</span> <span class=p>=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=nx>n</span>   <span class=p>=</span> <span class=mi>1000</span>
+</span></span><span class=line><span class=cl>        <span class=nx>sg</span>  <span class=p>=</span> <span class=o>&amp;</span><span class=nx>singleflight</span><span class=p>.</span><span class=nx>Group</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>n</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>wg</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>res</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nf>singleflightGetArticle</span><span class=p>(</span><span class=nx>sg</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// res, _ := getArticle(1)
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>if</span> <span class=nx>res</span> <span class=o>!=</span> <span class=s>&#34;article: 1&#34;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nb>panic</span><span class=p>(</span><span class=s>&#34;err&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=nx>wg</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>}()</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>wg</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;同时发起 %d 次请求，耗时: %s&#34;</span><span class=p>,</span> <span class=nx>n</span><span class=p>,</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Since</span><span class=p>(</span><span class=nx>now</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#go-waitgroup-实现原理><h1 id=go-waitgroup-实现原理><span class=hanchor arialabel=Anchor># </span>Go WaitGroup 实现原理？</h1></a><a href=#概念><h2 id=概念><span class=hanchor arialabel=Anchor># </span>概念</h2></a><p><code>Go</code>标准库提供了<code>WaitGroup</code>原语, 可以用它来等待一批 Goroutine 结束</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>// A WaitGroup must not be copied after first use.
+</span></span><span class=line><span class=cl>type WaitGroup struct {
+</span></span><span class=line><span class=cl> noCopy noCopy
+</span></span><span class=line><span class=cl> state1 [3]uint32
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#底层数据结构><h2 id=底层数据结构><span class=hanchor arialabel=Anchor># </span>底层数据结构</h2></a><p>其中 <code>noCopy</code> 是 golang 源码中检测禁止拷贝的技术。如果程序中有 WaitGroup 的赋值行为，使用 <code>go vet</code> 检查程序时，就会发现有报错。但需要注意的是，noCopy 不会影响程序正常的编译和运行。</p><p><code>state 1</code>主要是存储着状态和信号量，状态维护了 2 个计数器，一个是请求计数器 counter ，另外一个是等待计数器 waiter（已调用 <code>WaitGroup. Wait</code> 的 goroutine 的个数）</p><p>当数组的首地址是处于一个<code>8</code>字节对齐的位置上时，那么就将这个数组的前<code>8</code>个字节作为<code>64</code>位值使用表示状态，后<code>4</code>个字节作为<code>32</code>位值表示信号量 (<code>semaphore</code>)；同理如果首地址没有处于<code>8</code>字节对齐的位置上时，那么就将前<code>4</code>个字节作为<code>semaphore</code>，后<code>8</code>个字节作为<code>64</code>位数值。
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226005747.png width=auto alt=image.png></p><a href=#使用方法><h2 id=使用方法><span class=hanchor arialabel=Anchor># </span>使用方法</h2></a><p>在 WaitGroup 里主要有 3 个方法：</p><ul><li><code>WaitGroup.Add ()</code>：可以添加或减少请求的 goroutine 数量，<em><code>Add (n)</code> 将会导致 <code>counter += n</code></em></li><li><code>WaitGroup.Done ()</code>：相当于 Add (-1)，<code>Done ()</code> 将导致 <code>counter -=1</code>，请求计数器 counter 为 0 时通过信号量调用<code>runtime_Semrelease</code>唤醒 waiter 线程</li><li><code>WaitGroup.Wait ()</code>：会将 <code>waiter++</code>，同时通过信号量调用 <code>runtime_Semacquire (semap)</code>阻塞当前 goroutine</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>func main() {
+</span></span><span class=line><span class=cl>    var wg sync.WaitGroup
+</span></span><span class=line><span class=cl>    for i := 1; i &lt;= 5; i++ {
+</span></span><span class=line><span class=cl>        wg.Add(1)
+</span></span><span class=line><span class=cl>        go func() {
+</span></span><span class=line><span class=cl>            defer wg.Done()
+</span></span><span class=line><span class=cl>            println(&#34;hello&#34;)
+</span></span><span class=line><span class=cl>        }()
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    wg.Wait()
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#go-cond-实现原理><h1 id=go-cond-实现原理><span class=hanchor arialabel=Anchor># </span>Go Cond 实现原理？</h1></a><a href=#概念-1><h2 id=概念-1><span class=hanchor arialabel=Anchor># </span>概念</h2></a><p><code>Go</code>标准库提供了<code>Cond</code>原语，可以让 Goroutine 在满足特定条件时被阻塞和唤醒</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type Cond struct {
+</span></span><span class=line><span class=cl>    noCopy noCopy
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // L is held while observing or changing the condition
+</span></span><span class=line><span class=cl>    L Locker
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    notify  notifyList
+</span></span><span class=line><span class=cl>    checker copyChecker
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type notifyList struct {
+</span></span><span class=line><span class=cl>    wait   uint32
+</span></span><span class=line><span class=cl>    notify uint32
+</span></span><span class=line><span class=cl>    lock   uintptr // key field of the mutex
+</span></span><span class=line><span class=cl>    head   unsafe.Pointer
+</span></span><span class=line><span class=cl>    tail   unsafe.Pointer
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#底层数据结构-1><h2 id=底层数据结构-1><span class=hanchor arialabel=Anchor># </span>底层数据结构</h2></a><p>主要有<code>4</code>个字段：</p><ul><li><code>nocopy</code> ： golang 源码中检测禁止拷贝的技术。如果程序中有 WaitGroup 的赋值行为，使用 <code>go vet</code> 检查程序时，就会发现有报错，但需要注意的是，noCopy 不会影响程序正常的编译和运行</li><li><code>checker</code>：用于禁止运行期间发生拷贝，双重检查 (<code>Double check</code>)</li><li><code>L</code>：可以传入一个读写锁或互斥锁，当修改条件或者调用<code>Wait</code>方法时需要加锁</li><li><code>notify</code>：通知链表，调用<code>Wait ()</code>方法的<code>Goroutine</code>会放到这个链表中，从这里获取需被唤醒的 Goroutine 列表</li></ul><a href=#使用方法-1><h2 id=使用方法-1><span class=hanchor arialabel=Anchor># </span>使用方法</h2></a><p>在 Cond 里主要有 3 个方法：</p><ul><li><code>sync.NewCond (l Locker)</code>: 新建一个 sync. Cond 变量，注意该函数需要一个 Locker 作为必填参数，这是因为在 <code>cond.Wait ()</code> 中底层会涉及到 Locker 的锁操作</li><li><code>Cond.Wait ()</code>: 阻塞等待被唤醒，调用 Wait 函数前<strong>需要先加锁</strong>；并且由于 Wait 函数被唤醒时存在虚假唤醒等情况，导致唤醒后发现，条件依旧不成立，因此需要使用 for 语句来循环地进行等待，直到条件成立为止</li><li><code>Cond.Signal ()</code>: 只唤醒一个最先 Wait 的 goroutine，可以不用加锁</li><li><code>Cond.Broadcast ()</code>: 唤醒所有 Wait 的 goroutine，可以不用加锁</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;sync/atomic&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>status</span> <span class=kt>int64</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>sync</span><span class=p>.</span><span class=nf>NewCond</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Mutex</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>go</span> <span class=nf>listen</span><span class=p>(</span><span class=nx>c</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=nf>broadcast</span><span class=p>(</span><span class=nx>c</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>1</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>broadcast</span><span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Cond</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 原子操作
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>atomic</span><span class=p>.</span><span class=nf>StoreInt64</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>status</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nf>Broadcast</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>listen</span><span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Cond</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>L</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>atomic</span><span class=p>.</span><span class=nf>LoadInt64</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>status</span><span class=p>)</span> <span class=o>!=</span> <span class=mi>1</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>c</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span> 
+</span></span><span class=line><span class=cl>        <span class=c1>// Wait 内部会先调用 c.L.Unlock()，来先释放锁，如果调用方不先加锁的话，会报错
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;listen&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>.</span><span class=nx>L</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#go-有哪些方式安全读写共享变量><h1 id=go-有哪些方式安全读写共享变量><span class=hanchor arialabel=Anchor># </span>Go 有哪些方式安全读写共享变量？</h1></a><table><thead><tr><th>方法</th><th>并发原语</th><th>备注</th></tr></thead><tbody><tr><td>不要修改变量</td><td>sync. Once</td><td>不要去写变量，变量只初始化一次</td></tr><tr><td>只允许一个 goroutine 访问变量</td><td>Channel</td><td>不要通过共享变量来通信，通过通信 (channel)来共享变量</td></tr><tr><td>允许多个 goroutine 访问变量，但是同一时间只允许一个 goroutine 访问</td><td>sync. Mutex、sync. RWMutex、原子操作</td><td>实现锁机制，同时只有一个线程能拿到</td></tr></tbody></table><a href=#go-如何排查数据竞争问题><h1 id=go-如何排查数据竞争问题><span class=hanchor arialabel=Anchor># </span>Go 如何排查数据竞争问题？</h1></a><a href=#概念-2><h2 id=概念-2><span class=hanchor arialabel=Anchor># </span>概念</h2></a><p>只要有两个以上的 goroutine 并发访问同一变量，且至少其中的一个是写操作的时候就会发生数据竞争；全是读的情况下是不存在数据竞争的。</p><a href=#排查方式><h2 id=排查方式><span class=hanchor arialabel=Anchor># </span>排查方式</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>i</span><span class=o>++</span> <span class=c1>// write i
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span> <span class=c1>// read i
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>go 命令行</code>有个参数<code>race</code>可以帮助检测代码中的数据竞争</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ go run -race main.go
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>WARNING: DATA RACE
+</span></span><span class=line><span class=cl>Write at 0x00c0000ba008 by goroutine 7:
+</span></span><span class=line><span class=cl>exit status 66
+</span></span></code></pre></td></tr></table></div></div></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2024</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>
