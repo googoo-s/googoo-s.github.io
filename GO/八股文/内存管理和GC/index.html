@@ -1,0 +1,841 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="内存管理 Golang 的内存模型，为什么小对象多了会造成 gc 压力。 通常小对象过多会导致 GC 三色法消耗过多的 GPU。优化思路是，减少对象分配。
+Go 语言什么时候垃圾回收，写代码的时候如何减少对象分配 当 goroutine 申请新的内存管理单元时触发垃圾回收。
+写代码的时候如何减少对象分配，这是一个关于性能的问题，
+  例如如果需要把数字转换成字符串，使用 strconv.Itoa () 比 fmt."><meta property="og:title" content="内存管理"><meta property="og:description" content="内存管理 Golang 的内存模型，为什么小对象多了会造成 gc 压力。 通常小对象过多会导致 GC 三色法消耗过多的 GPU。优化思路是，减少对象分配。
+Go 语言什么时候垃圾回收，写代码的时候如何减少对象分配 当 goroutine 申请新的内存管理单元时触发垃圾回收。
+写代码的时候如何减少对象分配，这是一个关于性能的问题，
+  例如如果需要把数字转换成字符串，使用 strconv.Itoa () 比 fmt."><meta property="og:type" content="website"><meta property="og:image" content="https://googoo-s.github.io/icon.png"><meta property="og:url" content="https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%92%8CGC/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content="内存管理"><meta name=twitter:description content="内存管理 Golang 的内存模型，为什么小对象多了会造成 gc 压力。 通常小对象过多会导致 GC 三色法消耗过多的 GPU。优化思路是，减少对象分配。
+Go 语言什么时候垃圾回收，写代码的时候如何减少对象分配 当 goroutine 申请新的内存管理单元时触发垃圾回收。
+写代码的时候如何减少对象分配，这是一个关于性能的问题，
+  例如如果需要把数字转换成字符串，使用 strconv.Itoa () 比 fmt."><meta name=twitter:image content="https://googoo-s.github.io/icon.png"><title>内存管理</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://googoo-s.github.io//icon.png><link href=https://googoo-s.github.io/styles.19109a40042e9f0e72e952fda4442a34.min.css rel=stylesheet><link href=https://googoo-s.github.io/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://googoo-s.github.io/js/darkmode.953af745b0f9342644d632fc167f3727.min.js></script>
+<script src=https://googoo-s.github.io/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script defer src=https://googoo-s.github.io/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://googoo-s.github.io/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://googoo-s.github.io/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://googoo-s.github.io/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://googoo-s.github.io/",fetchData=Promise.all([fetch("https://googoo-s.github.io/indices/linkIndex.3bfb24158f5e9d4aff66ae07a3a8bd0d.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://googoo-s.github.io/indices/contentIndex.5773b7fc9ef1749b93b1b7daaee162c3.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://googoo-s.github.io",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!0;drawGraph("https://googoo-s.github.io",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/googoo-s.github.io\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=googoo-s.github.io src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://googoo-s.github.io/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://googoo-s.github.io/>googoo-s 😄😸😎</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><h1>内存管理</h1><p class=meta>Last updated
+Feb 26, 2024</p><ul class=tags><li><a href=https://googoo-s.github.io/tags/GO/%E5%85%AB%E8%82%A1%E6%96%87/>Go 八股文</a></li></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#内存管理>内存管理</a><ol><li><a href=#golang-的内存模型为什么小对象多了会造成-gc-压力>Golang 的内存模型，为什么小对象多了会造成 gc 压力。</a></li><li><a href=#go-语言什么时候垃圾回收写代码的时候如何减少对象分配>Go 语言什么时候垃圾回收，写代码的时候如何减少对象分配</a></li><li><a href=#给大家丢脸了用了三年-golang我还是没答对这道内存泄漏题>给大家丢脸了，用了三年 Golang，我还是没答对这道内存泄漏题</a></li><li><a href=#go-内存泄漏不是那么简单>Go 内存泄漏？不是那么简单</a></li><li><a href=#go-内存分配和-tcmalloc-的区别>Go 内存分配，和 tcmalloc 的区别?</a><ol><li><a href=#go-内存分配>GO 内存分配</a></li><li><a href=#tcmalloc><strong>tcmalloc</strong></a></li></ol></li><li><a href=#go-语言中的堆和栈>Go 语言中的堆和栈</a></li></ol></li><li><a href=#go-内存分配机制>Go 内存分配机制？</a><ol><li><a href=#操作系统的内存管理>操作系统的内存管理</a><ol><li><a href=#操作系统存储模型> 操作系统存储模型</a></li><li><a href=#虚拟内存与物理内存>虚拟内存与物理内存</a></li><li><a href=#分页管理> 分页管理</a></li></ol></li><li><a href=#go-内存模型设计思想>GO 内存模型设计思想</a></li><li><a href=#分配组件>分配组件</a></li><li><a href=#内存管理单元mspan>内存管理单元：mspan</a></li><li><a href=#内存单元等级-spanclass>内存单元等级 spanClass</a></li><li><a href=#线程缓存mcache>线程缓存：mcache</a></li><li><a href=#中心缓存mcentral>中心缓存：mcentral</a></li><li><a href=#页堆mheap>页堆：mheap</a></li><li><a href=#空闲页索引-pagealloc> 空闲页索引 pageAlloc</a></li><li><a href=#记录页到-mspan-的映射heaparena>记录页到 mspan 的映射：heapArena</a></li><li><a href=#分配流程>分配流程</a><ol><li><a href=#分配对象>分配对象</a></li><li><a href=#分配策略>分配策略</a></li></ol></li></ol></li><li><a href=#go-内存逃逸机制>Go 内存逃逸机制？</a><ol><li><a href=#概念>概念</a></li><li><a href=#逃逸机制>逃逸机制</a><ol><li><a href=#指针逃逸>指针逃逸</a></li><li><a href=#栈空间不足>栈空间不足</a></li><li><a href=#变量大小不确定>变量大小不确定</a></li><li><a href=#动态类型>动态类型</a></li><li><a href=#闭包引用对象>闭包引用对象</a></li></ol></li><li><a href=#总结>总结</a></li><li><a href=#怎么避免内存逃逸>怎么避免内存逃逸？</a></li></ol></li><li><a href=#go-内存对齐机制>Go 内存对齐机制？</a><ol><li><a href=#什么是内存对齐>什么是内存对齐</a></li><li><a href=#对齐系数>对齐系数</a></li><li><a href=#优点>优点</a></li><li><a href=#缺点>缺点</a></li><li><a href=#结构体对齐>结构体对齐</a></li></ol></li><li><a href=#go-gc-实现原理>Go GC 实现原理？</a><ol><li><a href=#什么是-gc>什么是 GC？</a></li><li><a href=#主流-gc-算法>主流 GC 算法</a></li><li><a href=#三色标记法><strong>三色标记法</strong></a><ol><li><a href=#并发垃圾回收会遇到的问题>并发垃圾回收会遇到的问题</a></li><li><a href=#root-对象><strong>root 对象</strong></a></li><li><a href=#强弱三色不变式>强弱三色不变式</a></li><li><a href=#插入写屏障><strong>插入写屏障</strong></a></li><li><a href=#删除写屏障><strong>删除写屏障</strong></a></li><li><a href=#混合写屏障><strong>混合写屏障</strong></a></li><li><a href=#show-case>show case</a></li></ol></li><li><a href=#gc-流程>GC 流程</a></li><li><a href=#gc-触发时机>GC 触发时机</a></li><li><a href=#go-gc-如何调优>Go GC 如何调优？</a></li><li><a href=#go-如何查看-gc-信息>Go 如何查看 GC 信息？</a><ol><li><a href=#1-godebuggctrace1>1. GODEBUG=’gctrace=1’</a></li><li><a href=#2-go-tool-trace>2. Go tool trace</a></li><li><a href=#3-debug-readgcstats>3. Debug. ReadGCStats</a></li><li><a href=#4-runtime-readmemstats>4. Runtime. ReadMemStats</a></li></ol></li></ol></li></ol></nav></details></aside><a href=#内存管理><h1 id=内存管理><span class=hanchor arialabel=Anchor># </span>内存管理</h1></a><a href=#golang-的内存模型为什么小对象多了会造成-gc-压力><h2 id=golang-的内存模型为什么小对象多了会造成-gc-压力><span class=hanchor arialabel=Anchor># </span>Golang 的内存模型，为什么小对象多了会造成 gc 压力。</h2></a><p>通常小对象过多会导致 GC 三色法消耗过多的 GPU。优化思路是，减少对象分配。</p><a href=#go-语言什么时候垃圾回收写代码的时候如何减少对象分配><h2 id=go-语言什么时候垃圾回收写代码的时候如何减少对象分配><span class=hanchor arialabel=Anchor># </span>Go 语言什么时候垃圾回收，写代码的时候如何减少对象分配</h2></a><p>当 <strong>goroutine 申请新的内存管理单元时触发垃圾回收</strong>。</p><p>写代码的时候如何减少对象分配，这是一个关于性能的问题，</p><ul><li><p>例如如果需要把数字转换成字符串，使用 strconv.Itoa () 比 fmt.Sprintf () 要快一倍左右。</p></li><li><p>如果需要把数字转换成字符串，使用 strconv.Itoa () 比 fmt.Sprintf () 要快一倍左右。这里就不一一展开了。</p></li></ul><a href=#给大家丢脸了用了三年-golang我还是没答对这道内存泄漏题><h2 id=给大家丢脸了用了三年-golang我还是没答对这道内存泄漏题><span class=hanchor arialabel=Anchor># </span>给大家丢脸了，用了三年 Golang，我还是没答对这道内存泄漏题</h2></a><p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&mid=2247492761&idx=1&sn=7b3660c3da402fa7f4c49b1ca8048f22&source=41#wechat_redirect" rel=noopener>https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&mid=2247492761&idx=1&sn=7b3660c3da402fa7f4c49b1ca8048f22&source=41#wechat_redirect</a></p><a href=#go-内存泄漏不是那么简单><h2 id=go-内存泄漏不是那么简单><span class=hanchor arialabel=Anchor># </span>Go 内存泄漏？不是那么简单</h2></a><p><a href=https://colobu.com/2019/08/28/go-memory-leak-i-dont-think-so/ rel=noopener>https://colobu.com/2019/08/28/go-memory-leak-i-dont-think-so/</a> </p><a href=#go-内存分配和-tcmalloc-的区别><h2 id=go-内存分配和-tcmalloc-的区别><span class=hanchor arialabel=Anchor># </span>Go 内存分配，和 tcmalloc 的区别?</h2></a><a href=#go-内存分配><h3 id=go-内存分配><span class=hanchor arialabel=Anchor># </span>GO 内存分配</h3></a><p>Go 内存分配核心思想就是把内存分为多级管理，从而降低锁的粒度。</p><p>它将可用的堆内存采用二级分配的方式进行管理：<strong>每个线程都会自行维护一个独立的内存池，进行内存分配时优先从该内存池中分配，当内存池不足时才会向全局内存池申请，以避免不同线程对全局内存池的频繁竞争</strong>。</p><ul><li>Go 在程序启动时，会向操作系统申请一大块内存，之后自行管理。</li><li>Go 内存管理的基本单元是 mspan，它由若干个页组成，每种 mspan 可以分配特定大小的 object。</li><li>Mcache, mcentral, mheap 是 Go 内存管理的三大组件，层层递进。<ul><li>Mcache 管理线程在本地缓存的 mspan；</li><li>mcentral 管理全局的 mspan 供所有线程使用；</li><li>mheap 管理 Go 的所有动态分配内存。</li></ul></li><li>分配对象<ul><li>极小的对象 (&lt;=16B)会分配在一个 object 中，以节省资源，使用 tiny 分配器分配内存；</li><li>一般对象(16B-32KB)通过 mspan 分配内存；</li><li>大对象(>32 KB)则直接由 mheap 分配内存。</li></ul></li></ul><a href=#tcmalloc><h3 id=tcmalloc><span class=hanchor arialabel=Anchor># </span><strong>tcmalloc</strong></h3></a><p>Tcmalloc 是 google 开发的内存分配算法库，最开始它是作为 google 的一个性能工具库 perftools 的一部分。TCMalloc 是用来替代传统的 malloc 内存分配函数。它有减少内存碎片，适用于多核，更好的并行性支持等特性。<br><strong>TC 就是 Thread Cache 两英文的简写</strong>。它提供了很多优化，如：</p><ol><li>TCMalloc 用<strong>固定大小的 page (页)来执行内存获取、分配等操作</strong>。这个特性跟 Linux 物理内存页的划分是不是有同样的道理。<ol><li>TCMalloc 用固定大小的对象，比如 8 KB，16 KB 等用于特定大小对象的内存分配，这对于内存获取或释放等操作都带来了简化的作用。</li></ol></li><li>TCMalloc 还<strong>利用缓存常用对象来提高获取内存的速度</strong>。</li><li>TCMalloc 还可以<strong>基于每个线程或者每个 CPU 来设置缓存大小</strong>，这是默认设置。<ol><li>TCMalloc 基于每个线程独立设置缓存分配策略，减少了多线程之间锁的竞争。</li></ol></li></ol><p>Go 中的内存分类并不像 TCMalloc 那样分成小、中、大对象，但是它的小对象里又细分了一个 Tiny 对象，Tiny 对象指大小在 1 Byte 到 16 Byte 之间并且不包含指针的对象。小对象和大对象只用大小划定，无其他区分。</p><p>Go 内存管理与 tcmalloc 最大的不同在于，<strong>它提供了逃逸分析和垃圾回收机制。</strong></p><a href=#go-语言中的堆和栈><h2 id=go-语言中的堆和栈><span class=hanchor arialabel=Anchor># </span>Go 语言中的堆和栈</h2></a><ul><li><p><strong>栈主要用来存储值类型的数据</strong>，如<strong>整数、浮点数、布尔值</strong>等。因为值类型的数据大小是固定的，所以可以直接分配在栈上，访问速度非常快。</p></li><li><p><strong>堆主要用来存储引用类型的数据</strong>，如字<strong>符串、切片、字典</strong>等。因<strong>为引用类型的数据大小是不固定的，所以需要动态分配内存，通常在堆上进行</strong>。同时，由于引用类型的数据通常需要共享和修改，因此使用指针来进行引用和操作，从而避免了复制大量的数据。</p></li></ul><p>可以看出，栈的性能会更好——<strong>不需要额外的垃圾回收机制</strong>（离开该作用域，它们的内存就会被自动回收），<strong>CPU 可以连续缓存</strong>（内存空间是连续的）。堆是通过<strong>GC 回收内存</strong>的。</p><a href=#go-内存分配机制><h1 id=go-内存分配机制><span class=hanchor arialabel=Anchor># </span>Go 内存分配机制？</h1></a><p>Go 语言内置运行时（就是 runtime），抛弃了传统的内存分配方式，改为自主管理。这样可以自主地实现更好的内存使用模式，比如内存池、预分配等等。这样，不会每次内存分配都需要进行系统调用。</p><a href=#操作系统的内存管理><h2 id=操作系统的内存管理><span class=hanchor arialabel=Anchor># </span>操作系统的内存管理</h2></a><a href=#操作系统存储模型><h3 id=操作系统存储模型><span class=hanchor arialabel=Anchor># </span> 操作系统存储模型</h3></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227194910.png width=auto alt=image.png></p><p>观察上图，我们可以从中捕捉到的关键词是：</p><ul><li><p>多级模型</p></li><li><p>动态切换</p></li></ul><a href=#虚拟内存与物理内存><h3 id=虚拟内存与物理内存><span class=hanchor arialabel=Anchor># </span>虚拟内存与物理内存</h3></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227194940.png width=auto alt=image.png></p><p>操作系统内存管理中，另一个重要概念是虚拟内存，其作用如下：</p><ul><li><p>在用户与硬件间添加中间代理层（没有什么是加一个中间层解决不了的）</p></li><li><p> 优化用户体验（进程感知到获得的内存空间是“连续”的）</p></li><li><p> “放大”可用内存（虚拟内存可以由物理内存+磁盘补足，并根据冷热动态置换，用户无感知）</p></li></ul><a href=#分页管理><h3 id=分页管理><span class=hanchor arialabel=Anchor># </span> 分页管理</h3></a><p>操作系统中通常会将虚拟内存和物理内存切割成固定的尺寸，于虚拟内存而言叫作“页”，于物理内存而言叫作“帧”，原因及要点如下：</p><ul><li><p>提高内存空间利用（以页为粒度后，消灭了不稳定的外部碎片，取而代之的是相对可控的内部碎片）</p></li><li><p> 提高内外存交换效率（更细的粒度带来了更高的灵活度）</p></li><li><p> 与虚拟内存机制呼应，便于建立虚拟地址->物理地址的映射关系（聚合映射关系的数据结构，称为页表）</p></li><li><p> linux 页/帧的大小固定，为 4KB（这实际是由实践推动的经验值，太粗会增加碎片率，太细会增加分配频率影响效率）</p></li></ul><a href=#go-内存模型设计思想><h2 id=go-内存模型设计思想><span class=hanchor arialabel=Anchor># </span>GO 内存模型设计思想</h2></a><ul><li>内存分配算法采用 Google 的 <code>TCMalloc算法</code>，<strong>每个线程都会自行维护一个独立的内存池</strong>，进行内存分配时优先从该内存池中分配，当内存池不足时才会向加锁向全局内存池申请，减少系统调用并且避免不同线程对全局内存池的锁竞争</li><li>把内存切分的非常的细小，<strong>分为多级管理</strong>，以降低锁的粒度</li><li>回收对象内存时，并没有将其真正释放掉，只是放<strong>回预先分配的大块内存中</strong>，以便复用。只有内存闲置过多的时候，才会尝试归还部分内存给操作系统，降低整体开销</li></ul><p>具体来说</p><ol><li>以空间换时间，一次缓存，多次复用</li></ol><p>由于<strong>每次向操作系统申请内存的操作很重，那么不妨一次多申请一些</strong>，以备后用.</p><p>Golang 中的堆 mheap 正是基于该思想，产生的数据结构. 我们可以从两个视角来解决 Golang 运行时的堆：</p><ul><li><p>I 对操作系统而言，这是用户进程中缓存的内存</p></li><li><p>II 对于 Go 进程内部，堆是所有对象的内存起源</p></li></ul><ol start=2><li> 多级缓存，实现无/细锁化</li></ol><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZuXibKvib2fj2vlIia93waBCNwL6syk6puNxa0Wx0XfnO48n3o4AM8MNRSicNOcDp3Q9Eicib2j7BIibkqEA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><p>堆是 Go 运行时中最大的临界共享资源，这意味着<strong>每次存取都要加锁</strong>，在性能层面是一件很可怕的事情.</p><p>在解决这个问题，Golang 在堆 mheap 之上，依次细化粒度，建立了 mcentral、mcache 的模型，下面对三者作个梳理：</p><ul><li><p>mheap：全局的内存起源，访问要加全局锁</p></li><li><p>mcentral：每种对象大小规格（全局共划分为 68 种）对应的缓存，锁的粒度也仅限于同一种规格以内</p></li><li><p> mcache：每个 P（正是 GMP 中的 P）持有一份的内存缓存，访问时无锁</p></li></ul><p>这些概念，我们在第 2 节中都会再作详细展开，此处可以先不深究，注重于宏观架构即可.</p><ul><li> 多级规格，提高利用率</li></ul><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZuXibKvib2fj2vlIia93waBCNwkDibfnBcJn5nOCyDic2gHABzy2TKIKrqN27Nnw3jXrudGb8rcYIjcHCQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><p>首先理下 page 和 mspan 两个概念：</p><p>（1）page：最小的存储单元.</p><p>Golang 借鉴操作系统分页管理的思想，每个最小的存储单元也称之为页 page，但大小为 8 KB</p><p>（2）mspan：最小的管理单元.</p><p>mspan 大小为 page 的整数倍，且从 8B 到 80 KB 被划分为 67 种不同的规格，分配对象时，会根据大小映射到不同规格的 mspan，从中获取空间.</p><p>于是，我们回头小节多规格 mspan 下产生的特点：</p><ul><li><p>I 根据规格大小，产生了等级的制度</p></li><li><p>II 消除了外部碎片，但不可避免会有内部碎片</p></li><li><p>III 宏观上能提高整体空间利用率</p></li><li><p>IV 正是因为有了规格等级的概念，才支持 mcentral 实现细锁化</p></li></ul><ol start=4><li>• 全局总览，留个印象</li></ol><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZuXibKvib2fj2vlIia93waBCNwkd8rJZ9b0h745aibfNReUePg2bqzT4ibrB6rrxzlzf6fMZnXib87O5o4w/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><p>上图是 Thread-Caching Malloc 的整体架构图，Golang 正是借鉴了该内存模型. 我们先看眼架构，有个整体概念，后续小节中，我们会不断对细节进行补充.</p><a href=#分配组件><h2 id=分配组件><span class=hanchor arialabel=Anchor># </span>分配组件</h2></a><p>Go 的内存管理组件主要有：<code>mspan</code>、<code>mcache</code>、<code>mcentral</code> 和 <code>mheap</code>
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226003340.png width=auto alt=image.png></p><a href=#内存管理单元mspan><h2 id=内存管理单元mspan><span class=hanchor arialabel=Anchor># </span>内存管理单元：mspan</h2></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227195526.png width=auto alt=image.png></p><ul><li><p> mspan 是 Golang 内存管理的最小单元，该结构体中包含 <code>next</code> 和 <code>prev</code> 两个字段，它们分别指向了前一个和后一个 mspan</p></li><li><p>mspan 大小是 page 的整数倍（Go 中的 page 大小为 8KB），且内部的页是连续的（至少在虚拟内存的视角中是这样），这里的页不是操作系统中的内存页，它们是操作系统内存页的整数倍。</p></li><li><p> 每个 mspan 根据空间大小以及面向分配对象的大小，会被划分为不同的等级（2.2小节展开）</p></li><li><p> 同等级的 mspan 会从属同一个 mcentral，最终会被组织成链表，因此带有前后指针（prev、next）</p></li><li><p> 由于同等级的 mspan 内聚于同一个 mcentral，所以会基于同一把互斥锁管理</p></li><li><p> mspan 会基于 <strong>bitMap 辅助快速找到空闲内存块</strong>（块大小为对应等级下的 object 大小），此时需要使用到 <strong>Ctz64 算法</strong>.</p></li></ul><p><code>page</code> 是内存存储的基本单元，“对象”放到 <code>page</code> 中</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type mspan struct {
+</span></span><span class=line><span class=cl>    // 标识前后节点的指针 
+</span></span><span class=line><span class=cl>    next *mspan     
+</span></span><span class=line><span class=cl>    prev *mspan    
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    // 起始地址
+</span></span><span class=line><span class=cl>    startAddr uintptr 
+</span></span><span class=line><span class=cl>    // 包含几页，页是连续的
+</span></span><span class=line><span class=cl>    npages    uintptr 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // 标识此前的位置都已被占用 
+</span></span><span class=line><span class=cl>    freeindex uintptr
+</span></span><span class=line><span class=cl>    // 最多可以存放多少个 object
+</span></span><span class=line><span class=cl>    nelems uintptr // number of object in the span.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // bitmap 每个 bit 对应一个 object 块，标识该块是否已被占用
+</span></span><span class=line><span class=cl>    allocCache uint64
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    // 标识 mspan 等级，包含 class 和 noscan 两部分信息
+</span></span><span class=line><span class=cl>    spanclass             spanClass    
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#内存单元等级-spanclass><h2 id=内存单元等级-spanclass><span class=hanchor arialabel=Anchor># </span>内存单元等级 spanClass</h2></a><p>Go 有 68 种不同大小的 spanClass，用于小对象的分配</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const _NumSizeClasses = 68
+</span></span><span class=line><span class=cl>var class_to_size = [_NumSizeClasses]uint16{0, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 288, 320, 352, 384, 416, 448, 480, 512, 576, 640, 704, 768, 896, 1024, 1152, 1280, 1408, 1536,1792, 2048, 2304, 2688, 3072, 3200, 3456, 4096, 4864, 5376, 6144, 6528, 6784, 6912, 8192, 9472, 9728, 10240, 10880, 12288, 13568, 14336, 16384, 18432, 19072, 20480, 21760, 24576, 27264, 28672, 32768}
+</span></span></code></pre></td></tr></table></div></div><p>如果按照序号为 1 的 spanClass（对象规格为 8 B）分配，每个 span 占用堆的字节数：8 k，mspan 可以保存 1024个对象</p><p>如果按照序号为 2 的 spanClass（对象规格为 16 B）分配，每个 span 占用堆的字节数：8 k，mspan 可以保存 512个对象</p><p>…</p><p>如果按照序号为 67 的 spanClass（对象规格为 32 K）分配，每个 span 占用堆的字节数：32 k，mspan 可以保存1个对象</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226003424.png width=auto alt=image.png></p><p>字段含义：</p><ul><li>Class： class ID，每个 span 结构中都有一个 class ID, 表示该 span 可处理的对象类型</li><li>Bytes/obj：该 class 代表对象的字节数</li><li>Bytes/span：每个 span 占用堆的字节数，也即页数*页大小</li><li>Objects: 每个 span 可分配的对象个数，也即（bytes/spans）/（bytes/obj）</li><li>Waste bytes: 每个 span 产生的内存碎片，也即（bytes/spans）%（bytes/obj）</li></ul><p>大于 32 k 的对象出现时，会直接从 heap 分配一个特殊的 span，这个特殊的 span 的类型 (class)是 0, 只包含了一个大对象</p><p>代码位于 runtime/mheap.go</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type spanClass uint8
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// uint8 左 7 位为 mspan 等级，最右一位标识是否为 noscan
+</span></span><span class=line><span class=cl>func makeSpanClass(sizeclass uint8, noscan bool) spanClass {
+</span></span><span class=line><span class=cl>    return spanClass(sizeclass&lt;&lt;1) | spanClass(bool2int(noscan))
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func (sc spanClass) sizeclass() int8 {
+</span></span><span class=line><span class=cl>    return int8(sc &gt;&gt; 1)
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>func (sc spanClass) noscan() bool {
+</span></span><span class=line><span class=cl>    return sc&amp;1 != 0
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#线程缓存mcache><h2 id=线程缓存mcache><span class=hanchor arialabel=Anchor># </span>线程缓存：mcache</h2></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227201105.png width=auto alt=image.png></p><p>mcache 管理线程在本地缓存的 mspan，每个 goroutine 绑定的 P 都有一个 <code>mcache</code> 字段</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type mcache struct {
+</span></span><span class=line><span class=cl>	 // 微对象分配器相关
+</span></span><span class=line><span class=cl>    tiny       uintptr
+</span></span><span class=line><span class=cl>    tinyoffset uintptr
+</span></span><span class=line><span class=cl>    tinyAllocs uintptr
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	 // mcache 中缓存的 mspan，每种 spanClass 各一个
+</span></span><span class=line><span class=cl>    alloc [numSpanClasses]*mspan
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>_NumSizeClasses = 68
+</span></span><span class=line><span class=cl>numSpanClasses = _NumSizeClasses &lt;&lt; 1
+</span></span></code></pre></td></tr></table></div></div><ul><li><p><code>mcache</code> 是每个 P 独有的缓存，因此交互无锁</p></li><li><p><code>mcache</code> 用 <code>Span Classes</code> 作为索引管理多个用于分配的 <code>mspan</code>，它包含所有规格的 <code>mspan</code>。它是 <code>_NumSizeClasses</code> 的 2 倍，也就是 <code>68*2=136</code>，</p><ul><li>其中* 2 是将 spanClass 分成了有指针和没有指针两种, 方便与垃圾回收。</li><li>对于每种规格，有 2 个 mspan，一个 mspan 不包含指针，另一个 mspan 则包含指针。对于无指针对象的 <code>mspan</code> 在进行垃圾回收的时候无需进一步扫描它是否引用了其他活跃的对象。</li></ul></li><li><p><code>mcache</code> 在初始化的时候是没有任何 <code>mspan</code> 资源的，在使用过程中会动态地从 <code>mcentral</code> 申请，之后会缓存下来。当对象小于等于 32 KB 大小时，使用 <code>mcache</code> 的相应规格的 <code>mspan</code> 进行分配。</p></li><li><p>mcache 中还有一个为对象分配器 tiny allocator，用于处理小于 16B 对象的内存分配，在 3.3 小节中详细展开.</p></li></ul><a href=#中心缓存mcentral><h2 id=中心缓存mcentral><span class=hanchor arialabel=Anchor># </span>中心缓存：mcentral</h2></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227201114.png width=auto alt=image.png></p><p>Mcentral 管理全局的 mspan 供所有线程使用，全局 mheap 变量包含 central 字段，每个 mcentral 结构都维护在<strong>mheap</strong>结构内</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type mcentral struct {
+</span></span><span class=line><span class=cl>    spanclass spanClass // 指当前规格大小
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    partial [2]spanSet // 有空闲object的mspan列表
+</span></span><span class=line><span class=cl>    full    [2]spanSet // 没有空闲object的mspan列表
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><ul><li>每个 mcentral 管理一种 spanClass 的 mspan，</li><li>每个 mcentral 下聚合了该 spanClass 下的 mspan</li><li>并将有空闲空间和没有空闲空间的 mspan 分开管理。Partial 和 full <code>的数据类型为</code> spanSet，表示 <code>mspans</code> 集，可以通过 pop、push 来获得 mspans</li><li>每个 mcentral 一把锁</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>type spanSet struct {
+</span></span><span class=line><span class=cl>    spineLock mutex
+</span></span><span class=line><span class=cl>    spine     unsafe.Pointer // 指向[]span的指针
+</span></span><span class=line><span class=cl>    spineLen  uintptr        // Spine array length, accessed atomically
+</span></span><span class=line><span class=cl>    spineCap  uintptr        // Spine array cap, accessed under lock
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    index headTailIndex  // 前32位是头指针，后32位是尾指针
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>简单说下 <code>mcache</code> 从 <code>mcentral</code> 获取和归还 <code>mspan</code> 的流程：</p><ul><li>获取；加锁，从 <code>partial</code> 链表找到一个可用的 <code>mspan</code>；并将其从 <code>partial</code> 链表删除；将取出的 <code>mspan</code> 加入到 <code>full</code> 链表；将 <code>mspan</code> 返回给工作线程，解锁。</li><li>归还；加锁，将 <code>mspan</code> 从 <code>full</code> 链表删除；将 <code>mspan</code> 加入到 <code>partial</code> 链表，解锁。</li></ul><a href=#页堆mheap><h2 id=页堆mheap><span class=hanchor arialabel=Anchor># </span>页堆：mheap</h2></a><p>Mheap 管理 Go 的所有动态分配内存，可以认为是 Go 程序持有的整个堆空间，全局唯一</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>var mheap_ mheap
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type mheap struct {
+</span></span><span class=line><span class=cl>    // 堆的全局锁
+</span></span><span class=line><span class=cl>    lock mutex
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // 空闲页分配器，底层是多棵基数树组成的索引，每棵树对应 16 GB 内存空间
+</span></span><span class=line><span class=cl>    pages pageAlloc 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // 记录了所有的 mspan. 需要知道，所有 mspan 都是经由 mheap，使用连续空闲页组装生成的
+</span></span><span class=line><span class=cl>    allspans []*mspan
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // heapAreana 数组，64 位系统下，二维数组容量为 [1][2^22]
+</span></span><span class=line><span class=cl>    // 每个 heapArena 大小 64M，因此理论上，Golang 堆上限为 2^22*64M = 256T
+</span></span><span class=line><span class=cl>    arenas [1 &lt;&lt; arenaL1Bits]*[1 &lt;&lt; arenaL2Bits]*heapArena
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    // 多个 mcentral，总个数为 spanClass 的个数
+</span></span><span class=line><span class=cl>    central [numSpanClasses]struct {
+</span></span><span class=line><span class=cl>        mcentral mcentral
+</span></span><span class=line><span class=cl>        // 用于内存地址对齐
+</span></span><span class=line><span class=cl>        pad      [cpu.CacheLinePadSize - unsafe.Sizeof(mcentral{})%cpu.CacheLinePadSize]byte
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><ul><li><p>对于 Golang 上层应用而言，堆是操作系统虚拟内存的抽象</p></li><li><p>所有 <code>mcentral</code> 的集合则是存放于 <code>mheap</code> 中的。<code>mheap</code> 里的 <code>arena</code> 区域是堆内存的抽象，运行时会将 <code>8KB</code> 看做一页，这些内存页中存储了所有在堆上初始化的对象</p></li><li><p>以页（8KB）为单位，作为最小内存存储单元</p></li><li><p>负责将连续页组装成 mspan</p></li><li><p>全局内存基于 <strong>bitMap 标识其使用情况</strong>，每个 bit 对应一页，为 0 则自由，为 1 则已被 mspan 组装</p></li><li><p>通过 <strong>heapArena 聚合页</strong>，记录了页到 mspan 的映射信息（2.7小节展开）</p></li><li><p>建立空闲页基数树索引 radix tree index，辅助快速寻找空闲页（2.6小节展开）</p></li><li><p>是 mcentral 的持有者，持有所有 spanClass 下的 mcentral，作为自身的缓存</p></li><li><p>内存不够时，向操作系统申请，申请单位为 heapArena（64M） 运行时使用二维的 runtime. HeapArena 数组管理所有的内存，每个 runtime. HeapArena 都会管理 64 MB 的内存。</p></li></ul><ul><li>当申请内存时，依次经过 <code>mcache</code> 和 <code>mcentral</code> 都没有可用合适规格的大小内存，这时候会向 <code>mheap</code> 申请一块内存。然后按指定规格划分为一些列表，并将其添加到相同规格大小的 <code>mcentral</code> 的 <code>非空闲列表</code> 后面</li></ul><a href=#空闲页索引-pagealloc><h2 id=空闲页索引-pagealloc><span class=hanchor arialabel=Anchor># </span> 空闲页索引 pageAlloc</h2></a><p>代码位于 runtime/mpagealloc.go</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const summaryLevels = 5
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type pageAlloc struct {
+</span></span><span class=line><span class=cl>    // 共有五层基数树，第一层有 2^14 个节点，因此共用 2^14棵基数树
+</span></span><span class=line><span class=cl>    // 总空间大小为 2^14*16GB = 256T
+</span></span><span class=line><span class=cl>    // 接下来每层的节点数为上层的 8 倍
+</span></span><span class=line><span class=cl>    summary [summaryLevels][]pallocSum
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    // 类似于 tiny offset，小于此值的地址无锁检索，必然没有空间可用
+</span></span><span class=line><span class=cl>    searchAddr offAddr
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>（1）数据结构背后的含义：</p><ul><li><p>mheap 会基于 bitMap 标识内存中各页的使用情况，bit 位为 0 代表该页是空闲的，为 1 代表该页已被 mspan 占用.</p></li><li><p>每棵基数树聚合了 16 GB 内存空间中各页使用情况的索引信息，用于帮助 mheap 快速找到指定长度的连续空闲页的所在位置</p></li><li><p>mheap 持有 2^14 棵基数树，因此索引全面覆盖到 2^14 * 16 GB = 256 T 的内存空间.</p></li></ul><p>（2）基数树节点设定</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227202838.png width=auto alt=image.png></p><p>基数树中，每个节点称之为 PallocSum，是一个 <strong>uint64</strong> 类型，体现了索引的聚合信息，包含以下四部分：</p><ul><li><p> start：最右侧 21 个 bit，<strong>标识了当前节点映射的 bitMap 范围中首端有多少个连续的 0 bit（空闲页）</strong>，</p></li><li><p>•max：中间 21 个 bit，<strong>标识了当前节点映射的 bitMap 范围中最多有多少个连续的 0 bit（空闲页）</strong>，称之为 max；</p></li><li><p>• end：左侧 21 个 bit，<strong>标识了当前节点映射的 bitMap 范围中最末端有多少个连续的 0 bit（空闲页）</strong>，称之为 end.</p></li><li><p>• 最左侧一个 bit，弃置不用</p></li></ul><p>（2）基数树节点设定</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227203338.png width=auto alt=image.png></p><ul><li><p>每个父 pallocSum 有 8 个子 pallocSum</p></li><li><p>根 pallocSum 总览全局，<strong>映射的 bitMap 范围为全局的 16 GB 空间</strong>（其 max 最大值为 2^21，因此总空间大小为 2^21*8KB=16GB）；</p></li><li><p>从首层向下是一个依次八等分的过程，每一个 pallocSum 映射其父节点 bitMap 范围的八分之一，因此第二层 pallocSum 的 bitMap 范围为 16GB/8 = 2GB，以此类推，第五层节点的范围为 16GB / (8^4) = 4 MB，已经很小</p></li></ul><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227203715.png width=auto alt></p><ul><li><p>•聚合信息时，自底向上. 每个父 pallocSum 聚合 8 个子 pallocSum 的 start、max、end 信息，形成自己的信息，直到根 pallocSum，坐拥全局 16 GB 的 start、max、end 信息</p></li><li><p> mheap 寻页时，自顶向下. 对于遍历到的每个 pallocSum，</p><ul><li>先看起 start 是否符合，是则寻页成功；</li><li>再看 max 是否符合，是则进入其下层孩子 pallocSum 中进一步寻访；</li><li>最后看 end 和下一个同辈 pallocSum 的 start 聚合后是否满足，是则寻页成功.</li></ul><p>基数树节点</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const(
+</span></span><span class=line><span class=cl>    logMaxPackedValue = 21
+</span></span><span class=line><span class=cl>    maxPackedValue    = 1 &lt;&lt; logMaxPackedValue
+</span></span><span class=line><span class=cl>)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type pallocSum uint64
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// 基于 start、max、end 组装成一个基数树节点 pallocSum
+</span></span><span class=line><span class=cl>func packPallocSum(start, max, end uint) pallocSum {
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    return pallocSum((uint64(start) &amp; (maxPackedValue - 1)) |
+</span></span><span class=line><span class=cl>        ((uint64(max) &amp; (maxPackedValue - 1)) &lt;&lt; logMaxPackedValue) |
+</span></span><span class=line><span class=cl>        ((uint64(end) &amp; (maxPackedValue - 1)) &lt;&lt; (2 * logMaxPackedValue)))
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// 当前节点对应区域内，首部连续空闲页的长度
+</span></span><span class=line><span class=cl>// 通过 uint64 最右侧 21 个 bit 标识
+</span></span><span class=line><span class=cl>func (p pallocSum) start() uint {
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    return uint(uint64(p) &amp; (maxPackedValue - 1))
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// 当前节点对应区域内，连续空闲页的最大长度
+</span></span><span class=line><span class=cl>// 通过 uint64 左数 23~43 个 bit 标识
+</span></span><span class=line><span class=cl>func (p pallocSum) max() uint {
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    return uint((uint64(p) &gt;&gt; logMaxPackedValue) &amp; (maxPackedValue - 1))
+</span></span><span class=line><span class=cl>}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>// 当前节点对应区域内，尾部连续空闲页的长度
+</span></span><span class=line><span class=cl>// 通过 uint64 左数 2~22 个 bit 标识
+</span></span><span class=line><span class=cl>func (p pallocSum) end() uint {
+</span></span><span class=line><span class=cl>    return uint((uint64(p) &gt;&gt; (2 * logMaxPackedValue)) &amp; (maxPackedValue - 1))
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#记录页到-mspan-的映射heaparena><h2 id=记录页到-mspan-的映射heaparena><span class=hanchor arialabel=Anchor># </span>记录页到 mspan 的映射：heapArena</h2></a><ul><li><p>每个 heapArena 包含 8192 个页，大小为 8192 * 8KB = 64 MB</p></li><li><p> heapArena 记录了页到 mspan 的映射. 因为 GC 时，通过地址偏移找到页很方便，但找到其所属的 mspan 不容易. 因此需要通过这个映射信息进行辅助.</p></li><li><p> heapArena 是 mheap 向操作系统申请内存的单位（64MB）</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>const pagesPerArena = 8192
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>type heapArena struct {
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>    // 实现 page 到 mspan 的映射
+</span></span><span class=line><span class=cl>    spans [pagesPerArena]*mspan
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    // ...
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><a href=#分配流程><h2 id=分配流程><span class=hanchor arialabel=Anchor># </span>分配流程</h2></a><p>下面来串联 Golang 中分配对象的流程，不论是以下哪种方式，最终都会殊途同归步入 mallocgc 方法中，并且根据 3.1 小节中的策略执行分配流程：</p><ul><li><p>new(T)</p></li><li><p> &T{}</p></li><li><p> make(xxxx)</p></li></ul><a href=#分配对象><h3 id=分配对象><span class=hanchor arialabel=Anchor># </span>分配对象</h3></a><ul><li>微对象 (0, 16 B)：先使用线程缓存上的微型分配器 (tiny allocator)，再依次尝试线程缓存、中心缓存、堆分配内存；</li><li>小对象 [16 B, 32 KB]：依次尝试线程缓存、中心缓存、堆分配内存；</li><li>大对象 (32 KB, +∞)：直接尝试堆分配内存；</li></ul><a href=#分配策略><h3 id=分配策略><span class=hanchor arialabel=Anchor># </span>分配策略</h3></a><p>不同类型的对象，会有着不同的分配策略，这些内容在 mallocgc 方法中都有体现.</p><p>核心流程类似于读多级缓存的过程，由上而下，每一步只要成功则直接返回. 若失败，则由下层方法兜底.</p><p>对于微对象的分配流程：</p><p>（1）从 P 专属 mcache 的 tiny 分配器取内存（无锁）</p><p>（2）根据所属的 spanClass，从 P 专属 mcache 缓存的 mspan 中取内存（无锁）</p><p>（3）根据所属的 spanClass 从对应的 mcentral 中取 mspan 填充到 mcache，然后从 mspan 中取内存（spanClass 粒度锁）</p><p>（4）根据所属的 spanClass，从 mheap 的页分配器 pageAlloc 取得足够数量空闲页组装成 mspan 填充到 mcache，然后从 mspan 中取内存（全局锁）</p><p>（5）mheap 向操作系统申请内存，更新页分配器的索引信息，然后重复（4）.</p><p>对于小对象的分配流程是跳过（1）步，执行上述流程的（2）-（5）步；</p><p>对于大对象的分配流程是跳过（1）-（3）步，执行上述流程的（4）-（5）步.</p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZuXibKvib2fj2vlIia93waBCNwralF3nEibKSbypbCcrSMDpAEgVJJE1ibaO6QCV2MNjwwibpt8PZiaw686g/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><a href=#go-内存逃逸机制><h1 id=go-内存逃逸机制><span class=hanchor arialabel=Anchor># </span>Go 内存逃逸机制？</h1></a><a href=#概念><h2 id=概念><span class=hanchor arialabel=Anchor># </span>概念</h2></a><p>在一段程序中，<strong>每一个函数都会有自己的内存区域存放自己的局部变量、返回地址等</strong>，这些内存会由编译器在栈中进行分配，<strong>每一个函数都会分配一个栈桢</strong>，在函数运行结束后进行销毁，<strong>但是有些变量我们想在函数运行结束后仍然使用它，那么就需要把这个变量在堆上分配</strong>，这种从”栈”上逃逸到”堆”上的现象就成为<strong>内存逃逸</strong>。</p><p>在栈上分配的地址，一般由系统申请和释放，不会有额外性能的开销，比如函数的入参、局部变量、返回值等。在堆上分配的内存，如果要回收掉，需要进行 GC，那么 GC 一定会带来额外的性能开销。编程语言不断优化 GC 算法，主要目的都是为了减少 GC 带来的额外性能开销，变量一旦逃逸会导致性能开销变大。</p><a href=#逃逸机制><h2 id=逃逸机制><span class=hanchor arialabel=Anchor># </span>逃逸机制</h2></a><p>编译器会根据变量是否被外部引用来决定是否逃逸：</p><ol><li>如果函数外部没有引用，则优先放到栈中；</li><li>如果函数外部存在引用，则必定放到堆中;</li><li>如果栈上放不下，则必定放到堆上;</li></ol><p>逃逸分析也就是由编译器决定哪些变量放在栈，哪些放在堆中，通过编译参数 <code>-gcflag=-m</code> 可以查看编译过程中的逃逸分析，发生逃逸的几种场景如下：</p><a href=#指针逃逸><h3 id=指针逃逸><span class=hanchor arialabel=Anchor># </span>指针逃逸</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>escape1</span><span class=p>()</span> <span class=o>*</span><span class=kt>int</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>a</span> <span class=kt>int</span> <span class=p>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>a</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>escape1</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过 <code>go build -gcflags=-m main.go</code> 查看逃逸情况：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>./main.go:4:6: moved to heap: a
+</span></span></code></pre></td></tr></table></div></div><p>函数返回值为局部变量的指针，函数虽然退出了，但是因为指针的存在，指向的内存不能随着函数结束而回收，因此只能分配在堆上。</p><a href=#栈空间不足><h3 id=栈空间不足><span class=hanchor arialabel=Anchor># </span>栈空间不足</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>escape2</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>s</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>int</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>10000</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>index</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>s</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>s</span><span class=p>[</span><span class=nx>index</span><span class=p>]</span> <span class=p>=</span> <span class=nx>index</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>escape2</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过 <code>go build -gcflags=-m main.go</code> 查看逃逸情况：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>./main.go:4:11: make([]int, 10000, 10000) escapes to heap
+</span></span></code></pre></td></tr></table></div></div><p>当栈空间足够时，不会发生逃逸，但是当变量过大时，已经完全超过栈空间的大小时，将会发生逃逸到堆上分配内存。局部变量 s 占用内存过大，编译器会将其分配到堆上</p><a href=#变量大小不确定><h3 id=变量大小不确定><span class=hanchor arialabel=Anchor># </span>变量大小不确定</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>escape3</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>number</span> <span class=o>:=</span> <span class=mi>10</span>
+</span></span><span class=line><span class=cl>    <span class=nx>s</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>int</span><span class=p>,</span> <span class=nx>number</span><span class=p>)</span> <span class=c1>// 编译期间无法确定slice的长度
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>s</span><span class=p>);</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>s</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>=</span> <span class=nx>i</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>escape3</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>编译期间无法确定 slice 的长度，这种情况为了保证内存的安全，编译器也会触发逃逸，在堆上进行分配内存。直接 <code>s := make([]int, 10)</code> 不会发生逃逸</p><a href=#动态类型><h3 id=动态类型><span class=hanchor arialabel=Anchor># </span>动态类型</h3></a><p>动态类型就是编译期间不确定参数的类型、参数的长度也不确定的情况下就会发生逃逸</p><p>空接口 interface{} 可以表示任意的类型，如果函数参数为 interface{}，编译期间很难确定其参数的具体类型，也会发生逃逸。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>escape4</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=mi>1111</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>escape4</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过 <code>go build -gcflags=-m main.go</code> 查看逃逸情况：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>./main.go:4:6: moved to heap: i
+</span></span></code></pre></td></tr></table></div></div><p>Fmt.Println (a …interface{})函数参数为 interface，编译器不确定参数的类型，会将变量分配到堆上</p><a href=#闭包引用对象><h3 id=闭包引用对象><span class=hanchor arialabel=Anchor># </span>闭包引用对象</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>escape5</span><span class=p>()</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>i</span> <span class=kt>int</span> <span class=p>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>i</span><span class=o>++</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>i</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>escape5</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过 <code>go build -gcflags=-m main.go</code> 查看逃逸情况：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>./main.go:4:6: moved to heap: i
+</span></span></code></pre></td></tr></table></div></div><p>闭包函数中局部变量 i 在后续函数是继续使用的，编译器将其分配到堆上</p><a href=#总结><h2 id=总结><span class=hanchor arialabel=Anchor># </span>总结</h2></a><ol><li>栈上分配内存比在堆中分配内存效率更高</li><li>栈上分配的内存不需要 GC 处理，而堆需要</li><li>逃逸分析目的是决定内分配地址是栈还是堆</li><li>逃逸分析在编译阶段完成</li></ol><p>因为无论变量的大小，只要是指针变量都会在堆上分配，所以对于小变量我们还是使用传值效率（而不是传指针）更高一点。</p><a href=#怎么避免内存逃逸><h2 id=怎么避免内存逃逸><span class=hanchor arialabel=Anchor># </span>怎么避免内存逃逸？</h2></a><ol><li><strong>不要盲目使用变量指针作为参数</strong>，虽然减少了复制，但变量逃逸的开销更大。</li><li><strong>预先设定好 slice 长度</strong>，避免频繁超出容量，重新分配。</li><li>一个经验是，<strong>指针指向的数据大部分在堆上分配的</strong>，请注意。</li></ol><p>出现内存逃逸的情况有：</p><ol><li><p>发送指针或带有指针的值到 channel，因为编译时候无法知道那个 goroutine 会在 channel 接受数据，编译器无法知道什么时候释放。</p></li><li><p>在一个切片上存储指针或带指针的值。比如[]*string，导致切片内容逃逸，其引用值一直在堆上。</p></li><li><p>切片的 append 导致超出容量，切片重新分配地址，切片背后的存储基于运行时的数据进行扩充，就会在堆上分配。</p></li><li><p>调用接口类型时，接口类型的方法调用是动态调度，实际使用的具体实现只能在运行时确定，如一个接口类型为 io. Reader 的变量 r，对r.Read (b)的调用将导致 r 的值和字节片 b 的后续转义并因此分配到堆上。</p></li><li><p>在方法内把局部变量指针返回，被外部引用，其生命周期大于栈，导致内存溢出。</p></li></ol><a href=#go-内存对齐机制><h1 id=go-内存对齐机制><span class=hanchor arialabel=Anchor># </span>Go 内存对齐机制？</h1></a><a href=#什么是内存对齐><h2 id=什么是内存对齐><span class=hanchor arialabel=Anchor># </span>什么是内存对齐</h2></a><p>为了能让 CPU 可以更快的存取到各个字段，Go 编译器会帮你把 struct 结构体做数据的对齐。<strong>所谓的数据对齐，是指内存地址是所存储数据大小（按字节为单位）的整数倍，以便 CPU 可以一次将该数据从内存中读取出来。</strong> 编译器通过在结构体的各个字段之间填充一些空白已达到对齐的目的。</p><a href=#对齐系数><h2 id=对齐系数><span class=hanchor arialabel=Anchor># </span>对齐系数</h2></a><ul><li><p>不同硬件平台占用的大小和对齐值都可能是不一样的 <strong>32 位系统对齐系数是 4，64 位系统对齐系数是 8</strong></p></li><li><p>不同类型的对齐系数也可能不一样，使用 <code>Go</code> 语言中的 <code>unsafe.Alignof</code> 函数可以返回相应类型的对齐系数，<strong>对齐系数都符合 <code>2^n</code> 这个规律</strong>，最大也不会超过8</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;unsafe&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;bool alignof is %d\n&#34;</span><span class=p>,</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>Alignof</span><span class=p>(</span><span class=nb>bool</span><span class=p>(</span><span class=kc>true</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;string alignof is %d\n&#34;</span><span class=p>,</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>Alignof</span><span class=p>(</span><span class=nb>string</span><span class=p>(</span><span class=s>&#34;a&#34;</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;int alignof is %d\n&#34;</span><span class=p>,</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>Alignof</span><span class=p>(</span><span class=nb>int</span><span class=p>(</span><span class=mi>0</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;float alignof is %d\n&#34;</span><span class=p>,</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>Alignof</span><span class=p>(</span><span class=nb>float64</span><span class=p>(</span><span class=mi>0</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;int32 alignof is %d\n&#34;</span><span class=p>,</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>Alignof</span><span class=p>(</span><span class=nb>int32</span><span class=p>(</span><span class=mi>0</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;float32 alignof is %d\n&#34;</span><span class=p>,</span> <span class=nx>unsafe</span><span class=p>.</span><span class=nf>Alignof</span><span class=p>(</span><span class=nb>float32</span><span class=p>(</span><span class=mi>0</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以查看到各种类型在 Mac 64 位上的对齐系数如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>bool alignof is 1
+</span></span><span class=line><span class=cl>string alignof is 8
+</span></span><span class=line><span class=cl>int alignof is 8
+</span></span><span class=line><span class=cl>int32 alignof is 4
+</span></span><span class=line><span class=cl>float32 alignof is 4
+</span></span><span class=line><span class=cl>float alignof is 8
+</span></span></code></pre></td></tr></table></div></div><a href=#优点><h2 id=优点><span class=hanchor arialabel=Anchor># </span>优点</h2></a><ol><li>提高可移植性，有些 <code>CPU</code> 可以访问任意地址上的任意数据，而有些 <code>CPU</code> 只能在特定地址访问数据，因此不同硬件平台具有差异性，这样的代码就不具有移植性，如果在编译时，将分配的内存进行对齐，这就具有平台可以移植性了</li><li>提高内存的访问效率，32 位 CPU 下一次可以从内存中读取 32 位（4 个字节）的数据，64 位 CPU 下一次可以从内存中读取 64 位（8 个字节）的数据，这个长度也称为 CPU 的字长。CPU 一次可以读取 1 个字长的数据到内存中，如果所需要读取的数据正好跨了 1 个字长，那就得花两个 CPU 周期的时间去读取了。因此在内存中存放数据时进行对齐，可以提高内存访问效率。</li></ol><a href=#缺点><h2 id=缺点><span class=hanchor arialabel=Anchor># </span>缺点</h2></a><ol><li>存在内存空间的浪费，实际上是空间换时间</li></ol><a href=#结构体对齐><h2 id=结构体对齐><span class=hanchor arialabel=Anchor># </span>结构体对齐</h2></a><p>对齐原则：</p><ol><li><strong>结构体变量中成员的偏移量必须是成员大小的整数倍</strong></li><li><strong>整个结构体的地址必须是最大字节的整数倍</strong>（结构体的内存占用是 1/4/8/16 byte…)</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;unsafe&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>T1</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>i16</span>  <span class=kt>int16</span> <span class=c1>// 2 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>bool</span> <span class=kt>bool</span>  <span class=c1>// 1 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>T2</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>i8</span>  <span class=kt>int8</span>  <span class=c1>// 1 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>i64</span> <span class=kt>int64</span> <span class=c1>// 8 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>i32</span> <span class=kt>int32</span> <span class=c1>// 4 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>T3</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>i8</span>  <span class=kt>int8</span>  <span class=c1>// 1 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>i32</span> <span class=kt>int32</span> <span class=c1>// 4 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>i64</span> <span class=kt>int64</span> <span class=c1>// 8 byte
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>runtime</span><span class=p>.</span><span class=nx>GOARCH</span><span class=p>)</span> <span class=c1>// amd64
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=nx>t1</span> <span class=o>:=</span> <span class=nx>T1</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>unsafe</span><span class=p>.</span><span class=nf>Sizeof</span><span class=p>(</span><span class=nx>t1</span><span class=p>))</span> <span class=c1>// 4 bytes
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=nx>t2</span> <span class=o>:=</span> <span class=nx>T2</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>unsafe</span><span class=p>.</span><span class=nf>Sizeof</span><span class=p>(</span><span class=nx>t2</span><span class=p>))</span> <span class=c1>// 24 bytes
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=nx>t3</span> <span class=o>:=</span> <span class=nx>T3</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>unsafe</span><span class=p>.</span><span class=nf>Sizeof</span><span class=p>(</span><span class=nx>t3</span><span class=p>))</span> <span class=c1>// 16 bytes
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>以 T 1 结构体为例，实际存储数据的只有 3 字节，但实际用了 4 字节，浪费了 1 个字节：</p><p>I 16 并没有直接放在 bool 的后面，而是在 bool 中填充了一个空白后，放到了偏移量为 2 的位置上。如果 i 16 从偏移量为 1 的位置开始占用 2 个字节，根据对齐原则 2：构体变量中成员的偏移量必须是成员大小的整数倍，套用公式 1 % 2 = 1，就不满足对齐的要求，所以 i 16 从偏移量为2的位置开始
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004114.png width=auto alt=image.png></p><p>以 T 2 结构体为例，实际存储数据的只有 13 字节，但实际用了 24 字节，浪费了 11 个字节：
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004122.png width=auto alt=image.png></p><p>以 T 3 结构体为例，实际存储数据的只有 13 字节，但实际用了 16 字节，浪费了 3 个字节：</p><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004134.png width=auto alt=image.png></p><a href=#go-gc-实现原理><h1 id=go-gc-实现原理><span class=hanchor arialabel=Anchor># </span>Go GC 实现原理？</h1></a><a href=#什么是-gc><h2 id=什么是-gc><span class=hanchor arialabel=Anchor># </span>什么是 GC？</h2></a><p>垃圾回收也称为 GC（Garbage Collection），<strong>是一种自动内存管理机制。由垃圾收集器以类似守护协程的方式在后台运作，按照既定的策略为用户回收那些不再被使用的对象，释放对应的内存空间</strong></p><p>现代高级编程语言管理内存的方式分为两种：自动和手动，</p><ul><li>像 C、C++ 等编程语言使用手动管理内存的方式，工程师编写代码过程中需要主动申请或者释放内存；</li><li>而 PHP、Java 和 Go 等语言使用自动的内存管理系统，有内存分配器和垃圾收集器来代为分配和回收内存，其中垃圾收集器就是我们常说的 GC。</li></ul><p>在应用程序中会使用到两种内存，分别为堆（Heap）和栈（Stack），</p><ul><li><p>G<strong>C 负责回收堆内存，而不负责回收栈中的内存</strong>：</p></li><li><p>栈是线程的专用内存，专门为了函数执行而准备的，存储着函数中的局部变量以及调用栈，函数执行完后，编译器可以将栈上分配的内存可以直接释放，不需要通过 GC 来回收。</p></li></ul><p>堆是程序共享的内存，需要 GC 进行回收在堆上分配的内存。</p><p>垃圾回收器的执行过程被划分为两个半独立的组件：</p><ul><li>赋值器（Mutator）：这一名称本质上是在指代用户态的代码。因为对垃圾回收器而言，用户态的代码仅仅只是在修改对象之间的引用关系，也就是在对象图（对象之间引用关系的一个有向图）上进行操作。</li><li>回收器（Collector）：负责执行垃圾回收的代码。</li></ul><a href=#主流-gc-算法><h2 id=主流-gc-算法><span class=hanchor arialabel=Anchor># </span>主流 GC 算法</h2></a><p>目前比较常见的垃圾回收算法有三种：</p><ol><li><p>引用计数：为每个对象维护一个引用计数，当引用该对象的对象销毁时，引用计数 -1，当对象引用计数为 0 时回收该对象。
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227212501.png width=auto alt=image.png></p><ul><li>代表语言：<strong>Python</strong>、<strong>PHP</strong>、<strong>Swift</strong></li><li>优点：对象回收快，不会出现内存耗尽或达到某个阈值时才回收。</li><li>缺点：不能很好的处理循环引用，而实时维护引用计数也是有损耗的。</li></ul></li><li><p>分代收集：按照对象生命周期长短划分不同的代空间，生命周期长的放入老年代，短的放入新生代，不同代有不同的回收算法和回收频率。</p><ul><li>代表语言：<strong>Java</strong></li><li>优点：回收性能好</li><li>缺点：算法复杂</li></ul></li><li><p>标记-清除：从根变量开始遍历所有引用的对象，标记引用的对象，没有被标记的进行回收。</p></li></ol><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227213214.png width=auto alt=image.png></p><pre><code>- 代表语言：**Golang**（三色标记法）
+- 优点：解决了引用计数的缺点。
+- 缺点：需要 STW，暂时停掉程序运行。 
+</code></pre><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004206.png width=auto alt=image.png>
+4. 标记-压缩：是在标记清扫算法的基础上做了升级，在第二步”清扫“的同时还会对存活对象进行压缩整合，使得整体空间更为紧凑，从而解决内存碎片问题.
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227213148.png width=auto alt=image.png></p><ol><li>半空间复制:</li></ol><ul><li>分配两片相等大小的空间，称为 fromspace 和 tospace</li><li>每轮只使用 fromspace 空间，以GC作为分水岭划分轮次</li><li>GC时，将fromspace存活对象转移到tospace中，并以此为契机对空间进行压缩整合</li><li> GC后，交换fromspace和tospace，开启新的轮次</li></ul><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227213422.png width=auto alt></p><a href=#三色标记法><h2 id=三色标记法><span class=hanchor arialabel=Anchor># </span><strong>三色标记法</strong></h2></a><p>此算法是在 Go 1.5 版本开始使用，Go 语言采用的是标记清除算法，并在此基础上使用了三色标记法和混合写屏障技术，GC 过程和其他用户 goroutine 可并发运行，但需要一定时间的 STW</p><p>这里的三色，对应了垃圾回收过程中对象的三种状态：</p><ul><li>灰色：对象还在标记队列中等待</li><li>黑色：对象已被标记，<code>gcmarkBits</code> 对应位为 <code>1</code> （该对象不会在本次 GC 中被回收）</li><li>白色：对象未被标记，<code>gcmarkBits</code> 对应位为 <code>0</code> （该对象将会在本次 GC 中被清理）</li></ul><p>简单概括：</p><ul><li><p>标记开始前，将根对象（全局对象、栈上局部变量等）置黑，将其所指向的对象置灰</p></li><li><p>标记规则是，从灰对象出发，将其所指向的对象都置灰. 所有指向对象都置灰后，当前灰对象置黑</p></li><li><p> 标记结束后，白色对象就是不可达的垃圾对象，需要进行清扫.</p></li></ul><p>执行的步骤</p><ul><li><p>Step 1: 创建：白、灰、黑三个集合</p></li><li><p>Step 2: 将所有对象放入白色集合中</p></li><li><p>Step 3: 遍历所有<strong>root 对象</strong>，把遍历到的对象从白色集合放入灰色集合 (这里放入灰色集合的都是根节点的对象)</p></li><li><p>Step 4: 遍历灰色集合，将灰色对象引用的对象从白色集合放入灰色集合，自身标记为黑色</p></li><li><p>Step 5: 重复步骤 4，直到灰色中无任何对象，其中用到 2 个机制：</p><ul><li><strong>写屏障（Write Barrier）</strong>：上面说到的 STW 的目的是防止 GC 扫描时内存变化引起的混乱，而写屏障就是让 goroutine 与 GC 同时运行的手段，虽然不能完全消除 STW，但是可以大大减少 STW 的时间。写屏障在 GC 的特定时间开启，开启后<strong>指针传递时</strong>会把指针标记，即本轮不回收，下次 GC 时再确定。</li><li><strong>辅助 GC（Mutator Assist）</strong>：为了防止内存分配过快，在 GC 执行过程中，GC 过程中 mutator 线程会并发运行，而 mutator assist 机制会协助 GC 做一部分的工作。</li></ul></li></ul><ul><li>Step 6: 收集所有白色对象（垃圾）</li></ul><a href=#并发垃圾回收会遇到的问题><h3 id=并发垃圾回收会遇到的问题><span class=hanchor arialabel=Anchor># </span>并发垃圾回收会遇到的问题</h3></a><a href=#漏标问题><h4 id=漏标问题><span class=hanchor arialabel=Anchor># </span>漏标问题</h4></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227214346.png width=auto alt=image.png></p><ul><li>条件：初始时刻，对象 B 持有对象 C 的引用</li><li> moment1：GC协程下，对象A被扫描完成，置黑；此时对象B是灰色，还未完成扫描</li><li> momen2：用户协程下，对象A建立指向对象C的引用</li><li> moment3：用户协程下，对象B删除指向对象C的引用</li><li> moment4：GC 协程下，开始执行对对象 B 的扫描</li></ul><p>漏标问题是无法接受，其引起的误删现象可能会导致程序出现致命的错误. 针对漏标问题，Golang 给出的解决方案是屏障机制的使用</p><a href=#多标问题><h4 id=多标问题><span class=hanchor arialabel=Anchor># </span>多标问题</h4></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227214657.png width=auto alt=image.png></p><ul><li> 条件：初始时刻，对象 A 持有对象 B 的引用</li><li>moment1：GC协程下，对象A被扫描完成，置黑；对象B被对象A引用，因此被置灰</li><li> momen2：用户协程下，对象 A 删除指向对象 B 的引用</li></ul><a href=#内存碎片><h4 id=内存碎片><span class=hanchor arialabel=Anchor># </span>内存碎片</h4></a><p>标记清扫算法会存在产生“内存碎片”的缺陷</p><p>Golang 采用 TCMalloc 机制，依据对象的大小将其归属为到事先划分好的 spanClass 当中，这样能够消解外部碎片的问题，将问题限制在相对可控的内部碎片当中..</p><a href=#为什么不选择分代垃圾回收机制><h4 id=为什么不选择分代垃圾回收机制><span class=hanchor arialabel=Anchor># </span>为什么不选择分代垃圾回收机制</h4></a><p>Golang中存在内存逃逸机制，会在编译过程中将生命周期更长的对象转移到堆中，将生命周期短的对象分配在栈上，并以栈为单位对这部分对象进行回收.</p><p>Golang中存在内存逃逸机制，会在编译过程中将生命周期更长的对象转移到堆中，将生命周期短的对象分配在栈上，并以栈为单位对这部分对象进行回收.</p><a href=#root-对象><h3 id=root-对象><span class=hanchor arialabel=Anchor># </span><strong>root 对象</strong></h3></a><p>根对象在垃圾回收的术语中又叫做根集合，它是垃圾回收器在标记过程时最先检查的对象，包括：</p><ul><li>全局变量：程序在编译期就能确定的那些存在于程序整个生命周期的变量。</li><li>执行栈：每个 goroutine 都包含自己的执行栈，这些执行栈上指向堆内存的指针。</li><li>寄存器：寄存器的值可能表示一个指针，参与计算的这些指针可能指向某些赋值器分配的堆内存区块。</li></ul><a href=#强弱三色不变式><h3 id=强弱三色不变式><span class=hanchor arialabel=Anchor># </span>强弱三色不变式</h3></a><p>漏标问题的本质就是，<strong>一个已经扫描完成的黑对象指向了一个被灰\白对象删除引用的白色对象.</strong></p><p>构成这一场景的要素拆分如下：</p><p>（1）黑色对象指向了白色对象</p><p>（2）灰、白对象删除了白色对象</p><p>（3）（1）、（2）步中谈及的白色对象是同一个对象</p><p>（4）（1）发生在（2）之前</p><p>一套用于解决漏标问题的方法论称之为强弱三色不变式：</p><ul><li><p>• 强三色不变式：白色对象不能被黑色对象直接引用（直接破坏（1））</p></li><li><p>• 弱三色不变式：白色对象可以被黑色对象引用，但要从某个灰对象出发仍然可达该白对象（间接破坏了（1）、（2）的联动）</p></li></ul><a href=#插入写屏障><h3 id=插入写屏障><span class=hanchor arialabel=Anchor># </span><strong>插入写屏障</strong></h3></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227220514.png width=auto alt=image.png></p><p><strong>保证当一个黑色对象指向一个白色对象前，会先触发屏障将白色对象置为灰色，再建立引用.</strong></p><p>对象被引用时触发的机制（只在堆内存中生效）：赋值器这一行为通知给并发执行的回收器，被引用的对象标记为灰色</p><p>缺点：结束时需要 STW 来重新扫描栈，标记栈上引用的白色对象的存活</p><a href=#删除写屏障><h3 id=删除写屏障><span class=hanchor arialabel=Anchor># </span><strong>删除写屏障</strong></h3></a><p><img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227220546.png width=auto alt=image.png></p><p><strong>保证当一个白色对象即将被上游删除引用前，会触发屏障将其置灰，之后再删除上游指向其的引用.</strong></p><p>对象被删除时触发的机制（只在堆内存中生效）：赋值器将这一行为通知给并发执行的回收器，被删除的对象，如果自身为灰色或者白色，那么标记为灰色</p><p>缺点：一个对象的引用被删除后，即使没有其他存活的对象引用它，它仍然会活到下一轮，会产生很大冗余扫描成本，且降低了回收精度</p><a href=#混合写屏障><h3 id=混合写屏障><span class=hanchor arialabel=Anchor># </span><strong>混合写屏障</strong></h3></a><p>插入写屏障、删除写屏障二者择其一，即可解决并发GC的漏标问题，至于错标问题，则采用容忍态度，放到下一轮GC中进行延后处理即可.</p><p>GC 没有混合写屏障前，一直是插入写屏障；<strong>混合写屏障是插入写屏障 + 删除写屏障，写屏障只应用在堆上应用，栈上不启用（栈上启用成本很高）</strong></p><ul><li><p>• GC 开始前，以栈为单位分批扫描，将栈中所有对象置黑</p></li><li><p>• GC 期间，栈上新创建对象直接置黑</p></li><li><p>• 堆对象正常启用插入写屏障</p></li><li><p>• 堆对象正常启用删除写屏障</p></li></ul><a href=#show-case><h3 id=show-case><span class=hanchor arialabel=Anchor># </span>show case</h3></a><p>（1）case 1：堆对象删除引用，栈对象建立引用</p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZsX03L7kZaOrjpArjV5Tfmib0PFRxUrFryicq6TW7qN5aQibT6aD9aE3Eo0oPibbmKnthQZX21pshcic6Q/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><ul><li>背景：存在栈上对象A，黑色（扫描完）；</li></ul><p>存在堆上对象B，白色（未被扫描）；</p><p>存在堆上对象C，被堆上对象B引用，白色（未被扫描）</p><ul><li><p>moment1：A建立对C的引用，由于栈无屏障机制，因此正常建立引用，无额外操作</p></li><li><p>moment2：B尝试删除对C的引用，删除写屏障被触发，C被置灰，因此不会漏标</p></li></ul><p>（2）case 2：一个堆对象删除引用，成为另一个堆对象下游</p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZsX03L7kZaOrjpArjV5TfmibxaRBiaBV6h44eqG5fA92WuDGbtXE5XIibyI7QLbmgMLwxkAndaqDWUSw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><ul><li>• 背景：存在堆上对象A，白色（未被扫描）；</li></ul><p>存在堆上对象B，黑色（已完成扫描）；</p><p>存在堆上对象C，被堆上对象B引用，白色（未被扫描）</p><ul><li><p>• moment1：B尝试建立对C的引用，插入写屏障被触发，C被置灰</p></li><li><p>• moment2：A删除对C的引用，此时C已置灰，因此不会漏标</p></li></ul><p>（3）case 3：栈对象删除引用，成为堆对象下游</p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZsX03L7kZaOrjpArjV5TfmibxHWaKDFs60CDNWs6NvCFaBibqe0PCFoMibUe7Ptc1xAicu5aFwpEP2LYg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><ul><li>• 背景：存在栈上对象A，白色（未完成扫描，说明对应的栈未扫描）；</li></ul><p>存在堆上对象B，黑色（已完成扫描）；</p><p>存在堆上对象C，被栈上对象A引用，白色（未被扫描）</p><ul><li><p>• moment1：B尝试建立对C的引用，插入写屏障被触发，C被置灰</p></li><li><p>• moment2：A删除对C的引用，此时C已置灰，因此不会漏标</p></li></ul><p>（4）case 4：一个栈中对象删除引用，另一个栈中对象建立引用</p><p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZsX03L7kZaOrjpArjV5TfmibyjmjfS5mTiaH4EKOuKpDdWToJWfy9iaBvLg9AcicHu8bRqanQk7jCZZ1w/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width=auto alt=图片></p><ul><li>• 背景：存在栈上对象A，白色（未扫描，这是因为对应的栈还未开始扫描）；</li></ul><p>存在栈上对象B，黑色（已完成扫描，说明对应的栈均已完成扫描）；</p><p>存在堆上对象C，被栈上对象A引用，白色（未被扫描）</p><ul><li><p>• moment1：B建立对C的引用；</p></li><li><p>• moment2：A删除对C的引用.</p></li><li><p>• 结论：这种场景下，C要么已然被置灰，要么从某个灰对象触发仍然可达C.</p></li><li><p>• 原因在于，对象的引用不是从天而降，一定要有个来处. 当前 case 中，对象B能建立指向C的引用，至少需要满足如下三个条件之一：</p></li></ul><p>I 栈对象B原先就持有C的引用，如若如此，C就必然已处于置灰状态（因为B已是黑色）</p><p>II 栈对象B持有A的引用，通过A间接找到C. 然而这也是不可能的，因为倘若A能同时被另一个栈上的B引用到，那样A必然会升级到堆中，不再满足作为一个栈对象的前提；</p><p>III B同栈内存在其他对象X可达C，此时从X出发，必然存在一个灰色对象，从其出发存在可达C的路线.</p><p>综上，我们得以证明混合写屏障是能够胜任并发GC场景的解决方案，并且满足栈无须添加屏障的前提.</p><a href=#gc-流程><h2 id=gc-流程><span class=hanchor arialabel=Anchor># </span>GC 流程</h2></a><p>一次完整的垃圾回收会分为四个阶段，分别是标记准备、标记开始、标记终止、清理：</p><ol><li><strong>标记准备（Mark Setup）</strong>：打开写屏障（Write Barrier），需 STW（stop the world)</li><li><strong>标记开始（Marking）</strong>：使用三色标记法并发标记，与用户程序并发执行</li><li><strong>标记终止（Mark Termination</strong>）：对触发写屏障的对象进行重新扫描标记，关闭写屏障（Write Barrier），需 STW（stop the world)</li><li><strong>清理（Sweeping）</strong>：将需要回收的内存归还到堆中，将过多的内存归还给操作系统，与用户程序并发执行
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004354.png width=auto alt=image.png></li></ol><a href=#gc-触发时机><h2 id=gc-触发时机><span class=hanchor arialabel=Anchor># </span>GC 触发时机</h2></a><p><strong>主动触发：</strong></p><ul><li>调用 runtime.GC () 方法，触发 GC</li></ul><p><strong>被动触发：</strong></p><ul><li>定时触发，该触发条件由 <code>runtime.forcegcperiod</code> 变量控制，默认为 2 分钟。当超过两分钟没有产生任何 GC 时，触发 GC</li><li>根据内存分配阈值触发，该触发条件由环境变量 GOGC 控制，默认值为 100（100%），当前堆内存占用是上次 GC 结束后占用内存的 2 倍时，触发 GC</li></ul><a href=#go-gc-如何调优><h2 id=go-gc-如何调优><span class=hanchor arialabel=Anchor># </span>Go GC 如何调优？</h2></a><ul><li>控制内存分配的速度，限制 Goroutine 的数量，提高赋值器 mutator 的 CPU 利用率（降低 GC 的 CPU 利用率）</li><li>少量使用 <code>+</code> 连接 string</li><li>Slice 提前分配足够的内存来降低扩容带来的拷贝</li><li>避免 map key 对象过多，导致扫描时间增加</li><li>变量复用，减少对象分配，例如使用 sync. Pool 来复用需要频繁创建临时对象、使用全局变量等</li><li>增大 GOGC 的值，降低 GC 的运行频率</li></ul><a href=#go-如何查看-gc-信息><h2 id=go-如何查看-gc-信息><span class=hanchor arialabel=Anchor># </span>Go 如何查看 GC 信息？</h2></a><a href=#1-godebuggctrace1><h3 id=1-godebuggctrace1><span class=hanchor arialabel=Anchor># </span>1. GODEBUG=’gctrace=1’</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>n</span> <span class=p>&lt;</span> <span class=mi>100000</span><span class=p>;</span> <span class=nx>n</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>_</span> <span class=p>=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>byte</span><span class=p>,</span> <span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>20</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ GODEBUG=&#39;gctrace=1&#39; go run main.go
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>gc 1 @0.003s 4%: 0.013+1.7+0.008 ms clock, 0.10+0.67/1.2/0.018+0.064 ms cpu, 4-&gt;6-&gt;2 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 2 @0.006s 2%: 0.006+4.5+0.058 ms clock, 0.048+0.070/0.027/3.6+0.47 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 3 @0.011s 3%: 0.021+1.3+0.009 ms clock, 0.17+0.041/0.41/0.046+0.072 ms cpu, 4-&gt;6-&gt;2 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 4 @0.013s 5%: 0.025+0.38+0.26 ms clock, 0.20+0.054/0.15/0.009+2.1 ms cpu, 4-&gt;6-&gt;2 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 5 @0.014s 5%: 0.021+0.16+0.002 ms clock, 0.17+0.098/0.028/0.001+0.016 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 6 @0.014s 7%: 0.025+1.6+0.003 ms clock, 0.20+0.061/2.9/1.5+0.025 ms cpu, 4-&gt;6-&gt;2 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 7 @0.016s 7%: 0.019+1.0+0.002 ms clock, 0.15+0.053/1.0/0.018+0.017 ms cpu, 4-&gt;6-&gt;2 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 8 @0.017s 7%: 0.029+0.17+0.002 ms clock, 0.23+0.037/0.10/0.063+0.022 ms cpu, 4-&gt;4-&gt;0 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 9 @0.018s 7%: 0.019+0.23+0.002 ms clock, 0.15+0.040/0.16/0.023+0.018 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 10 @0.018s 7%: 0.022+0.23+0.003 ms clock, 0.17+0.061/0.13/0.006+0.024 ms cpu, 4-&gt;6-&gt;2 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 11 @0.018s 7%: 0.019+0.11+0.001 ms clock, 0.15+0.033/0.051/0.013+0.015 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 12 @0.019s 7%: 0.018+0.19+0.001 ms clock, 0.14+0.035/0.10/0.018+0.014 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 13 @0.019s 7%: 0.018+0.35+0.002 ms clock, 0.15+0.21/0.054/0.013+0.016 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 14 @0.019s 8%: 0.024+0.27+0.002 ms clock, 0.19+0.022/0.13/0.014+0.017 ms cpu, 4-&gt;5-&gt;1 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 15 @0.020s 8%: 0.019+0.42+0.038 ms clock, 0.15+0.060/0.28/0.007+0.31 ms cpu, 4-&gt;17-&gt;13 MB, 5 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 16 @0.021s 8%: 0.018+0.53+0.060 ms clock, 0.14+0.045/0.39/0.005+0.48 ms cpu, 21-&gt;28-&gt;7 MB, 26 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 17 @0.021s 10%: 0.020+0.91+0.64 ms clock, 0.16+0.050/0.36/0.027+5.1 ms cpu, 12-&gt;16-&gt;4 MB, 14 MB goal, 8 P
+</span></span><span class=line><span class=cl>gc 18 @0.023s 10%: 0.020+0.55+0.002 ms clock, 0.16+0.053/0.50/0.081+0.023 ms cpu, 7-&gt;9-&gt;2 MB, 8 MB goal, 8 P
+</span></span></code></pre></td></tr></table></div></div><p>字段含义由下表所示：</p><table><thead><tr><th style=text-align:left>字段</th><th style=text-align:left>含义</th></tr></thead><tbody><tr><td style=text-align:left>gc 2</td><td style=text-align:left>第二个 GC 周期</td></tr><tr><td style=text-align:left>0.006</td><td style=text-align:left>程序开始后的 0.006 秒</td></tr><tr><td style=text-align:left>2%</td><td style=text-align:left>该 GC 周期中 CPU 的使用率</td></tr><tr><td style=text-align:left>0.006</td><td style=text-align:left>标记开始时， STW 所花费的时间（wall clock）</td></tr><tr><td style=text-align:left>4.5</td><td style=text-align:left>标记过程中，并发标记所花费的时间（wall clock）</td></tr><tr><td style=text-align:left>0.058</td><td style=text-align:left>标记终止时， STW 所花费的时间（wall clock）</td></tr><tr><td style=text-align:left>0.048</td><td style=text-align:left>标记开始时， STW 所花费的时间（cpu time）</td></tr><tr><td style=text-align:left>0.070</td><td style=text-align:left>标记过程中，标记辅助所花费的时间（cpu time）</td></tr><tr><td style=text-align:left>0.027</td><td style=text-align:left>标记过程中，并发标记所花费的时间（cpu time）</td></tr><tr><td style=text-align:left>3.6</td><td style=text-align:left>标记过程中，GC 空闲的时间（cpu time）</td></tr><tr><td style=text-align:left>0.47</td><td style=text-align:left>标记终止时， STW 所花费的时间（cpu time）</td></tr><tr><td style=text-align:left>4</td><td style=text-align:left>标记开始时，堆的大小的实际值</td></tr><tr><td style=text-align:left>5</td><td style=text-align:left>标记结束时，堆的大小的实际值</td></tr><tr><td style=text-align:left>1</td><td style=text-align:left>标记结束时，标记为存活的对象大小</td></tr><tr><td style=text-align:left>5</td><td style=text-align:left>标记结束时，堆的大小的预测值</td></tr><tr><td style=text-align:left>8</td><td style=text-align:left>P 的数量</td></tr></tbody></table><a href=#2-go-tool-trace><h3 id=2-go-tool-trace><span class=hanchor arialabel=Anchor># </span>2. Go tool trace</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;os&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime/trace&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>f</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Create</span><span class=p>(</span><span class=s>&#34;trace.out&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>defer</span> <span class=nx>f</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>trace</span><span class=p>.</span><span class=nf>Start</span><span class=p>(</span><span class=nx>f</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>defer</span> <span class=nx>trace</span><span class=p>.</span><span class=nf>Stop</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>n</span> <span class=p>&lt;</span> <span class=mi>100000</span><span class=p>;</span> <span class=nx>n</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>_</span> <span class=p>=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>byte</span><span class=p>,</span> <span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>20</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ go run main.go
+</span></span><span class=line><span class=cl>$ go tool trace trace.out
+</span></span></code></pre></td></tr></table></div></div><p>打开浏览器后，可以看到如下统计：
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004606.png width=auto alt=image.png></p><p>点击 View trace，可以查看当时的 trace 情况
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004617.png width=auto alt=image.png></p><p>点击 Minimum mutator utilization，可以查看到赋值器 mutator （用户程序）对 CPU 的利用率 74.1%，接近 100%则代表没有针对 GC 的优化空间了
+<img src=https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226004625.png width=auto alt=image.png></p><a href=#3-debug-readgcstats><h3 id=3-debug-readgcstats><span class=hanchor arialabel=Anchor># </span>3. Debug. ReadGCStats</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime/debug&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>printGCStats</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>t</span> <span class=o>:=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>NewTicker</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>s</span> <span class=o>:=</span> <span class=nx>debug</span><span class=p>.</span><span class=nx>GCStats</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>t</span><span class=p>.</span><span class=nx>C</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=nx>debug</span><span class=p>.</span><span class=nf>ReadGCStats</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;gc %d last@%v, PauseTotal %v\n&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>.</span><span class=nx>NumGC</span><span class=p>,</span> <span class=nx>s</span><span class=p>.</span><span class=nx>LastGC</span><span class=p>,</span> <span class=nx>s</span><span class=p>.</span><span class=nx>PauseTotal</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=nf>printGCStats</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>n</span> <span class=p>&lt;</span> <span class=mi>100000</span><span class=p>;</span> <span class=nx>n</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>_</span> <span class=p>=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>byte</span><span class=p>,</span> <span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>20</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ go run main.go
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>gc 3392 last@2022-05-04 19:22:52.877293 +0800 CST, PauseTotal 117.524907ms
+</span></span><span class=line><span class=cl>gc 6591 last@2022-05-04 19:22:53.876837 +0800 CST, PauseTotal 253.254996ms
+</span></span><span class=line><span class=cl>gc 10028 last@2022-05-04 19:22:54.87674 +0800 CST, PauseTotal 376.981595ms
+</span></span><span class=line><span class=cl>gc 13447 last@2022-05-04 19:22:55.87689 +0800 CST, PauseTotal 511.420111ms
+</span></span><span class=line><span class=cl>gc 16938 last@2022-05-04 19:22:56.876955 +0800 CST, PauseTotal 649.293449ms
+</span></span><span class=line><span class=cl>gc 20350 last@2022-05-04 19:22:57.876756 +0800 CST, PauseTotal 788.003014ms
+</span></span></code></pre></td></tr></table></div></div><p>字段含义由下表所示：</p><table><thead><tr><th style=text-align:left>字段</th><th style=text-align:left>含义</th></tr></thead><tbody><tr><td style=text-align:left>NumGC</td><td style=text-align:left>GC 总次数</td></tr><tr><td style=text-align:left>LastGC</td><td style=text-align:left>上次 GC 时间</td></tr><tr><td style=text-align:left>PauseTotal</td><td style=text-align:left>STW 总耗时</td></tr></tbody></table><a href=#4-runtime-readmemstats><h3 id=4-runtime-readmemstats><span class=hanchor arialabel=Anchor># </span>4. Runtime. ReadMemStats</h3></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;runtime&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>printMemStats</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>t</span> <span class=o>:=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>NewTicker</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>s</span> <span class=o>:=</span> <span class=nx>runtime</span><span class=p>.</span><span class=nx>MemStats</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>t</span><span class=p>.</span><span class=nx>C</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=nx>runtime</span><span class=p>.</span><span class=nf>ReadMemStats</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;gc %d last@%v, heap_object_num: %v, heap_alloc: %vMB, next_heap_size: %vMB\n&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nx>s</span><span class=p>.</span><span class=nx>NumGC</span><span class=p>,</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Unix</span><span class=p>(</span><span class=nb>int64</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Duration</span><span class=p>(</span><span class=nx>s</span><span class=p>.</span><span class=nx>LastGC</span><span class=p>).</span><span class=nf>Seconds</span><span class=p>()),</span> <span class=mi>0</span><span class=p>),</span> <span class=nx>s</span><span class=p>.</span><span class=nx>HeapObjects</span><span class=p>,</span> <span class=nx>s</span><span class=p>.</span><span class=nx>HeapAlloc</span><span class=o>/</span><span class=p>(</span><span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>20</span><span class=p>),</span> <span class=nx>s</span><span class=p>.</span><span class=nx>NextGC</span><span class=o>/</span><span class=p>(</span><span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>20</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>go</span> <span class=nf>printMemStats</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=mi>20</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>n</span> <span class=p>&lt;</span> <span class=mi>100000</span><span class=p>;</span> <span class=nx>n</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>_</span> <span class=p>=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>byte</span><span class=p>,</span> <span class=mi>1</span><span class=o>&lt;&lt;</span><span class=mi>20</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ go run main.go
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>gc 2978 last@2022-05-04 19:38:04 +0800 CST, heap_object_num: 391, heap_alloc: 20MB, next_heap_size: 28MB
+</span></span><span class=line><span class=cl>gc 5817 last@2022-05-04 19:38:05 +0800 CST, heap_object_num: 370, heap_alloc: 4MB, next_heap_size: 4MB
+</span></span><span class=line><span class=cl>gc 9415 last@2022-05-04 19:38:06 +0800 CST, heap_object_num: 392, heap_alloc: 7MB, next_heap_size: 8MB
+</span></span><span class=line><span class=cl>gc 11429 last@2022-05-04 19:38:07 +0800 CST, heap_object_num: 339, heap_alloc: 4MB, next_heap_size: 5MB
+</span></span><span class=line><span class=cl>gc 14706 last@2022-05-04 19:38:08 +0800 CST, heap_object_num: 436, heap_alloc: 6MB, next_heap_size: 8MB
+</span></span><span class=line><span class=cl>gc 18253 last@2022-05-04 19:38:09 +0800 CST, heap_object_num: 375, heap_alloc: 4MB, next_heap_size: 6M
+</span></span></code></pre></td></tr></table></div></div><p>字段含义由下表所示：</p><table><thead><tr><th style=text-align:left>字段</th><th style=text-align:left>含义</th></tr></thead><tbody><tr><td style=text-align:left>NumGC</td><td style=text-align:left>GC 总次数</td></tr><tr><td style=text-align:left>LastGC</td><td style=text-align:left>上次 GC 时间</td></tr><tr><td style=text-align:left>HeapObjects</td><td style=text-align:left>堆中已经分配的对象总数，GC 内存回收后 HeapObjects 取值相应减小</td></tr><tr><td style=text-align:left>HeapAlloc</td><td style=text-align:left>堆中已经分配给对象的字节数，GC 内存回收后 HeapAlloc 取值相应减小</td></tr><tr><td style=text-align:left>NextGC</td><td style=text-align:left>下次 GC 目标堆的大小</td></tr></tbody></table></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://googoo-s.github.io/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by googoo-s using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2024</p><ul><li><a href=https://googoo-s.github.io/>Home</a></li><li><a href=https://github.com/googoo-s>GitHub</a></li></ul></footer></div></div></body></html>
