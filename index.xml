@@ -3,56 +3,56 @@
     <channel>
       <title>googoo-s</title>
       <link>https://googoo-s.github.io</link>
-      <description>Last 10 notes on googoo-s</description>
+      <description>最近的10条笔记 on googoo-s</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
     <title>git</title>
     <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/git/git</link>
     <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/git/git</guid>
     <description>版本控制 什么是版本控制 版本控制是一种记录一个或若干文件内容变化，以便将来查阅特定版本修订情况的系统。除了项目源代码，你可以对任何类型的文件进行版本控制。 为什么要版本控制 有了它你就可以将某个文件回溯到之前的状态，甚至将整个项目都回退到过去某个时间点的状态，你可以比较文件的变化细节，查出最后是谁修改了哪个地方，从而找出导致怪异问题出现的原因，又是谁在何时报告了某个功能缺陷等等。 ...</description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>工具</title>
     <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/%E5%B7%A5%E5%85%B7</link>
     <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/%E5%B7%A5%E5%85%B7</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>环境搭建</title>
     <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA</link>
     <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>Zookeeper 教程</title>
     <link>https://googoo-s.github.io/zookeeper/Zookeeper-%E6%95%99%E7%A8%8B</link>
     <guid>https://googoo-s.github.io/zookeeper/Zookeeper-%E6%95%99%E7%A8%8B</guid>
     <description>www.runoob.com/w3cnote/zookeeper-tutorial.html.</description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>KQL</title>
     <link>https://googoo-s.github.io/elastic/KQL</link>
     <guid>https://googoo-s.github.io/elastic/KQL</guid>
     <description>Kibana Query Language juejin.cn/post/7003201901382598686 www.elastic.co/guide/en/kibana/7.14/kuery-query.html#kuery-query.</description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>index</title>
     <link>https://googoo-s.github.io/</link>
     <guid>https://googoo-s.github.io/</guid>
     <description>😀😁😲🌞🙀 这是我的 Obsidian 的 vault ,我使用了 quartz 搭建了这个页面。 关于如何搭建可以看这篇文章 使用quartz发布obsidian vault 可以算是我的博客，和资源库。主要包括的内容： 工具 环境搭建 各种笔记 资源汇总 .</description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>使用quartz发布obsidian  vault</title>
     <link>https://googoo-s.github.io/Obsidian/%E4%BD%BF%E7%94%A8quartz%E5%8F%91%E5%B8%83obsidian--vault</link>
     <guid>https://googoo-s.github.io/Obsidian/%E4%BD%BF%E7%94%A8quartz%E5%8F%91%E5%B8%83obsidian--vault</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>Context</title>
     <link>https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/Context</link>
     <guid>https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/Context</guid>
     <description>参考 Golang context 实现原理 go 之 Context 基本使用 前言 context 是 golang 中的经典工具 主要在异步场景中用于实现并发协调以及对 goroutine 的生命周期控制. 除此之外，context 还兼有一定的数据存储能力. 本着知其然知其所以然的精神，本文和大家一起深入 context 源码一探究竟，较为细节地对其实现原理进行梳理.</description>
-    <pubDate>Thu, 21 Mar 2024 08:54:56 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 09:03:45 GMT</pubDate>
   </item><item>
     <title>安装</title>
     <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%AE%89%E8%A3%85</link>
