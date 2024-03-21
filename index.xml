@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
     <channel>
-      <title>🪴 Quartz 4.0</title>
-      <link>https://quartz.jzhao.xyz</link>
-      <description>Last 10 notes on 🪴 Quartz 4.0</description>
+      <title>googoo-s</title>
+      <link>https://googoo-s.github.io</link>
+      <description>Last 10 notes on googoo-s</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
     <title>资源汇总</title>
-    <link>https://quartz.jzhao.xyz/%E8%B5%84%E6%BA%90/%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB</link>
-    <guid>https://quartz.jzhao.xyz/%E8%B5%84%E6%BA%90/%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB</guid>
+    <link>https://googoo-s.github.io/%E8%B5%84%E6%BA%90/%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB</link>
+    <guid>https://googoo-s.github.io/%E8%B5%84%E6%BA%90/%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item><item>
     <title>1.Pulsar概述</title>
-    <link>https://quartz.jzhao.xyz/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/1.Pulsar%E6%A6%82%E8%BF%B0</link>
-    <guid>https://quartz.jzhao.xyz/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/1.Pulsar%E6%A6%82%E8%BF%B0</guid>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/1.Pulsar%E6%A6%82%E8%BF%B0</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/1.Pulsar%E6%A6%82%E8%BF%B0</guid>
     <description>Pulsar 是一个分布式发布、订阅 (pub-sub)消息的平台，具有非常灵活的消息传递模型以及跨语言的客户端 API。Pulsar 也是一个集消息传递、消息存储、轻量化函数式计算于一体的流数据平台。Pulsar 采用了计算与存储分离的架构，支持云原生、多租户、持久化存储、多机房跨区域数据复制等，具有高一致性、高吞吐、低延时及高可扩展性等流数据存储系统特性 ...</description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item><item>
     <title>2.doccker 中启动 standalone Pulsar</title>
-    <link>https://quartz.jzhao.xyz/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/2.doccker-%E4%B8%AD%E5%90%AF%E5%8A%A8-standalone-Pulsar</link>
-    <guid>https://quartz.jzhao.xyz/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/2.doccker-%E4%B8%AD%E5%90%AF%E5%8A%A8-standalone-Pulsar</guid>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/2.doccker-%E4%B8%AD%E5%90%AF%E5%8A%A8-standalone-Pulsar</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Pulsar/2.doccker-%E4%B8%AD%E5%90%AF%E5%8A%A8-standalone-Pulsar</guid>
     <description>...</description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item><item>
     <title>消息队列对比</title>
-    <link>https://quartz.jzhao.xyz/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%AF%B9%E6%AF%94</link>
-    <guid>https://quartz.jzhao.xyz/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%AF%B9%E6%AF%94</guid>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%AF%B9%E6%AF%94</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%AF%B9%E6%AF%94</guid>
     <description>性能和可靠性 副本与存储结构 Pulsar通过BookKeeper实现了数据的高可靠。在BookKeeper中Ledger是基本的持久化存储单元。Pulsar的每个主题的数据都会在逻辑上映射为多个Ledger。每个Ledger在服务端会存储多个副本。为了灵活地控制存储时的一致性，BookKeeper在存储时提供了3个关键的参数—数据存储的副本数（Ensemble ...</description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item><item>
     <title>如何</title>
-    <link>https://quartz.jzhao.xyz/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95</link>
-    <guid>https://quartz.jzhao.xyz/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95</guid>
+    <link>https://googoo-s.github.io/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95</link>
+    <guid>https://googoo-s.github.io/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item><item>
     <title>如何设计一个排行榜？</title>
-    <link>https://quartz.jzhao.xyz/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%8E%92%E8%A1%8C%E6%A6%9C%EF%BC%9F</link>
-    <guid>https://quartz.jzhao.xyz/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%8E%92%E8%A1%8C%E6%A6%9C%EF%BC%9F</guid>
+    <link>https://googoo-s.github.io/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%8E%92%E8%A1%8C%E6%A6%9C%EF%BC%9F</link>
+    <guid>https://googoo-s.github.io/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%9C%BA%E6%99%AF%E9%A2%98/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%8E%92%E8%A1%8C%E6%A6%9C%EF%BC%9F</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
-  </item><item>
-    <title>Zookeeper 教程</title>
-    <link>https://quartz.jzhao.xyz/zookeeper/Zookeeper-%E6%95%99%E7%A8%8B</link>
-    <guid>https://quartz.jzhao.xyz/zookeeper/Zookeeper-%E6%95%99%E7%A8%8B</guid>
-    <description>www.runoob.com/w3cnote/zookeeper-tutorial.html.</description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
-  </item><item>
-    <title>服务治理：分布式下如何进行日志管理？</title>
-    <link>https://quartz.jzhao.xyz/%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E6%80%A7%E8%83%BD%E9%AB%98%E5%8F%AF%E7%94%A8/%E6%97%A5%E5%BF%97/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9A%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8B%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%EF%BC%9F</link>
-    <guid>https://quartz.jzhao.xyz/%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E6%80%A7%E8%83%BD%E9%AB%98%E5%8F%AF%E7%94%A8/%E6%97%A5%E5%BF%97/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9A%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8B%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%EF%BC%9F</guid>
-    <description></description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
-  </item><item>
-    <title>服务治理：监控系统如何做？</title>
-    <link>https://quartz.jzhao.xyz/%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E6%80%A7%E8%83%BD%E9%AB%98%E5%8F%AF%E7%94%A8/%E7%9B%91%E6%8E%A7/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9A%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%81%9A%EF%BC%9F</link>
-    <guid>https://quartz.jzhao.xyz/%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E5%B9%B6%E5%8F%91%E9%AB%98%E6%80%A7%E8%83%BD%E9%AB%98%E5%8F%AF%E7%94%A8/%E7%9B%91%E6%8E%A7/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9A%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%81%9A%EF%BC%9F</guid>
-    <description></description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item><item>
     <title>安装</title>
-    <link>https://quartz.jzhao.xyz/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%AE%89%E8%A3%85</link>
-    <guid>https://quartz.jzhao.xyz/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%AE%89%E8%A3%85</guid>
+    <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%AE%89%E8%A3%85</link>
+    <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%AE%89%E8%A3%85</guid>
     <description>github.com/kiennq/emacs-build 添加到菜单栏 需要打开 server-mode (server-mode 1) 新建文件 emacs.reg 注意修改路径 Windows Registry Editor Version 5.00 [HKEY_CLASSES_ROOT\*\shell] [HKEY_CLASSES_ROOT\*\shell\openwemacs] ...</description>
-    <pubDate>Thu, 21 Mar 2024 07:51:53 GMT</pubDate>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
+  </item><item>
+    <title>快捷键</title>
+    <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%BF%AB%E6%8D%B7%E9%94%AE</link>
+    <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/emacs/%E5%BF%AB%E6%8D%B7%E9%94%AE</guid>
+    <description>Emacs 这个东东听说功能很强大。不过感觉有些难学，还好网络上的资源还是比较丰富的。目前基于最基本的文本编辑来学习。而且它的快捷键很多，所以要在使用过程中学习会比较容易记住。这个是从网上搜索来的，总结的比较好的，贴在自己这里当做摘录了，方便查询。 C = Control M = Meta = Alt S = Super = ...</description>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
+  </item><item>
+    <title>git</title>
+    <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/git/git</link>
+    <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/git/git</guid>
+    <description>版本控制 什么是版本控制 版本控制是一种记录一个或若干文件内容变化，以便将来查阅特定版本修订情况的系统。除了项目源代码，你可以对任何类型的文件进行版本控制。 为什么要版本控制 有了它你就可以将某个文件回溯到之前的状态，甚至将整个项目都回退到过去某个时间点的状态，你可以比较文件的变化细节，查出最后是谁修改了哪个地方，从而找出导致怪异问题出现的原因，又是谁在何时报告了某个功能缺陷等等。 ...</description>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
+  </item><item>
+    <title>pacman</title>
+    <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/msys2/pacman</link>
+    <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7%E5%92%8C%E7%8E%AF%E5%A2%83/msys2/pacman</guid>
+    <description>安装软件 pacman -S (软件名)：安装软件，若有多个软件包，空格分隔 pacman -S --needed （软件名）：安装软件，若存在，不重新安装最新的软件 pacman -Sy (软件名)：安装软件前，先从远程仓库下载软件包数据库 pacman -Sv (软件名)：输出操作信息后安装 pacman -Sw (软件名)：只下载软件包，而不安装 ...</description>
+    <pubDate>Thu, 21 Mar 2024 07:59:53 GMT</pubDate>
   </item>
     </channel>
   </rss>
