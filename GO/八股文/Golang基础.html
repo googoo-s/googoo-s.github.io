@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Golang基础</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="Golang基础"/><meta property="og:description" content="init 和 main 函数相关特点 init 函数 （没有输入参数、返回值）的主要作用 初始化不能采用初始化表达式初始化的变量。 程序运行前的注册。 实现sync.Once功能。 其他 init 顺序 在同一个 package 中，可以多个文件中定义 init 方法 在同一个 go 文件中，可以重复定义 init 方法 在同一个 package ..."/><meta property="og:image" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="init 和 main 函数相关特点 init 函数 （没有输入参数、返回值）的主要作用 初始化不能采用初始化表达式初始化的变量。 程序运行前的注册。 实现sync.Once功能。 其他 init 顺序 在同一个 package 中，可以多个文件中定义 init 方法 在同一个 go 文件中，可以重复定义 init 方法 在同一个 package ..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="GO/八股文/Golang基础"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="../..">🪴 Quartz 4.0</a></h1><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>Search</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;awesome&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;elastic&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/Channel&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/分布式并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/原子操作&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/基础并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/扩展并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/netty&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring/Spring-cloud&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;journal&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua/用Go实现Lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;zookeeper&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/日志&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/监控&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列/Pulsar&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计/场景题&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true}]"><h1>Explorer</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="awesome"><button class="folder-button"><span class="folder-title">awesome</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="awesome"><li><a href="../../awesome/JavaGuide-知识星球优质主题汇总" data-for="awesome/JavaGuide-知识星球优质主题汇总">JavaGuide 知识星球优质主题汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="elastic"><button class="folder-button"><span class="folder-title">elastic</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="elastic"><li><a href="../../elastic/KQL" data-for="elastic/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程"><button class="folder-button"><span class="folder-title">并发编程</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/Channel"><button class="folder-button"><span class="folder-title">Channel</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/Channel"><li><a href="../../GO/并发编程/Channel/channel" data-for="GO/并发编程/Channel/channel">channel</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/分布式并发原语"><button class="folder-button"><span class="folder-title">分布式并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/分布式并发原语"><li><a href="../../GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁" data-for="GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁">Leader选举互斥锁和读写锁</a></li><li><a href="../../GO/并发编程/分布式并发原语/队列、栅栏和STM" data-for="GO/并发编程/分布式并发原语/队列、栅栏和STM">队列、栅栏和STM</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/原子操作"><button class="folder-button"><span class="folder-title">原子操作</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/原子操作"><li><a href="../../GO/并发编程/原子操作/atomic" data-for="GO/并发编程/原子操作/atomic">atomic</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/基础并发原语"><button class="folder-button"><span class="folder-title">基础并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/基础并发原语"><li><a href="../../GO/并发编程/基础并发原语/Cond" data-for="GO/并发编程/基础并发原语/Cond">Cond</a></li><li><a href="../../GO/并发编程/基础并发原语/Context" data-for="GO/并发编程/基础并发原语/Context">Context</a></li><li><a href="../../GO/并发编程/基础并发原语/map" data-for="GO/并发编程/基础并发原语/map">map</a></li><li><a href="../../GO/并发编程/基础并发原语/Mutex" data-for="GO/并发编程/基础并发原语/Mutex">Mutex</a></li><li><a href="../../GO/并发编程/基础并发原语/Once" data-for="GO/并发编程/基础并发原语/Once">Once</a></li><li><a href="../../GO/并发编程/基础并发原语/Pool" data-for="GO/并发编程/基础并发原语/Pool">Pool</a></li><li><a href="../../GO/并发编程/基础并发原语/RWMutex" data-for="GO/并发编程/基础并发原语/RWMutex">RWMutex</a></li><li><a href="../../GO/并发编程/基础并发原语/WaitGroup" data-for="GO/并发编程/基础并发原语/WaitGroup">WaitGroup</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/扩展并发原语"><button class="folder-button"><span class="folder-title">扩展并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/扩展并发原语"><li><a href="../../GO/并发编程/扩展并发原语/Semaphore-信号量" data-for="GO/并发编程/扩展并发原语/Semaphore-信号量">Semaphore-信号量</a></li><li><a href="../../GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏" data-for="GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏">SingleFlight 和 CyclicBarrier-请求合并和循环栅栏</a></li><li><a href="../../GO/并发编程/扩展并发原语/分组操作" data-for="GO/并发编程/扩展并发原语/分组操作">分组操作</a></li></ul></div></li><li><a href="../../GO/并发编程/开篇词" data-for="GO/并发编程/开篇词">开篇词</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java"><button class="folder-button"><span class="folder-title">Java</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/netty"><button class="folder-button"><span class="folder-title">netty</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/netty"><li><a href="../../Java/netty/1.-概念和体系结构" data-for="Java/netty/1.-概念和体系结构">1. 概念和体系结构</a></li><li><a href="../../Java/netty/BootStrap" data-for="Java/netty/BootStrap">BootStrap</a></li><li><a href="../../Java/netty/ByteBuf" data-for="Java/netty/ByteBuf">ByteBuf</a></li><li><a href="../../Java/netty/ChannelHandler、ChannelPipeline、ChannelContext" data-for="Java/netty/ChannelHandler、ChannelPipeline、ChannelContext">ChannelHandler、ChannelPipeline、ChannelContext</a></li><li><a href="../../Java/netty/EventLoop-和线程模型" data-for="Java/netty/EventLoop-和线程模型">EventLoop 和线程模型</a></li><li><a href="../../Java/netty/传输和Channel" data-for="Java/netty/传输和Channel">传输和Channel</a></li><li><a href="../../Java/netty/编解码器" data-for="Java/netty/编解码器">编解码器</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring"><button class="folder-button"><span class="folder-title">Spring</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring/Spring-cloud"><button class="folder-button"><span class="folder-title">Spring cloud</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring/Spring-cloud"><li><a href="../../Java/Spring/Spring-cloud/spring-cloud-alibaba" data-for="Java/Spring/Spring-cloud/spring-cloud-alibaba">spring cloud alibaba</a></li></ul></div></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="journal"><button class="folder-button"><span class="folder-title">journal</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="journal"><li><a href="../../journal/2023-07-25" data-for="journal/2023-07-25">2023-07-25</a></li><li><a href="../../journal/2023-07-26" data-for="journal/2023-07-26">2023-07-26</a></li><li><a href="../../journal/2023-07-27" data-for="journal/2023-07-27">2023-07-27</a></li><li><a href="../../journal/2023-07-31" data-for="journal/2023-07-31">2023-07-31</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua/用Go实现Lua"><button class="folder-button"><span class="folder-title">用Go实现Lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua/用Go实现Lua"><li><a href="../../lua/用Go实现Lua/1.二进制Chunk" data-for="lua/用Go实现Lua/1.二进制Chunk">1.二进制Chunk</a></li><li><a href="../../lua/用Go实现Lua/2.指令集" data-for="lua/用Go实现Lua/2.指令集">2.指令集</a></li><li><a href="../../lua/用Go实现Lua/3.lua-API" data-for="lua/用Go实现Lua/3.lua-API">3.lua API</a></li><li><a href="../../lua/用Go实现Lua/前言" data-for="lua/用Go实现Lua/前言">前言</a></li></ul></div></li><li><a href="../../lua/lua基础" data-for="lua/lua基础">lua基础</a></li><li><a href="../../lua/Lua高级" data-for="lua/Lua高级">Lua高级</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="zookeeper"><button class="folder-button"><span class="folder-title">zookeeper</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="zookeeper"><li><a href="../../zookeeper/Zookeeper-教程" data-for="zookeeper/Zookeeper-教程">Zookeeper 教程</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用"><button class="folder-button"><span class="folder-title">分布式高并发高性能高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/日志"><button class="folder-button"><span class="folder-title">日志</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/日志"><li><a href="../../分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？" data-for="分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？">服务治理：分布式下如何进行日志管理？</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/监控"><button class="folder-button"><span class="folder-title">监控</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/监控"><li><a href="../../分布式高并发高性能高可用/监控/服务治理：监控系统如何做？" data-for="分布式高并发高性能高可用/监控/服务治理：监控系统如何做？">服务治理：监控系统如何做？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境"><button class="folder-button"><span class="folder-title">工具和环境</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/emacs"><li><a href="../../工具和环境/emacs/安装" data-for="工具和环境/emacs/安装">安装</a></li><li><a href="../../工具和环境/emacs/快捷键" data-for="工具和环境/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/git"><li><a href="../../工具和环境/git/git" data-for="工具和环境/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/msys2"><li><a href="../../工具和环境/msys2/pacman" data-for="工具和环境/msys2/pacman">pacman</a></li></ul></div></li><li><a href="../../工具和环境/工具" data-for="工具和环境/工具">工具</a></li><li><a href="../../工具和环境/环境搭建" data-for="工具和环境/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列"><button class="folder-button"><span class="folder-title">消息队列</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列/Pulsar"><button class="folder-button"><span class="folder-title">Pulsar</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列/Pulsar"><li><a href="../../消息队列/Pulsar/1.Pulsar概述" data-for="消息队列/Pulsar/1.Pulsar概述">1.Pulsar概述</a></li><li><a href="../../消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar" data-for="消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar">2.doccker 中启动 standalone Pulsar</a></li></ul></div></li><li><a href="../../消息队列/消息队列对比" data-for="消息队列/消息队列对比">消息队列对比</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计"><button class="folder-button"><span class="folder-title">系统设计</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计/场景题"><button class="folder-button"><span class="folder-title">场景题</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计/场景题"><li><a href="../../系统设计/场景题/如何" data-for="系统设计/场景题/如何">如何</a></li><li><a href="../../系统设计/场景题/如何设计一个排行榜？" data-for="系统设计/场景题/如何设计一个排行榜？">如何设计一个排行榜？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../GO/">GO</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../GO/八股文/">八股文</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Golang基础</a></div></nav><h1 class="article-title">Golang基础</h1><p show-comma="true" class="content-meta"><span>Feb 25, 2024</span><span>60 min read</span></p><ul class="tags"><li><a href="../../tags/GO/八股文" class="internal tag-link">GO/八股文</a></li></ul></div></div><article class="popover-hint"><h1 id="init-和-main-函数相关特点">init 和 main 函数相关特点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#init-和-main-函数相关特点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="init-函数-没有输入参数返回值的主要作用">init 函数 （没有输入参数、返回值）的主要作用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#init-函数-没有输入参数返回值的主要作用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>初始化不能采用初始化表达式初始化的变量。</li>
+<li>程序运行前的注册。</li>
+<li>实现sync.Once功能。</li>
+<li>其他</li>
+</ul>
+<h2 id="init-顺序">init 顺序<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#init-顺序" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>在同一个 package 中，可以多个文件中定义 init 方法</li>
+<li>在同一个 go 文件中，可以重复定义 init 方法</li>
+<li>在同一个 package 中，不同文件中的 init 方法的执行按照文件名先后执行各个文件中的 init 方法</li>
+<li>在同一个文件中的多个 init 方法，按照在代码中编写的顺序依次执行不同的 init 方法</li>
+<li>对于不同的 package，如果不相互依赖的话，按照 main 包中 import 的顺序调用其包中的 init() 函数</li>
+<li>如果 package 存在依赖，调用顺序为最后被依赖的最先被初始化，例如：导入顺序 main –> A –> B –> C，则初始化顺序为 C –> B –> A –> main，一次执行对应的 init 方法。</li>
+</ol>
+<p>所有 init 函数都在同⼀个 goroutine 内执行。
+所有 init 函数结束后才会执行 main.main 函数</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage.png" alt="image.png"/></p>
+<h1 id="go-的数据结构的零值是什么">Go 的数据结构的零值是什么?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-的数据结构的零值是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p>所有整型类型：0</p>
+</li>
+<li>
+<p>浮点类型：0.0</p>
+</li>
+<li>
+<p>布尔类型：false</p>
+</li>
+<li>
+<p>字符串类型：””</p>
+</li>
+<li>
+<p>指针、interface、切片（slice）、channel、map、function ：nil</p>
+</li>
+</ul>
+<p>Go的零值初始是递归的，即<strong>数组、结构体等类型的零值初始化就是对其组成元素逐一进行零值初始化</strong>。</p>
+<h1 id="byte和rune有什么区别">byte和rune有什么区别<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#byte和rune有什么区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>rune和byte在go语言中都是字符类型，且都是别名类型</p>
+<ul>
+<li>
+<p>byte 型本质上是 uint8类型的别名，代表了 ASCII 码的一个字符</p>
+</li>
+<li>
+<p>rune 型本质上是 int32型的别名，代表一个 UTF-8 字符</p>
+</li>
+</ul>
+<h1 id="go-struct-能不能比较">Go struct 能不能比较<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-struct-能不能比较" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>需要具体情况具体分析，如果struct中含有不能被比较的字段类型，就不能被比较。</p>
+<p>如果struct中所有的字段类型都支持比较，那么就可以被比较。</p>
+<ul>
+<li>不可被比较的类型：
+<ul>
+<li>slice，因为slice是引用类型，除非是和nil比较</li>
+<li>map，和slice同理，如果要比较两个map只能通过循环遍历实现</li>
+<li>函数类型</li>
+</ul>
+</li>
+</ul>
+<p>其他的类型都可以比较。</p>
+<p>还有两点值得注意：</p>
+<ul>
+<li>结构体之间只能比较它们是否相等，而不能比较它们的大小</li>
+<li>只有所有属性都相等而且属性顺序都一致的结构体才能进行比较</li>
+</ul>
+<h1 id="go-语言如何初始化变量">Go 语言如何初始化变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言如何初始化变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>var a int=10  
+var a=10  
+a:=10
+</code></pre>
+<h1 id="go-import-的三种方式">Go import 的三种方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-import-的三种方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>一、加下划线：</strong></p>
+<p>import 下划线（如：_ “github.com/go-sql-driver/mysql”）</p>
+<p>作用：<strong>使用[import _ 包路径]只是引用该包，仅仅是为了调用init()函数，所以无法通过包名来调用包中的其他函数</strong>。</p>
+<p><strong>二、加点(.)：</strong></p>
+<p>import和引用的包名之间加点（.）操作的含义就是这个包导入之后在调用这个包的函数时，可以省略前缀的包名。</p>
+<p><strong>三、别名：</strong></p>
+<p>别名操作顾名思义可以把包命名成另一个用起来容易记忆的名字。</p>
+<h1 id="与其他语言相比使用-go-有什么好处">与其他语言相比，使用 Go 有什么好处？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#与其他语言相比使用-go-有什么好处" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>与其他作为学术实验开始的语⾔不同，Go 代码的设计是务实的。每个功能和语法决策都旨在让程序员的⽣活更轻松。</li>
+<li>Golang 针对并发进行了优化，并且在规模上运行良好。</li>
+<li>由于单⼀的标准代码格式，Golang 通常被认为比其他语⾔更具可读性。</li>
+<li>⾃动垃圾收集明显比Java 或 Python 更有效，因为它与程序同时执行。</li>
+</ul>
+<h1 id="听说-go-有什么什么的缺陷你怎么看">听说 go 有什么什么的缺陷，你怎么看<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#听说-go-有什么什么的缺陷你怎么看" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>缺少框架；</li>
+<li>go 语言通过函数和预期的调用代码简单地返回错误，容易丢失错误发生的范围；</li>
+<li>go语言的软件包管理没有办法制定特定版本的依赖库。</li>
+</ul>
+<h1 id="golang的常量取地址">Golang的常量取地址<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang的常量取地址" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Go 语⾔中，<strong>常量⽆法寻址, 是不能进⾏取指针操作的</strong></p>
+<pre><code>const i = 100  
+  
+var j = 123  
+  
+func main() {  
+	fmt.Println(&amp;j, j)   
+	fmt.Println(&amp;i, i)  //panic  
+} //Go语⾔中，常量⽆法寻址, 是不能进⾏取指针操作的
+</code></pre>
+<h1 id="golang-的字符串拼接">Golang 的字符串拼接<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-的字符串拼接" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>A. str := 'abc' + '123'  
+B. str := &quot;abc&quot; + &quot;123&quot;  
+C. str ：= '123' + &quot;abc&quot;  
+D. fmt.Sprintf(&quot;abc%d&quot;, 123)
+
+答案：B、D
+</code></pre>
+<h1 id="string-和-byte-如何取舍">string 和 []byte 如何取舍<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#string-和-byte-如何取舍" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>string 擅长的场景：</p>
+<ul>
+<li>需要字符串比较的场景；</li>
+<li>不需要nil字符串的场景；</li>
+</ul>
+<p>[]byte擅长的场景：</p>
+<ul>
+<li>修改字符串的场景，尤其是修改粒度为1个字节；</li>
+<li>函数返回值，需要用nil表示含义的场景；</li>
+<li>需要切片操作的场景；</li>
+</ul>
+<h1 id="使用过哪些-golang-的-string-类库">使用过哪些 Golang 的 String 类库<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#使用过哪些-golang-的-string-类库" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>strings. Builder</strong></p>
+<p><code>Go</code> 语言提供了一个专门操作字符串的库 <code>strings</code>，可以用于字符串查找、替换、比较等。</p>
+<p>使用 <code>strings.Builder</code> 可以进行字符串拼接，提供了 <code>writeString</code> 方法拼接字符串，使用方式如下：</p>
+<pre><code>var builder strings.Builder
+builder.WriteString(&quot;asong&quot;)
+builder.String()
+</code></pre>
+<p><code>strings.builder</code> 的实现原理很简单，结构如下：</p>
+<pre><code>type Builder struct {
+    addr *Builder // of receiver, to detect copies by value
+    buf  []byte // 1
+}
+</code></pre>
+<p><code>addr</code> 字段主要是做 <code>copycheck</code>，<code>buf</code> 字段是一个 <code>byte</code> 类型的切片，这个就是用来存放字符串内容的，提供的 <code>writeString()</code> 方法就是向切片 <code>buf</code> 中追加数据：</p>
+<pre><code>func (b *Builder) WriteString(s string) (int, error) {
+ b.copyCheck()
+ b.buf = append(b.buf, s...)
+ return len(s), nil
+}
+</code></pre>
+<p>提供的 <code>String</code> 方法就是将 <code>[]byte</code> 转换为 <code>string</code> 类型，这里为了避免内存拷贝的问题，使用了强制转换来避免内存拷贝：</p>
+<pre><code>func (b *Builder) String() string {
+ return *(*string)(unsafe.Pointer(&amp;b.buf))
+}
+</code></pre>
+<p><strong>bytes. Buffer</strong></p>
+<p>因为 <code>string</code> 类型底层就是一个 <code>byte</code> 数组，所以我们就可以 <code>Go</code> 语言的 <code>bytes.Buffer</code> 进行字符串拼接。<code>bytes.Buffer</code> 是一个一个缓冲 <code>byte</code> 类型的缓冲器，这个缓冲器里存放着都是 <code>byte</code>。使用方式如下：</p>
+<pre><code>buf := new(bytes.Buffer)
+buf.WriteString(&quot;asong&quot;)
+buf.String()
+</code></pre>
+<p><code>bytes.buffer</code> 底层也是一个 <code>[]byte</code> 切片，结构体如下：</p>
+<pre><code>type Buffer struct {
+ buf      []byte // contents are the bytes buf[off : len(buf)]
+ off      int    // read at &amp;buf[off], write at &amp;buf[len(buf)]
+ lastRead readOp // last read operation, so that Unread* can work correctly.
+}
+</code></pre>
+<p>因为 <code>bytes.Buffer</code> 可以持续向 <code>Buffer</code> 尾部写入数据，从 <code>Buffer</code> 头部读取数据，所以 <code>off</code> 字段用来记录读取位置，再利用切片的 <code>cap</code> 特性来知道写入位置，这个不是本次的重点，重点看一下 <code>WriteString</code> 方法是如何拼接字符串的：</p>
+<pre><code>func (b *Buffer) WriteString(s string) (n int, err error) {
+ b.lastRead = opInvalid
+ m, ok := b.tryGrowByReslice(len(s))
+ if !ok {
+  m = b.grow(len(s))
+ }
+ return copy(b.buf[m:], s), nil
+}
+</code></pre>
+<p>切片在创建时并不会申请内存块，只有在往里写数据时才会申请，首次申请的大小即为写入数据的大小。如果写入的数据小于 64 字节，则按 64 字节申请。采用 <code>动态扩展slice</code> 的机制，字符串追加采用 <code>copy</code> 的方式将追加的部分拷贝到尾部，copy 是内置的拷贝函数，可以减少内存分配。</p>
+<p>但是在将 <code>[]byte</code> 转换为 <code>string</code> 类型依旧使用了标准类型，所以会发生内存分配：</p>
+<pre><code>func (b *Buffer) String() string {
+ if b == nil {
+  // Special case, useful in debugging.
+  return &quot;&lt;nil>&quot;
+ }
+ return string(b.buf[b.off:])
+}
+</code></pre>
+<h1 id="字符串转成-byte-数组会发生内存拷贝吗">字符串转成 byte 数组，会发生内存拷贝吗<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#字符串转成-byte-数组会发生内存拷贝吗" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>字符串转成切片，会产生拷贝。严格来说，只要是发生类型强转都会发生内存拷贝</strong></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492748&amp;idx=1&amp;sn=1b836dbf9ce2e660080d28878f57476c&amp;source=41#wechat_redirect" class="external">https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492748&amp;idx=1&amp;sn=1b836dbf9ce2e660080d28878f57476c&amp;source=41#wechat_redirect<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="翻转含有中文数字英文字母的字符串">翻转含有中文、数字、英文字母的字符串<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#翻转含有中文数字英文字母的字符串" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p><code>rune</code> 关键字，从 golang 源码中看出，它是 int32的别名（-2^31 ~ 2^31-1），比起 byte（-128～127），<strong>可表示更多的字符</strong>。</p>
+</li>
+<li>
+<p>由于rune可表示的范围更大，所以能处理一切字符，当然也包括<strong>中文字符</strong>。在平时计算中文字符，可用rune。</p>
+</li>
+<li>
+<p><strong>因此将<code>字符串</code>转为<code>rune的切片</code>，再进行翻转，完美解决</strong></p>
+</li>
+</ul>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492747&amp;idx=1&amp;sn=2c2e3331053fe3baf9e842ddbd795f20&amp;source=41#wechat_redirect" class="external">https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492747&amp;idx=1&amp;sn=2c2e3331053fe3baf9e842ddbd795f20&amp;source=41#wechat_redirect<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="json-包变量不加-tag-会怎么样">json 包变量不加 tag 会怎么样？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#json-包变量不加-tag-会怎么样" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p>如果变量 <code>首字母小写</code>，则为 <code>private</code>。无论如何 <code>不能转</code>，因为取不到 <code>反射信息</code>。</p>
+</li>
+<li>
+<p>如果变量<code>首字母大写</code>，则为<code>public</code>。</p>
+<ul>
+<li>
+<p><code>不加tag</code>，可以正常转为<code>json</code>里的字段，<code>json</code>内字段名跟结构体内字段<code>原名一致</code>。</p>
+</li>
+<li>
+<p><code>加了tag</code>，从<code>struct</code>转<code>json</code>的时候，<code>json</code>的字段名就是<code>tag</code>里的字段名，原字段名已经没用。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492753&amp;idx=1&amp;sn=50f47249103f79fd404c180cb9e2c926&amp;source=41#wechat_redirect" class="external">https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492753&amp;idx=1&amp;sn=50f47249103f79fd404c180cb9e2c926&amp;source=41#wechat_redirect<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="reflect反射包如何获取字段-tag为什么-json-包不能导出私有变量的-tag">reflect（反射包）如何获取字段 tag？为什么 json 包不能导出私有变量的 tag？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#reflect反射包如何获取字段-tag为什么-json-包不能导出私有变量的-tag" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492754&amp;idx=1&amp;sn=9fb4360da097c81fe733ba48d3aca8a7&amp;source=41#wechat_redirect" class="external">https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492754&amp;idx=1&amp;sn=9fb4360da097c81fe733ba48d3aca8a7&amp;source=41#wechat_redirect<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="昨天那个在-for-循环里-append-元素的同事今天还在么">昨天那个在 for 循环里 append 元素的同事，今天还在么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#昨天那个在-for-循环里-append-元素的同事今天还在么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492759&amp;idx=1&amp;sn=d91070aef6e10d92a7a094d1e99f45ee&amp;source=41#wechat_redirect" class="external">https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492759&amp;idx=1&amp;sn=d91070aef6e10d92a7a094d1e99f45ee&amp;source=41#wechat_redirect<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="golang-语言的自增自减操作">Golang 语言的自增，自减操作<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-语言的自增自减操作" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Golang 语言没++i、–i，只有 i++、i–-。</p>
+<h1 id="printfsprintffprintf函数的区别用法是什么">Printf()、Sprintf()、Fprintf()函数的区别用法是什么<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#printfsprintffprintf函数的区别用法是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>都是把格式好的字符串输出，只是输出的目标不一样。</p>
+<ul>
+<li>Printf()，是把格式字符串<strong>输出到标准输出</strong>（一般是屏幕，可以重定向）。Printf() 是和标准输出文件 (stdout) 关联的，Fprintf 则没有这个限制。</li>
+<li>Sprintf()，是把格式字符串<strong>输出到指定字符串中</strong>，所以参数比 printf 多一个 char*。那就是目标字符串地址。</li>
+<li>Fprintf()，是把格式字符串<strong>输出到指定文件设备中</strong>，所以参数比 printf 多一个文件指针 FILE*。主要用于文件操作。Fprintf() 是格式化输出到一个 stream，通常是到文件。</li>
+</ul>
+<h1 id="go-语言中-cap-函数可以作用于哪些内容">Go 语言中 cap 函数可以作用于哪些内容？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言中-cap-函数可以作用于哪些内容" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p>array 返回数组的元素个数；</p>
+</li>
+<li>
+<p>slice 返回 slice 的最⼤容量；</p>
+</li>
+<li>
+<p>channel 返回 channel 的容量；</p>
+</li>
+</ul>
+<h1 id="golang-语言的引用类型有什么">Golang 语言的引用类型有什么?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-语言的引用类型有什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Go语言中的引用类型有</p>
+<ul>
+<li>
+<p>func（函数类型）</p>
+</li>
+<li>
+<p>interface（接口类型）</p>
+</li>
+<li>
+<p>slice（切片类型）</p>
+</li>
+<li>
+<p>map（字典类型）</p>
+</li>
+<li>
+<p>channel（管道类型）</p>
+</li>
+<li>
+<p>指针类型</p>
+</li>
+</ul>
+<h1 id="通过指针变量-p访问其成员变量-name有哪几种方式">通过指针变量  <strong>p</strong> 访问其成员变量 name，有哪几种方式？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#通过指针变量-p访问其成员变量-name有哪几种方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>A. p.name</p>
+<p>B. (&amp;p).name</p>
+<p>C. (*p).name</p>
+<p>D. p<span>→</span>name</p>
+<p><strong>答案：A、C</strong></p>
+<h1 id="for-select-时如果通道已经关闭会怎么样如果只有个-case-呢">for select 时，如果通道已经关闭会怎么样？如果只有⼀个 case 呢？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#for-select-时如果通道已经关闭会怎么样如果只有个-case-呢" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p>for 循环 <code>select</code> 时，如果其中一个 case 通道已经关闭，则每次都会执行到这个 case。</p>
+</li>
+<li>
+<p>如果select里边只有一个case，而这个case被关闭了，则会出现死循环。</p>
+</li>
+</ul>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492758&amp;idx=1&amp;sn=fb81bf91986b7c42f1ac2b8fb75f74a6&amp;source=41#wechat_redirect" class="external">https://mp.weixin.qq.com/s?__biz=MzkxNTU5MjE0MQ==&amp;mid=2247492758&amp;idx=1&amp;sn=fb81bf91986b7c42f1ac2b8fb75f74a6&amp;source=41#wechat_redirect<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="golang-的-bool-类型的赋值">Golang 的 bool 类型的赋值<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-的-bool-类型的赋值" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>A. b = true  
+B. b = 1  
+C. b = bool(1)  
+D. b = (1 == 2)  
+  
+赋值正确的是A,D。   
+首先B选项，int类型不能由bool类型来表示。  
+其次C选项，bool()不能转化int类型。int和float可以相互转化
+</code></pre>
+<h1 id="空结构体占不占内存空间-为什么使用空结构体">空结构体占不占内存空间？ 为什么使用空结构体？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#空结构体占不占内存空间-为什么使用空结构体" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>空结构体是没有内存大小的结构体。<br/>
+通过 unsafe.Sizeof() 可以查看空结构体的宽度，代码如下：</p>
+<pre><code>var s struct{}
+fmt.Println(unsafe.Sizeof(s)) // prints 0
+</code></pre>
+<p>准确的来说，空结构体有一个特殊起点： <code>zerobase</code> 变量。<code>zerobase</code>是一个占用 8 个字节的<code>uintptr</code>全局变量。每次定义 <code>struct {}</code> 类型的变量，编译器只是把<code>zerobase</code>变量的地址给出去。也就是说空结构体的变量的内存地址都是一样的。<br/>
+空结构体的使用场景主要有三种：</p>
+<ul>
+<li>实现方法接收者：在业务场景下，<strong>我们需要将方法组合起来，代表其是一个 ”分组“ 的</strong>，便于后续拓展和维护。</li>
+<li>实现集合类型：在** Go 语言的标准库中并没有提供集合（Set）的相关实现，因此一般在代码中我们图方便，会直接用 map 来替代：<code>type Set map[string]struct{}</code>**。</li>
+<li>实现空通道：在 Go channel 的使用场景中，<strong>常常会遇到通知型 channel，其不需要发送任何数据，只是用于协调 Goroutine 的运行，用于流转各类状态或是控制并发情况</strong>。</li>
+</ul>
+<h1 id="空结构体的使用场景">空结构体的使用场景<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#空结构体的使用场景" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>空结构体（empty struct）是在 Go 语言中一个特殊的概念，它没有任何字段。在 Go 中，它通常被称为匿名结构体或零宽度结构体。尽管它没有字段，但它在某些情况下仍然有其用途，以下是一些常见的空结构体的使用场景：</p>
+<ol>
+<li><strong>占位符</strong>：空结构体可以用作占位符，用于表示某个数据结构或数据集合的存在而不实际存储任何数据。这在某些数据结构的实现中非常有用，特别是在要实现某种数据结构的集合或映射时，但并不需要存储实际的值。</li>
+</ol>
+<pre><code>goCopy code// 表示集合中是否包含某个元素的映射
+set := make(map[string]struct{})
+set[&quot;apple&quot;] = struct{}{}
+</code></pre>
+<ol start="2">
+<li><strong>信号量</strong>：空结构体可以用作信号量，用于控制并发操作。通过向通道发送或接收空结构体，可以实现信号的传递和同步。</li>
+</ol>
+<pre><code>goCopy code// 用通道作为信号量
+semaphore := make(chan struct{}, 5) // 控制并发数为5
+go func() {
+    semaphore &lt;- struct{}{} // 获取信号量
+    defer func() { &lt;-semaphore }() // 释放信号量
+    // 执行并发操作
+}()
+</code></pre>
+<ol>
+<li><strong>强调结构</strong>：有时，空结构体可用于强调某个结构的重要性或存在。它可以用作结构体的标签，表示关注该结构的存在而不是其内容。</li>
+</ol>
+<pre><code>goCopy code// 表示一篇文章的元信息，不包含实际内容
+type Article struct {
+    Title       string
+    Author      string
+    PublishedAt time.Time
+    Metadata    struct{} // 空结构体强调元信息的存在
+}
+</code></pre>
+<ol>
+<li><strong>JSON 序列化</strong>：在处理 JSON 数据时，有时需要表示一个空对象。可以使用空结构体来表示 JSON 中的空对象（<code>{}</code>）。</li>
+</ol>
+<pre><code>goCopy code// 表示一个空的JSON对象
+emptyJSON := struct{}{}
+jsonBytes, _ := json.Marshal(emptyJSON)
+fmt.Println(string(jsonBytes)) // 输出: {}
+</code></pre>
+<p>尽管空结构体没有字段，但它在上述情况下提供了一种轻量级的方式来实现特定的需求，而无需分配额外的内存或定义具体的数据结构。这使得它成为 Go 中的一种有用工具，可以在编写清晰、高效和易于理解的代码时派上用场。</p>
+<p><strong>struct 的特点</strong></p>
+<ul>
+<li>用来自定义复杂数据结构</li>
+<li>Struct 里面可以包含多个字段（属性）</li>
+<li>Struct 类型可以定义方法，注意和函数的区分</li>
+<li>Struct 类型是值类型</li>
+<li>Struct 类型可以嵌套</li>
+<li>GO 语言没有 class 类型，只有 struct 类型</li>
+</ul>
+<p><strong>特殊之处</strong></p>
+<ul>
+<li>结构体是用户单独定义的类型，不能和其他类型进行强制转换</li>
+<li>Golang 中的 struct 没有构造函数，一般可以使用工厂模式来解决这个问题</li>
+<li>我们可以为 struct 中的每个字段，写上一个 tag。这个 tag 可以通过反射的机制获取到，最常用的场景就是 json 序列化和反序列化。</li>
+<li>结构体中字段可以没有名字，即匿名字段</li>
+</ul>
+<h1 id="go-的面向对象特性">Go 的面向对象特性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-的面向对象特性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>接口</strong></p>
+<p>接口使用 interface 关键字声明，<strong>任何实现接口定义方法的类都可以实例化该接口</strong>，接口和实现类之间没有任何依赖</p>
+<p>你可以实现一个新的类当做 Sayer 来使用，而不需要依赖 Sayer 接口，也可以为已有的类创建一个新的接口，而不需要修改任何已有的代码，和其他静态语言相比，这可以算是 golang 的特色了吧</p>
+<pre><code>type Sayer interface {
+ Say(message string)
+ SayHi()
+}
+</code></pre>
+<p><strong>继承</strong></p>
+<p><strong>继承使用组合的方式实现</strong></p>
+<pre><code>type Animal struct {
+ Name string
+}
+
+func (a *Animal) Say(message string) {
+    fmt.Printf(&quot;Animal[%v] say: %v
+&quot;, a.Name, message)
+}
+
+type Dog struct {
+ Animal
+}
+</code></pre>
+<p>Dog 将继承 Animal 的 Say 方法，以及其成员 Name</p>
+<p><strong>覆盖</strong></p>
+<p>子类可以重新实现父类的方法</p>
+<pre><code>// override Animal.Say
+func (d *Dog) Say(message string) {
+    fmt.Printf(&quot;Dog[%v] say: %v
+&quot;, d.Name, message)
+}
+</code></pre>
+<p>Dog.Say 将覆盖 Animal.Say</p>
+<p><strong>多态</strong></p>
+<p>接口可以用任何实现该接口的指针来实例化</p>
+<pre><code>var sayer Sayer
+
+sayer = &amp;Dog{Animal{Name: &quot;Yoda&quot;}}
+sayer.Say(&quot;hello world&quot;)
+</code></pre>
+<p>但是不支持父类指针指向子类，下面这种写法是不允许的</p>
+<pre><code>var animal *Animal
+animal = &amp;Dog{Animal{Name: &quot;Yoda&quot;}}
+</code></pre>
+<p>同样子类继承的父类的方法引用的父类的其他方法也没有多态特性</p>
+<pre><code>func (a *Animal) Say(message string) {
+    fmt.Printf(&quot;Animal[%v] say: %v
+&quot;, a.Name, message)
+}
+
+func (a *Animal) SayHi() {
+    a.Say(&quot;Hi&quot;)
+}
+
+func (d *Dog) Say(message string) {
+    fmt.Printf(&quot;Dog[%v] say: %v
+&quot;, d.Name, message)
+}
+
+func main() {
+ var sayer Sayer
+
+    sayer = &amp;Dog{Animal{Name: &quot;Yoda&quot;}}
+    sayer.Say(&quot;hello world&quot;) // Dog[Yoda] say: hello world
+    sayer.SayHi() // Animal[Yoda] say: Hi
+    }
+</code></pre>
+<p>上面这段代码中，<strong>子类 Dog 没有实现 SayHi 方法，调用的是从父类 Animal.SayHi，而 Animal.SayHi 调用的是 Animal.Say 而不是Dog.Say，这一点和其他面向对象语言有所区别</strong>，需要特别注意，但是可以用下面的方式来实现类似的功能，以提高代码的复用性</p>
+<pre><code>func SayHi(s Sayer) {
+    s.Say(&quot;Hi&quot;)
+}
+
+type Cat struct {
+ Animal
+}
+
+func (c *Cat) Say(message string) {
+    fmt.Printf(&quot;Cat[%v] say: %v
+&quot;, c.Name, message)
+}
+
+func (c *Cat) SayHi() {
+ SayHi(c)
+}
+
+func main() {
+ var sayer Sayer
+
+    sayer = &amp;Cat{Animal{Name: &quot;Jerry&quot;}}
+    sayer.Say(&quot;hello world&quot;) // Cat[Jerry] say: hello world
+    sayer.SayHi() // Cat[Jerry] say: Hi
+}
+</code></pre>
+<h1 id="go-语言中-下面哪个关于指针的说法是错误的">Go 语言中 ,下面哪个关于指针的说法是错误的?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言中-下面哪个关于指针的说法是错误的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>指针不能进行算术运算</li>
+<li>指针可以比较</li>
+<li>指针可以是nil</li>
+<li>指针可以指向任何类型</li>
+</ul>
+<p>指针在 Go 语言中只能指向相同类型的结构体或者基本类型。例如，一个 int 类型的变量，只能指向 int 类型的指针。如果尝试将一个不同类型的指针赋给一个变量，将会导致编译错误。</p>
+<h1 id="go-语言的接口类型是如何实现的">Go 语言的接口类型是如何实现的？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言的接口类型是如何实现的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>在Go语言中，接口类型是通过类型嵌入（embedding的方式实现的。<strong>每个实现了接口的类型的结构体中都有一个隐含的成员，该成员是指向接口类型的指针</strong>。通过这种方式，接口实现了对类型的约束和定义。</p>
+<p>具体来说，当一个类型实现了某个接口的所有方法后，该类型就被认为是实现了该接口。在结构体中，可以通过嵌入接口类型的方式来实现接口方法。在实现接口方法时，方法的签名需要与接口定义中的方法签名保持一致。</p>
+<h1 id="go-结构体内嵌后的命名冲突">Go 结构体内嵌后的命名冲突<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-结构体内嵌后的命名冲突" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+)
+
+type A struct {
+	a int
+}
+
+type B struct {
+	a int
+}
+
+type C struct {
+	A
+	B
+}
+
+func main() {
+	c := &amp;C{}
+	c.A.a = 1
+	fmt.Println(c)
+}
+// 输出 &amp;{{1} {0}}
+</code></pre>
+<p>第 7 行和第 11 行分别定义了两个拥有 a int 字段的结构体。
+第 15 行的结构体嵌入了 A 和 B 的结构体。
+第 21 行实例化 C 结构体。
+第 22 行按常规的方法，访问嵌入结构体 A 中的 a 字段，并赋值1。
+第 23 行可以正常输出实例化 C 结构体。
+接着，将第 22 行修改为如下代码：</p>
+<pre><code>func main(){
+	c:=&amp;C{}
+    c.a=1
+    fmt.Println(c)
+}
+</code></pre>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimg.png" alt="img"/></p>
+<p>此时再编译运行，编译器报错：</p>
+<p>.main. Go:22:3:ambiguousselectorc. A</p>
+<p>编译器告知 C 的选择器 a 引起歧义，也就是说，编译器无法决定将 1 赋给 C 中的 A 还是 B 里的字段 a。使用c.a 引发二义性的问题一般应该由程序员逐级完整写出避免错误。</p>
+<p>在使用内嵌结构体时，Go 语言的编译器会非常智能地提醒我们可能发生的歧义和错误。</p>
+<p>**解决：可以通过：c.A.a 或者c.B.a 都可以正确得到对应的值</p>
+<h1 id="关于-switch-语句下说法正确的有">关于 switch 语句，下⾯说法正确的有?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#关于-switch-语句下说法正确的有" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>A. 条件表达式必须为常量或者整数；</p>
+<p>B. 单个case中，可以出现多个结果选项；</p>
+<p>C. 需要⽤break来明确退出⼀个case；</p>
+<p>D. 只有在case中明确添加fallthrough关键字，才会继续执⾏紧跟的下⼀个case；</p>
+<p><strong>答案B、D</strong></p>
+<h1 id="go-编程语言中-switch-语句的语法">Go 编程语言中 switch 语句的语法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-编程语言中-switch-语句的语法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>switch var1 {
+    case val1:
+        ...
+    case val2:
+        ...
+    default:
+        .
+}
+
+switch{
+    case 1,2,3,4:
+    default:
+} //case可以有多个数据
+
+</code></pre>
+<p>变量 var1 可以是任何类型，而 val1 和 val2 则可以是同类型的任意值。类型不被局限于常量或整数，但必须是相同的类型；或者最终结果为相同类型的表达式。</p>
+<h1 id="go-关键字-fallthrough-有什么作用">Go 关键字 fallthrough 有什么作用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-关键字-fallthrough-有什么作用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Fallthrough 关键字只能用在 switch 中。且只能在每个 case 分支中最后一行出现，<strong>作用是如果这个 case 分支被执行，将会继续执行下一个 case 分支，而且不会去判断下一个分支的 case 条件是否成立。</strong></p>
+<pre><code>package main  
+  
+import &quot;fmt&quot;  
+  
+func main() {  
+	switch &quot;a&quot; {  
+	case &quot;a&quot;:  
+		fmt.Println(&quot;匹配a&quot;)  
+		fallthrough  
+	case &quot;b&quot;:  
+		fmt.Println(&quot;a成功了，也执行b分支&quot;)  
+	case &quot;c&quot;:  
+		fmt.Println(&quot;a成功了，c分支会执行吗？&quot;)  
+	default:  
+		fmt.Println(&quot;默认执行&quot;)  
+	}  
+}  
+/*  
+	匹配a  
+    a成功了，也执行b分支  
+*/
+</code></pre>
+<h1 id="copy-是操作符还是内置函数">copy 是操作符还是内置函数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#copy-是操作符还是内置函数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Golang中copy是内置函数。</p>
+<h1 id="go-两个接口之间可以存在什么关系">Go 两个接口之间可以存在什么关系？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-两个接口之间可以存在什么关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>如果两个接口有相同的方法列表，那么他们就是等价的，可以相互赋值</strong>。如果接口 A的方法列表是接口B的方法列表的自己，那么接口B可以赋值给接口A。接口查询是否成功，要在运行期才能够确定。</p>
+<h1 id="golang-的返回值命名">Golang 的返回值命名<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-的返回值命名" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20230724165455977.png" alt="image-20230724165455977"/></p>
+<h1 id="golang-的-iota-如何使用">Golang 的 iota 如何使用？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-的-iota-如何使用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20230724165708801.png" alt="image-20230724165708801"/></p>
+<ol>
+<li>iota在const关键字出现时被重置为0</li>
+<li>const声明块中每新增一行iota值自增1</li>
+<li><strong>第一个常量必须指定一个表达式，后续的常量如果没有表达式，则继承上面的表达式</strong></li>
+</ol>
+<h1 id="数组之间如何进行比较">数组之间如何进行比较？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数组之间如何进行比较" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20230724170030544.png" alt="image-20230724170030544"/></p>
+<h1 id="for-range-的注意点和坑">for range 的注意点和坑<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#for-range-的注意点和坑" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>第一个说法</strong></p>
+<p>1.迭代变量。Python中for in 可以直接的到value，但Go的for range 迭代变量有两个，<strong>第一个是元素在迭代集合中的序号值key（从0开始），第二个值才是元素值value</strong>。</p>
+<p>2.针对字符串。在Go中对字符串运用for range操作，<strong>每次返回的是一个码点，而不是一个字节</strong>。Go编译器不会为[]byte进行额外的内存分配，而是直接使用string的底层数据。</p>
+<p>3.对map类型内元素的迭代顺序是随机的。要想有序迭代map内的元素，我们需要额外的数据结构支持，<strong>比如使用一个切片来有序保存map内元素的key值</strong>。</p>
+<p>4.针对切片类型复制之后，如果原切片扩容增加新元素。迭代复制后的切片并不会输出扩容新增元素。这是因为range表达式中的切片实际上是原切片的副本。</p>
+<p>5.迭代变量是重用的。类似PHP语言中的i=0；如果其他循环中使用相同的迭代变量，需要重新初始化i。</p>
+<p>6.for range使用时，k,v值已经赋值好了，不会因为for循环的改变而改变</p>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+)
+
+func main() {
+	x := []string{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;}
+	for v := range x {
+		fmt.Println(v)
+	}
+}
+//输出 0 1 2
+</code></pre>
+<p><strong>第二个说法</strong></p>
+<p>应该是一个for循环中作用域的问题</p>
+<pre><code>src := []int{1, 2, 3, 4, 5}
+var dst2 []*inv
+for _, v := range src {
+    dst2 = append(dst2, &amp;v)
+    // fmt.println(&amp;v)
+}
+
+for _, p := range dst2 {
+    fmt.Print(*p)
+}
+// 输出
+// 5555
+</code></pre>
+<p>为什么呢, 因为 for-range 中 循环变量的作用域的规则限制<br/>
+假如取消append()后一行的注释，可以发现循环中v的变量内存地址是一样的，也可以解释为for range相当于</p>
+<pre><code>var i int
+for j := 0; j &lt; len(src); j++ {
+    i = src[j]
+    dst2 = append(dst2, &amp;i)
+}
+</code></pre>
+<p>而不是我们想象中的</p>
+<pre><code>for j := 0; j &lt; len(src); j++ {
+    dst2 = append(dst2, &amp;src[j])
+}
+</code></pre>
+<p>如果要在for range中实现，我们可以改写为</p>
+<pre><code>src := []int{1, 2, 3, 4, 5}
+var dst2 []*int
+for _, v := range src {
+    new_v := v
+    dst2 = append(dst2, &amp;new_v)
+    // fmt.println(&amp;new_v)
+}
+
+for _, p := range dst2 {
+    fmt.Print(*p)
+}
+</code></pre>
+<h1 id="golang-的断言">Golang 的断言<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-的断言" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Go中的所有程序都实现了<code>interface{}</code>的接口，这意味着，所有的类型如<code>string</code>,<code>int</code>,<code>int64</code>甚至是自定义的<code>struct</code>类型都就此拥有了<code>interface{}</code>的接口.那么在一个数据通过<code>func funcName(interface{})</code>的方式传进来的时候，也就意味着这个参数被自动的转为interface{}的类型。</p>
+<p>如以下的代码：</p>
+<pre><code>func funcName(a interface{}) string {
+	return string(a)
+}
+</code></pre>
+<p>编译器将会返回：<code>cannot convert a (type interface{}) to type string: need type assertion</code></p>
+<p>此时，意味着整个转化的过程需要类型断言。类型断言有以下几种形式：</p>
+<p>直接断言使用</p>
+<pre><code>var a interface{}
+fmt.Println(&quot;Where are you,Jonny?&quot;, a.(string))
+</code></pre>
+<p>但是如果断言失败一般会导致panic的发生。所以为了防止panic的发生，我们需要在断言前进行一定的判断</p>
+<pre><code>value, ok := a.(string)
+</code></pre>
+<p>如果断言失败，那么ok的值将会是false,但是如果断言成功ok的值将会是true,同时value将会得到所期待的正确的值。示例：</p>
+<pre><code>value, ok := a.(string)
+if !ok {
+    fmt.Println(&quot;It's not ok for type string&quot;)
+    return
+}
+fmt.Println(&quot;The value is &quot;, value)
+</code></pre>
+<p>另外也可以配合switch语句进行判断：</p>
+<pre><code>var t interface{}
+t = functionOfSomeType()
+switch t := t.(type) {
+default:
+    fmt.Printf(&quot;unexpected type %T&quot;, t)       // %T prints whatever type t has    break
+case bool:
+    fmt.Printf(&quot;boolean %t\n&quot;, t)             // t has type bool    break
+case int:
+    fmt.Printf(&quot;integer %d\n&quot;, t)             // t has type int    break
+case *bool:
+    fmt.Printf(&quot;pointer to boolean %t\n&quot;, *t) // t has type *bool    break
+case *int:
+    fmt.Printf(&quot;pointer to integer %d\n&quot;, *t) // t has type *int    break
+}
+</code></pre>
+<h1 id="如何在运行时检查变量类型">如何在运行时检查变量类型？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#如何在运行时检查变量类型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>类型开关是在运行时检查变量类型的最佳方式</strong>。类型开关按类型而不是值来评估变量。每个 Switch ⾄少包含⼀个 case，⽤作条件语句，和⼀个 default，如果没有⼀个 case 为真，则执行。</p>
+<pre><code>func classifier(items ...interface{}) {
+    for i, x := range items {
+        switch x.(type) {
+        case bool:
+            fmt.Printf(&quot;Param #%d is a bool\n&quot;, i)
+        case float64:
+            fmt.Printf(&quot;Param #%d is a float64\n&quot;, i)
+        case int, int64:
+            fmt.Printf(&quot;Param #%d is a int\n&quot;, i)
+        case nil:
+            fmt.Printf(&quot;Param #%d is a nil\n&quot;, i)
+        case string:
+            fmt.Printf(&quot;Param #%d is a string\n&quot;, i)
+        default:
+            fmt.Printf(&quot;Param #%d is unknown\n&quot;, i)
+        }
+    }
+}
+</code></pre>
+<h1 id="精通-golang-项目依赖-go-modules">精通 Golang 项目依赖 Go modules<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#精通-golang-项目依赖-go-modules" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://www.topgoer.cn/docs/golangxiuyang/golangxiuyang-1cmee13oek1e8" class="external">https://www.topgoer.cn/docs/golangxiuyang/golangxiuyang-1cmee13oek1e8<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="go-string-的底层实现">Go string 的底层实现<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-string-的底层实现" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>源码包src/runTime/string.go.stringStruct定义了string的数据结构</p>
+<pre><code>Type stringStruct struct{
+	str unsafe.Pointer // 字符串的首地址
+ 	len int // 字符串的长度
+}
+</code></pre>
+<p>声明：</p>
+<p>如下代码所示，可以声明一个string变量赋予初值</p>
+<pre><code>var str string
+str = &quot;Hello world&quot;
+</code></pre>
+<p>字符串构建过程是根据字符串构建stringStruct，再转化成string。转换的源码如下：</p>
+<pre><code>func gostringnocopy(str *byte) string{       //根据字符串地址构建string
+       ss := stringStruct{str:unsafe.Pointer(str),len:findnull(str)}  // 先构造 stringStruct
+       s := *(*string)(unsafe.Pointer(&amp;ss))   //再将stringStruct 转换成string
+       return s
+}
+</code></pre>
+<h1 id="go-语言的-panic-如何恢复">Go 语言的 panic 如何恢复<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言的-panic-如何恢复" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>recover 可以中止 panic 造成的程序崩溃，或者说平息运行时恐慌，recover 函数不需要任何参数，并且会返回一个空接口类型的值。<strong>需要注意的是 recover 只能在 defer 中发挥作用，在其他作用域中调用不会发挥作用</strong>。编译器会将 recover 转换成 runtime.gorecover，该函数的实现逻辑是如果当前 goroutine 没有调用 panic，那么该函数会直接返回 nil，当前 goroutine 调用 panic 后，会先调用 runtime.gopaic 函数 runtime.gopaic 会从 runtime.  _defer 结构体中取出程序计数器 pc 和栈指针 sp，再调用 runtime.recovery 函数来恢复程序，runtime.recovery 会根据传入的 pc 和 sp 跳转回 runtime.deferproc，编译器自动生成的代码会发现 runtime.deferproc 的返回值不为 0，这时会调回 runtime.deferreturn 并恢复到正常的执行流程。总的来说恢复流程就是通过程序计数器来回跳转。</p>
+<h1 id="go-如何避免-panic">Go 如何避免 panic<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-如何避免-panic" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>首先明确panic定义：go把真正的异常叫做 panic，是指出现重大错误，比如数组越界之类的编程BUG或者是那些需要人工介入才能修复的问题，比如程序启动时加载资源出错等等。<br/>
+几个容易出现panic的点:</p>
+<ul>
+<li>函数返回值或参数为指针类型，nil, 未初始化结构体，此时调用容易出现panic，可加 != nil 进行判断</li>
+<li>数组切片越界</li>
+<li>如果我们关闭未初始化的通道，重复关闭通道，向已经关闭的通道中发送数据，这三种情况也会引发 panic，导致程序崩溃</li>
+<li>如果我们直接操作未初始化的映射（map），也会引发 panic，导致程序崩溃</li>
+<li>另外，操作映射可能会遇到的更为严重的一个问题是，同时对同一个映射并发读写，它会触发 runtime.throw，不像 panic 可以使用 recover 捕获。所以，我们在对同一个映射并发读写时，一定要使用锁。</li>
+<li>如果类型断言使用不当，比如我们不接收布尔值的话，类型断言失败也会引发 panic，导致程序崩溃。</li>
+<li>如果很多时候不可避免地出现了panic, 记得使用 defer/recover</li>
+</ul>
+<h1 id="defer-的几个坑">defer 的几个坑<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#defer-的几个坑" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>func main() {
+    fmt.Println(test())
+}
+
+func test() error {
+    var err error
+    defer func() {
+       if r := recover(); r != nil {
+          err = errors.New(fmt.Sprintf(&quot;%s&quot;, r))
+       }
+    }()
+    raisePanic()
+    return err
+}
+
+func raisePanic() {
+    panic(&quot;发生了错误&quot;)
+}
+</code></pre>
+<p>为什么输出****?</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func main()  {
+
+    defer func() {
+       if err := recover(); err != nil{
+           fmt.Println(err)
+       }else {
+           fmt.Println(&quot;fatal&quot;)
+       }
+    }()
+
+    defer func() {
+        panic(&quot;defer panic&quot;)
+    }()
+
+    panic(&quot;panic&quot;)
+}
+</code></pre>
+<p><strong>结果</strong></p>
+<pre><code>defer panic
+</code></pre>
+<p><strong>分析</strong></p>
+<p><strong>panic仅有最后一个可以被revover捕获</strong>。</p>
+<p>触发<code>panic(&quot;panic&quot;)</code>后defer顺序出栈执行，第一个被执行的defer中 会有<code>panic(&quot;defer panic&quot;)</code>异常语句，这个异常将会覆盖掉main中的异常<code>panic(&quot;panic&quot;)</code>，最后这个异常被第二个执行的defer捕获到。</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func function(index int, value int) int {
+
+    fmt.Println(index)
+
+    return index
+}
+
+func main() {
+    defer function(1, function(3, 0))
+    defer function(2, function(4, 0))
+}
+</code></pre>
+<p>这里，有4个函数，他们的index序号分别为1，2，3，4。</p>
+<p>那么这4个函数的先后执行顺序是什么呢？这里面有两个defer， 所以defer一共会压栈两次，先进栈1，后进栈2。 那么在压栈function1的时候，需要连同函数地址、函数形参一同进栈，那么为了得到function1的第二个参数的结果，所以就需要先执行function3将第二个参数算出，那么function3就被第一个执行。同理压栈function2，就需要执行function4算出function2第二个参数的值。然后函数结束，先出栈fuction2、再出栈function1.</p>
+<p>所以顺序如下：</p>
+<ul>
+<li>defer压栈function1，压栈函数地址、形参1、形参2(调用function3) –> 打印3</li>
+<li>defer压栈function2，压栈函数地址、形参1、形参2(调用function4) –> 打印4</li>
+<li>defer出栈function2, 调用function2 –> 打印2</li>
+<li>defer 出栈 function1, 调用 function1–> 打印1</li>
+</ul>
+<pre><code>3
+4
+2
+1
+</code></pre>
+<p>**</p>
+<h1 id="go程序中的包是什么"><strong>Go</strong>程序中的包是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go程序中的包是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>包(pkg)是 Go 工作区中包含 Go 源⽂件或其他包的目录。源文件中的每个函数、变量和类型都存储在链接包中。每个 Go 源文件都属于⼀个包，该包在文件顶部使⽤以下命令声明：</p>
+<pre><code>package &lt;packagename>
+</code></pre>
+<p>您可以使⽤以下⽅法导⼊和导出包以重⽤导出的函数或类型：</p>
+<pre><code>import &lt;packagename>
+</code></pre>
+<p>Golang 的标准包是 fmt，其中包含格式化和打印功能，如 Println().</p>
+<h1 id="go-实现不重启热部署">Go 实现不重启热部署<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-实现不重启热部署" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>根据系统的 SIGHUP 信号量，以此信号量触发进程重启，达到热更新的效果。</p>
+<p>热部署我们需要考虑几个能力：</p>
+<ul>
+<li>新进程启动成功，老进程不会有资源残留</li>
+<li>新进程初始化的过程中，服务不会中断</li>
+<li>新进程初始化失败，老进程仍然继续工作</li>
+<li>同一时间，只能有一个更新动作执行</li>
+</ul>
+<p>监听信号量的方法的环境是在 类 UNIX 系统中，在现在的 UNIX 内核中，允许多个进程同时监听一个端口。在收到 SIGHUP 信号量时，先 fork 出一个新的进程监听端口，同时等待旧进程处理完已经进来的连接，最后杀掉旧进程。</p>
+<p>我基于这个思路，实现了一段示例代码，仓库地址：<a href="https://github.com/guowei-gong/tablefilp-example%EF%BC%8C" class="external">https://github.com/guowei-gong/tablefilp-example，<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>  如果你希望动手来加深印象可以打开看看。</p>
+<h1 id="go-中的指针强转">Go 中的指针强转<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-中的指针强转" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>在 <strong>Golang 中无法使用指针类型对指针进行强制转换</strong></p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20220501142757244.png" alt="image-20220501142757244"/></p>
+<p>但可以借助 <code>unsafe</code> 包中的 <code>unsafe.Pointer</code> 转换</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20220501142724715.png" alt="image-20220501142724715"/></p>
+<p>在 <code>src/unsafe.go</code> 中可以看到指针类型说明</p>
+<pre><code>// ArbitraryType 与 IntegerType 在此只用于文档描述，实际并不 unsafe 包中的一部分
+// 表示任意 go 的表达式
+type ArbitraryType int
+
+// 表示任意 integer 类型
+type IntegerType int
+
+type Pointer *ArbitraryType
+</code></pre>
+<p>对于指针类型 <code>Pointer</code> 强调以下四种操作</p>
+<ul>
+<li>指向任意类型的指针都可以被转化成 Pointer</li>
+<li>Pointer 可以转化成指向任意类型的指针</li>
+<li>uintptr 可以转化成 Pointer</li>
+<li>Pointer 可以转化成 uintptr</li>
+</ul>
+<blockquote>
+<p>uintptr 在 <code>src/builtin/builtin.go</code> 中定义</p>
+</blockquote>
+<p>其后描述了六种指针转换的情形</p>
+<p>其一：*<em>Conversion of a <em>T1 to Pointer to *T2</em></em></p>
+<p>转换条件：</p>
+<ul>
+<li>T2 的数据类型不大于 T1</li>
+<li>T1、T2 的内存模型相同</li>
+</ul>
+<p>因此对于 <code>*int</code> 不能强制转换 <code>*float64</code> 可以变化为 <code>*int</code> <span>→</span> <code>unsafe.Pointer</code> <span>→</span> <code>*float64</code> 的过程</p>
+<h1 id="go-支持什么形式的类型转换将整数转换为浮点数">Go 支持什么形式的类型转换？将整数转换为浮点数。<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-支持什么形式的类型转换将整数转换为浮点数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Go 支持显式类型转换以满足其严格的类型要求。</p>
+<pre><code>i := 55 //int
+j := 67.8 //float64
+sum := i + int(j)//j is converted to int
+</code></pre>
+<h1 id="golang-语言中-的使用">Golang 语言中== 的使用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-语言中-的使用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>package main
+
+func main() {
+	var x interface{}
+	var y interface{} = []int{3, 5}
+	_ = x == x //输出true
+	_ = x == y //interface{}比较的是动态类型和动态值，输出false
+	_ = y == y //panic,切片不可比较
+}
+</code></pre>
+<h1 id="go-语言实现小根堆">Go 语言实现小根堆<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言实现小根堆" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>package main
+
+import (
+	&quot;container/heap&quot;
+	&quot;fmt&quot;
+)
+
+type MinHeap []int
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i] &lt; h[j] }
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[:n-1]
+	return x
+}
+
+func main() {
+	h := &amp;MinHeap{2, 1, 5, 3, 4}
+	heap.Init(h)
+	fmt.Println(&quot;堆中最小的元素是：&quot;, (*h)[0])
+	heap.Push(h, 0)
+	fmt.Println(&quot;插入后最小的元素是：&quot;, (*h)[0])
+	min := heap.Pop(h).(int)
+	fmt.Println(&quot;弹出最小的元素是：&quot;, min)
+}
+</code></pre>
+<h1 id="go-怎么实现-func-的自定义参数">Go 怎么实现 func 的自定义参数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-怎么实现-func-的自定义参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>在 golang中，type 可以定义任何自定义的类型</p>
+<p>func 也是可以作为类型自定义的，type myFunc func(int) int，意思是自定义了一个叫 myFunc 的函数类型，这个函数的签名必须符合输入为 int，输出为 int。</p>
+<p>golang通过type定义函数类型<br/>
+通过 type 可以定义函数类型，格式如下</p>
+<pre><code>type typeName func(arguments) retType
+</code></pre>
+<p>函数类型也是一种类型，故可以将其定义为函数入参，在 go 语言中函数名可以看做是函数类型的常量，所以我们可以直接将函数名作为参数传入的函数中。</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func add(a, b int) int {
+	return a + b
+}
+
+//sub作为函数名可以看成是 op 类型的常量
+func sub(a, b int) int {
+	return a - b
+}
+
+//定义函数类型 op
+type op func(a, b int) int
+
+//形参指定传入参数为函数类型op
+func Oper(fu op, a, b int) int {
+	return fu(a, b)
+}
+
+func main() {
+	//在go语言中函数名可以看做是函数类型的常量，所以我们可以直接将函数名作为参数传入的函数中。
+	aa := Oper(add, 1, 2)
+	fmt.Println(aa)
+	bb := Oper(sub, 1, 2)
+	fmt.Println(bb)
+}
+</code></pre>
+<h1 id="为什么-go-的变量申请类型是为了什么">为什么 go 的变量申请类型是为了什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为什么-go-的变量申请类型是为了什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>在 Go 编程语言中，数据类型用于声明函数和变量。<br/>
+数据类型的出现是为了把数据分成所需内存大小不同的数据，编程的时候需要用大数据的时候才需要申请大内存，就可以充分利用内存。</p>
+<h1 id="go-的闭包语法">Go 的闭包语法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-的闭包语法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>go语言的闭包可以理解为一个引用外部变量的匿名函数，Go语言中闭包是引用了自由变量的函数，被引用的自由变量和函数一同存在，即使已经离开了自由变量的环境也不会被释放或者删除，在闭包中可以继续使用这个自由变量，因此，简单的说：<br/>
+<code>函数 + 引用环境 = 闭包</code><br/>
+同一个函数与不同引用环境组合，可以形成不同的实例，如下图：<br/>
+<img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimg.jpg" alt="img"/><br/>
+一个函数类型就像结构体一样，可以被实例化，函数本身不存储任何信息，只有与引用环境结合后形成的闭包才具有“记忆性”，函数是编译期静态的概念，而闭包是运行期动态的概念。</p>
+<h1 id="go-语言中-int-占几个字节">Go 语言中 int 占几个字节<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-语言中-int-占几个字节" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Go语言中的int的大小是和操作系统位数相关的，如果是32位操作系统，int类型的大小就是4字节; 如果是64位操作系统，int类型的大小就是8个字节</p>
+<h1 id="golang-程序启动过程">Golang 程序启动过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-程序启动过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://juejin.cn/post/6942509882281033764" class="external">Go程序启动过程<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> </p>
+<p><a href="https://juejin.cn/post/7035633561805783070" class="external">Golang 程序启动过程<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> </p>
+<h1 id="golang-开发新手常犯的50个错误">Golang 开发新手常犯的50个错误<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#golang-开发新手常犯的50个错误" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://blog.csdn.net/gezhonglei2007/article/details/52237582" class="external">https://blog.csdn.net/gezhonglei2007/article/details/52237582<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> </p>
+<h1 id="go基础语法50问">go基础语法50问<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go基础语法50问" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://juejin.cn/post/7160639446612705316" class="external">https://juejin.cn/post/7160639446612705316<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="go-程序的基本结构">Go 程序的基本结构？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-程序的基本结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://blog-1314857283.cos.ap-shanghai.myqcloud.com/images/202308281927218.png" alt="img"/></p>
+<h1 id="go-有哪些关键字">Go 有哪些关键字？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-有哪些关键字" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://blog-1314857283.cos.ap-shanghai.myqcloud.com/images/202308281929906.png" alt="img"/></p>
+<h1 id="go-有哪些数据类型">Go 有哪些数据类型？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-有哪些数据类型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://blog-1314857283.cos.ap-shanghai.myqcloud.com/images/202308281929278.png" alt="img"/></p>
+<h1 id="go-方法与函数的区别">Go 方法与函数的区别？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-方法与函数的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><img src="https://blog-1314857283.cos.ap-shanghai.myqcloud.com/images/202308281929899.png" alt="image-20230828192956848"/></p>
+<h1 id="go-方法值接收者和指针接收者的区别">Go 方法值接收者和指针接收者的区别?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-方法值接收者和指针接收者的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p>如果方法的接收者是指针类型，无论调用者是对象还是对象指针，<strong>修改的都是对象本身，会影响调用者</strong>；</p>
+</li>
+<li>
+<p>如果方法的接收者是值类型，无论调用者是对象还是对象指针，<strong>修改的都是对象的副本，不影响调用者</strong>；</p>
+</li>
+</ul>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+type Person struct {
+	age int
+}
+
+// 如果实现了接收者是指针类型的方法，会隐含地也实现了接收者是值类型的IncrAge1方法。
+// 会修改age的值
+func (p *Person) IncrAge1() {
+	p.age += 1
+}
+
+// 如果实现了接收者是值类型的方法，会隐含地也实现了接收者是指针类型的IncrAge2方法。
+// 不会修改age的值
+func (p Person) IncrAge2() {
+	p.age += 1
+}
+
+// 如果实现了接收者是值类型的方法，会隐含地也实现了接收者是指针类型的GetAge方法。
+func (p Person) GetAge() int {
+	return p.age
+}
+
+func main() {
+	// p1 是值类型
+	p := Person{age: 10}
+
+	// 值类型 调用接收者是指针类型的方法
+	p.IncrAge1()
+	fmt.Println(p.GetAge())
+	// 值类型 调用接收者是值类型的方法
+	p.IncrAge2()
+	fmt.Println(p.GetAge())
+
+	// ----------------------
+
+	// p2 是指针类型
+	p2 := &amp;Person{age: 20}
+
+	// 指针类型 调用接收者是指针类型的方法
+	p2.IncrAge1()
+	fmt.Println(p2.GetAge())
+	// 指针类型 调用接收者是值类型的方法
+	p2.IncrAge2()
+	fmt.Println(p2.GetAge())
+}
+/*
+11
+11
+21
+21
+*/
+</code></pre>
+<p>上述代码中：</p>
+<p>实现了接收者是指针类型的 IncrAge 1 函数，不管调用者是值类型还是指针类型，都可以调用 IncrAge 1 方法，并且它的 age 值都改变了。</p>
+<p>实现了接收者是指针类型的 IncrAge 2 函数，不管调用者是值类型还是指针类型，都可以调用 IncrAge 2 方法，并且它的 age 值都没有被改变。</p>
+<p>通常我们使用<strong>指针类型作为方法的接收者的理由</strong>：</p>
+<ul>
+<li>使用指针类型能够修改调用者的值。</li>
+<li>使用指针类型可以避免在每次调用方法时复制该值，在值的类型为大型结构体时，这样做会更加高效。</li>
+</ul>
+<h1 id="go-函数返回局部变量的指针是否安全">Go 函数返回局部变量的指针是否安全?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-函数返回局部变量的指针是否安全" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>一般来说，局部变量会在函数返回后被销毁，因此被返回的引用就成为了”无所指”的引用，程序会进入未知状态。</p>
+<p>但这在 Go 中是安全的，<strong>Go 编译器将会对每个局部变量进行逃逸分析。如果发现局部变量的作用域超出该函数，则不会将内存分配在栈上，而是分配在堆上</strong>，因为他们不在栈区，即使释放函数，其内容也不会受影响。</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func add(x, y int) *int {
+	res := 0
+	res = x + y
+	return &amp;res
+}
+
+func main() {
+	fmt.Println(add(1, 2))
+}
+</code></pre>
+<p>这个例子中，函数 <code>add</code> 局部变量 <code>res</code> 发生了逃逸。Res 作为返回值，在 main 函数中继续使用，因此 res 指向的内存不能够分配在栈上，随着函数结束而回收，只能分配在堆上。</p>
+<p>编译时可以借助选项 <code>-gcflags=-m</code>，查看变量逃逸的情况</p>
+<pre><code>./main.go:6:2: res escapes to heap:
+./main.go:6:2:   flow: ~r2 = &amp;res:
+./main.go:6:2:     from &amp;res (address-of) at ./main.go:8:9
+./main.go:6:2:     from return &amp;res (return) at ./main.go:8:2
+./main.go:6:2: moved to heap: res
+./main.go:12:13: ... argument does not escape
+0xc0000ae008
+</code></pre>
+<p><code>res escapes to heap</code> 即表示 <code>res</code> 逃逸到堆上了。</p>
+<h1 id="go-函数参数传递到底是值传递还是引用传递">Go 函数参数传递到底是值传递还是引用传递？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-函数参数传递到底是值传递还是引用传递" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>先说下结论：</p>
+<p><strong>Go 语言中所有的传参都是值传递（传值），都是一个副本，一个拷贝。</strong></p>
+<p><strong>参数如果是非引用类型（int、string、struct 等这些），这样就在函数中就无法修改原内容数据；如果是引用类型（指针、map、slice、chan 等这些），这样就可以修改原内容数据。</strong></p>
+<p><strong>是否可以修改原内容数据，和传值、传引用没有必然的关系。在 C++中，传引用肯定是可以修改原内容数据的，在 Go 语言里，虽然只有传值，但是我们也可以修改原内容数据，因为参数是引用类型</strong></p>
+<p><strong>引用类型和引用传递是 2 个概念，切记</strong>！！！</p>
+<p><strong>什么是值传递？</strong></p>
+<p>将实参的值传递给形参，形<strong>参是实参的一份拷贝，实参和形参的内存地址不同</strong>。函数内对形参值内容的修改，是否会影响实参的值内容，取决于参数是否是引用类型</p>
+<p><strong>什么是引用传递？</strong></p>
+<p><strong>将实参的地址传递给形参，函数内对形参值内容的修改</strong>，将会影响实参的值内容。Go 语言是没有引用传递的，在 C++中，函数参数的传递方式有引用传递。</p>
+<p><strong>例子：</strong></p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    m := make(map[string]int)
+    m[&quot;age&quot;] = 8
+
+    fmt.Printf(&quot;原始map的内存地址是：%p\n&quot;, &amp;m)
+    modifyMap(m)
+    fmt.Printf(&quot;改动后的值是: %v\n&quot;, m)
+}
+
+func modifyMap(m map[string]int) {
+    fmt.Printf(&quot;函数里接收到map的内存地址是：%p\n&quot;, &amp;m)
+    m[&quot;age&quot;] = 9
+}
+/*
+原始map的内存地址是：0xc00000e028
+函数里接收到map的内存地址是：0xc00000e038
+改动后的值是: map[age:9]
+通过make函数创建的map变量本质是一个hmap类型的指针*hmap，所以函数内对形参的修改，会修改原内容数据(channel也如此)
+*/
+</code></pre>
+<h1 id="go-defer-关键字的实现原理">Go defer 关键字的实现原理？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-defer-关键字的实现原理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>定义</strong>：</p>
+<p>Defer 能够让我们推迟执行某些函数调用，<strong>推迟到当前函数返回前才实际执行</strong>。Defer 与 panic 和 recover 结合，形成了 Go 语言风格的异常与捕获机制。</p>
+<p><strong>使用场景</strong>：</p>
+<p>Defer 语句经常被用于处理成对的操作，如文件句柄关闭、连接关闭、释放锁</p>
+<p><strong>优点：</strong></p>
+<p>方便开发者使用</p>
+<p><strong>缺点：</strong></p>
+<p>有性能损耗</p>
+<p><strong>实现原理</strong>：</p>
+<p>Go 1.14 中编译器会将 defer 函数直接插入到函数的尾部，无需链表和栈上参数拷贝，性能大幅提升。把 defer 函数在当前函数内展开并直接调用，这种方式被称为 open coded defer</p>
+<p>源代码：</p>
+<pre><code>func A(i int) {
+    defer A1(i, 2*i)
+    if(i > 1) {
+        defer A2(&quot;Hello&quot;, &quot;eggo&quot;)
+    }
+    // code to do something
+    return
+}
+func A1(a,b int) {
+    //......
+}
+func A2(m,n string) {
+    //......
+}
+</code></pre>
+<p>编译后（伪代码）：</p>
+<pre><code>func A(i int) {
+        // code to do something
+    if(i > 1){
+       A2(&quot;Hello&quot;, &quot;eggo&quot;)
+    }
+    A1(i, 2*i)
+    return
+}
+</code></pre>
+<p><strong>代码示例</strong>：</p>
+<p>1、函数退出前，按照先进后出的顺序，执行 defer 函数</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+// defer：延迟函数执行，先进后出
+func main() {
+    defer fmt.Println(&quot;defer1&quot;)
+    defer fmt.Println(&quot;defer2&quot;)
+    defer fmt.Println(&quot;defer3&quot;)
+    defer fmt.Println(&quot;defer4&quot;)
+    fmt.Println(&quot;11111&quot;)
+}
+
+// 11111
+// defer4
+// defer3
+// defer2
+// defer1
+</code></pre>
+<p>2、panic 后的 defer 函数不会被执行（遇到 panic，如果没有捕获错误，函数会立刻终止）</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+// panic后的defer函数不会被执行
+func main() {
+    defer fmt.Println(&quot;panic before&quot;)
+    panic(&quot;发生panic&quot;)
+    defer func() {
+        fmt.Println(&quot;panic after&quot;)
+    }()
+}
+
+// panic before
+// panic: 发生panic
+</code></pre>
+<p>3、panic 没有被 recover 时，抛出的 panic 到当前 goroutine 最上层函数时，最上层程序直接异常终止</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func F() {
+    defer func() {
+        fmt.Println(&quot;b&quot;)
+    }()
+    panic(&quot;a&quot;)
+}
+
+// 子函数抛出的panic没有recover时，上层函数时，程序直接异常终止
+func main() {
+    defer func() {
+        fmt.Println(&quot;c&quot;)
+    }()
+    F()
+    fmt.Println(&quot;继续执行&quot;)
+}
+
+// b
+// c
+// panic: a
+</code></pre>
+<p>4、panic 有被 recover 时，当前 goroutine 最上层函数正常执行</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func F() {
+    defer func() {
+        if err := recover(); err != nil {
+            fmt.Println(&quot;捕获异常:&quot;, err)
+        }
+        fmt.Println(&quot;b&quot;)
+    }()
+    panic(&quot;a&quot;)
+}
+
+func main() {
+    defer func() {
+        fmt.Println(&quot;c&quot;)
+    }()
+    F()
+    fmt.Println(&quot;继续执行&quot;)
+}
+
+// 捕获异常: a
+// b
+// 继续执行
+// c
+</code></pre>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func main() {
+
+	defer func() {
+		if v := recover();v == 11 {
+			fmt.Println(&quot;v:&quot;,v)
+		}
+		fmt.Printf(&quot;defer1...&quot;)
+		}()
+
+	defer func() {
+		fmt.Printf(&quot;defer2...&quot;)
+	}()
+
+	array := [2]int{1,2}
+	fmt.Println(&quot;array: &quot;,array[1])
+	panic(11)
+}
+//array:  2
+//defer2...
+//v:  11   
+//defer1...
+</code></pre>
+<ol start="5">
+<li>执行过程是: 保存返回值 (若有)–>执行 defer（若有）–>执行 ret 跳转</li>
+</ol>
+<pre><code>func foo() (ret int) {
+    defer func() {
+        ret++
+    }()
+
+    return 0
+}
+</code></pre>
+<ol start="6">
+<li>延迟函数的参数在 defer 语句出现时就已经确定下来了</li>
+</ol>
+<pre><code>func a() {
+    i := 0
+    defer fmt.Println(i)
+    i++
+    return
+}
+</code></pre>
+<p><strong>注意：</strong></p>
+<p>执行顺序应该为 panic、defer、recover</p>
+<ul>
+<li>发生 panic 的函数并不会立刻返回，而是先层层函数执行 defer，再返回。如果有办法将 panic 捕获到 panic，就正常处理（若是外部函数捕获到，则外部函数只执行 defer），如果没有没有捕获，程序直接异常终止。</li>
+<li>Go 语言提供了 recover 内置函数。前面提到，一旦 panic 逻辑就会走到 defer（defer 必须在 panic 的前面！)。调用 recover 函数将会捕获到当前的 panic，被捕获到的 panic 就不会向上传递了</li>
+<li>在 panic 发生时，在前面的 defer 中通过 recover 捕获这个 panic，转化为错误通过返回值告诉方法调用者。</li>
+</ul>
+<h1 id="go-内置函数-make-和-new-的区别">Go 内置函数 make 和 new 的区别？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-内置函数-make-和-new-的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>首先纠正下 make 和 new 是内置函数，不是关键字</p>
+<p>变量初始化，一般包括 2 步，变量声明 + 变量内存分配，var 关键字就是用来声明变量的，new 和 make 函数主要是用来分配内存的</p>
+<p>Var 声明<strong>值类型</strong>的变量时，系统会<strong>默认为他分配内存空间</strong>，并赋该类型的<strong>零值</strong></p>
+<p>比如布尔、数字、字符串、结构体</p>
+<p>如果<strong>指针类型</strong>或者<strong>引用类型</strong>的变量，系统<strong>不会为它分配内存</strong>，默认就是 <code>nil</code>。此时如果你想 <code>直接使用，那么系统会抛异常</code>，必须进行内存分配后，才能使用。</p>
+<p>New 和 make 两个内置函数，主要用来分配内存空间，有了内存，变量就能使用了，主要有以下 2 点区别：</p>
+<p><strong>使用场景区别：</strong></p>
+<p>Make 只能用来分配及初始化类型为 slice、map、chan 的数据。</p>
+<p>New 可以分配任意类型的数据，并且置零。</p>
+<p><strong>返回值区别：</strong></p>
+<p>Make 函数原型如下，返回的是 slice、map、chan 类型本身</p>
+<p>这 3 种类型是引用类型，就没有必要返回他们的指针</p>
+<pre><code>func make(t Type, size ...IntegerType) Type
+</code></pre>
+<p>New 函数原型如下，返回一个指向该类型内存地址的指针</p>
+<pre><code>type slice struct {
+    array unsafe.Pointer
+    len   int
+    cap   int
+}
+</code></pre>
+<h1 id="make-函数底层实现">Make 函数底层实现<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#make-函数底层实现" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>func makeslice(et *_type, len, cap int) unsafe.Pointer {
+	mem, overflow := math.MulUintptr(et.size, uintptr(cap))
+	if overflow || mem > maxAlloc || len &lt; 0 || len > cap {
+		// NOTE: Produce a 'len out of range' error instead of a
+		// 'cap out of range' error when someone does make([]T, bignumber).
+		// 'cap out of range' is true too, but since the cap is only being
+		// supplied implicitly, saying len is clearer.
+		// See golang.org/issue/4085.
+		mem, overflow := math.MulUintptr(et.size, uintptr(len))
+		if overflow || mem > maxAlloc || len &lt; 0 {
+			panicmakeslicelen()
+		}
+		panicmakeslicecap()
+	}
+
+	return mallocgc(mem, et, true)
+}
+</code></pre>
+<p>函数功能：</p>
+<ul>
+<li>检查切片占用的内存空间是否溢出。</li>
+<li>调用 <code>mallocgc</code> 在堆上申请一片连续的内存。</li>
+</ul>
+<p>检查内存空间这里是根据切片容量进行计算的，<strong>根据当前切片元素的大小与切片容量的乘积得出当前内存空间的大小</strong>，检查溢出的条件：</p>
+<ul>
+<li>内存空间大小溢出了</li>
+<li>申请的内存空间大于最大可分配的内存</li>
+<li>传入的 <code>len</code> 小于 <code>0</code>，<code>cap</code> 的大小只小于 `len</li>
+</ul></article></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+	c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+	v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+	s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+	C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+	S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+	s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+	s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></div><div id="global-graph-outer"><div id="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" id="toc" class><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#init-和-main-函数相关特点" data-for="init-和-main-函数相关特点">init 和 main 函数相关特点</a></li><li class="depth-1"><a href="#init-函数-没有输入参数返回值的主要作用" data-for="init-函数-没有输入参数返回值的主要作用">init 函数 （没有输入参数、返回值）的主要作用</a></li><li class="depth-1"><a href="#init-顺序" data-for="init-顺序">init 顺序</a></li><li class="depth-0"><a href="#go-的数据结构的零值是什么" data-for="go-的数据结构的零值是什么">Go 的数据结构的零值是什么?</a></li><li class="depth-0"><a href="#byte和rune有什么区别" data-for="byte和rune有什么区别">byte和rune有什么区别</a></li><li class="depth-0"><a href="#go-struct-能不能比较" data-for="go-struct-能不能比较">Go struct 能不能比较</a></li><li class="depth-0"><a href="#go-语言如何初始化变量" data-for="go-语言如何初始化变量">Go 语言如何初始化变量</a></li><li class="depth-0"><a href="#go-import-的三种方式" data-for="go-import-的三种方式">Go import 的三种方式</a></li><li class="depth-0"><a href="#与其他语言相比使用-go-有什么好处" data-for="与其他语言相比使用-go-有什么好处">与其他语言相比，使用 Go 有什么好处？</a></li><li class="depth-0"><a href="#听说-go-有什么什么的缺陷你怎么看" data-for="听说-go-有什么什么的缺陷你怎么看">听说 go 有什么什么的缺陷，你怎么看</a></li><li class="depth-0"><a href="#golang的常量取地址" data-for="golang的常量取地址">Golang的常量取地址</a></li><li class="depth-0"><a href="#golang-的字符串拼接" data-for="golang-的字符串拼接">Golang 的字符串拼接</a></li><li class="depth-0"><a href="#string-和-byte-如何取舍" data-for="string-和-byte-如何取舍">string 和 []byte 如何取舍</a></li><li class="depth-0"><a href="#使用过哪些-golang-的-string-类库" data-for="使用过哪些-golang-的-string-类库">使用过哪些 Golang 的 String 类库</a></li><li class="depth-0"><a href="#字符串转成-byte-数组会发生内存拷贝吗" data-for="字符串转成-byte-数组会发生内存拷贝吗">字符串转成 byte 数组，会发生内存拷贝吗</a></li><li class="depth-0"><a href="#翻转含有中文数字英文字母的字符串" data-for="翻转含有中文数字英文字母的字符串">翻转含有中文、数字、英文字母的字符串</a></li><li class="depth-0"><a href="#json-包变量不加-tag-会怎么样" data-for="json-包变量不加-tag-会怎么样">json 包变量不加 tag 会怎么样？</a></li><li class="depth-0"><a href="#reflect反射包如何获取字段-tag为什么-json-包不能导出私有变量的-tag" data-for="reflect反射包如何获取字段-tag为什么-json-包不能导出私有变量的-tag">reflect（反射包）如何获取字段 tag？为什么 json 包不能导出私有变量的 tag？</a></li><li class="depth-0"><a href="#昨天那个在-for-循环里-append-元素的同事今天还在么" data-for="昨天那个在-for-循环里-append-元素的同事今天还在么">昨天那个在 for 循环里 append 元素的同事，今天还在么？</a></li><li class="depth-0"><a href="#golang-语言的自增自减操作" data-for="golang-语言的自增自减操作">Golang 语言的自增，自减操作</a></li><li class="depth-0"><a href="#printfsprintffprintf函数的区别用法是什么" data-for="printfsprintffprintf函数的区别用法是什么">Printf()、Sprintf()、Fprintf()函数的区别用法是什么</a></li><li class="depth-0"><a href="#go-语言中-cap-函数可以作用于哪些内容" data-for="go-语言中-cap-函数可以作用于哪些内容">Go 语言中 cap 函数可以作用于哪些内容？</a></li><li class="depth-0"><a href="#golang-语言的引用类型有什么" data-for="golang-语言的引用类型有什么">Golang 语言的引用类型有什么?</a></li><li class="depth-0"><a href="#通过指针变量-p访问其成员变量-name有哪几种方式" data-for="通过指针变量-p访问其成员变量-name有哪几种方式">通过指针变量  p 访问其成员变量 name，有哪几种方式？</a></li><li class="depth-0"><a href="#for-select-时如果通道已经关闭会怎么样如果只有个-case-呢" data-for="for-select-时如果通道已经关闭会怎么样如果只有个-case-呢">for select 时，如果通道已经关闭会怎么样？如果只有⼀个 case 呢？</a></li><li class="depth-0"><a href="#golang-的-bool-类型的赋值" data-for="golang-的-bool-类型的赋值">Golang 的 bool 类型的赋值</a></li><li class="depth-0"><a href="#空结构体占不占内存空间-为什么使用空结构体" data-for="空结构体占不占内存空间-为什么使用空结构体">空结构体占不占内存空间？ 为什么使用空结构体？</a></li><li class="depth-0"><a href="#空结构体的使用场景" data-for="空结构体的使用场景">空结构体的使用场景</a></li><li class="depth-0"><a href="#go-的面向对象特性" data-for="go-的面向对象特性">Go 的面向对象特性</a></li><li class="depth-0"><a href="#go-语言中-下面哪个关于指针的说法是错误的" data-for="go-语言中-下面哪个关于指针的说法是错误的">Go 语言中 ,下面哪个关于指针的说法是错误的?</a></li><li class="depth-0"><a href="#go-语言的接口类型是如何实现的" data-for="go-语言的接口类型是如何实现的">Go 语言的接口类型是如何实现的？</a></li><li class="depth-0"><a href="#go-结构体内嵌后的命名冲突" data-for="go-结构体内嵌后的命名冲突">Go 结构体内嵌后的命名冲突</a></li><li class="depth-0"><a href="#关于-switch-语句下说法正确的有" data-for="关于-switch-语句下说法正确的有">关于 switch 语句，下⾯说法正确的有?</a></li><li class="depth-0"><a href="#go-编程语言中-switch-语句的语法" data-for="go-编程语言中-switch-语句的语法">Go 编程语言中 switch 语句的语法</a></li><li class="depth-0"><a href="#go-关键字-fallthrough-有什么作用" data-for="go-关键字-fallthrough-有什么作用">Go 关键字 fallthrough 有什么作用</a></li><li class="depth-0"><a href="#copy-是操作符还是内置函数" data-for="copy-是操作符还是内置函数">copy 是操作符还是内置函数</a></li><li class="depth-0"><a href="#go-两个接口之间可以存在什么关系" data-for="go-两个接口之间可以存在什么关系">Go 两个接口之间可以存在什么关系？</a></li><li class="depth-0"><a href="#golang-的返回值命名" data-for="golang-的返回值命名">Golang 的返回值命名</a></li><li class="depth-0"><a href="#golang-的-iota-如何使用" data-for="golang-的-iota-如何使用">Golang 的 iota 如何使用？</a></li><li class="depth-0"><a href="#数组之间如何进行比较" data-for="数组之间如何进行比较">数组之间如何进行比较？</a></li><li class="depth-0"><a href="#for-range-的注意点和坑" data-for="for-range-的注意点和坑">for range 的注意点和坑</a></li><li class="depth-0"><a href="#golang-的断言" data-for="golang-的断言">Golang 的断言</a></li><li class="depth-0"><a href="#如何在运行时检查变量类型" data-for="如何在运行时检查变量类型">如何在运行时检查变量类型？</a></li><li class="depth-0"><a href="#精通-golang-项目依赖-go-modules" data-for="精通-golang-项目依赖-go-modules">精通 Golang 项目依赖 Go modules</a></li><li class="depth-0"><a href="#go-string-的底层实现" data-for="go-string-的底层实现">Go string 的底层实现</a></li><li class="depth-0"><a href="#go-语言的-panic-如何恢复" data-for="go-语言的-panic-如何恢复">Go 语言的 panic 如何恢复</a></li><li class="depth-0"><a href="#go-如何避免-panic" data-for="go-如何避免-panic">Go 如何避免 panic</a></li><li class="depth-0"><a href="#defer-的几个坑" data-for="defer-的几个坑">defer 的几个坑</a></li><li class="depth-0"><a href="#go程序中的包是什么" data-for="go程序中的包是什么">Go程序中的包是什么？</a></li><li class="depth-0"><a href="#go-实现不重启热部署" data-for="go-实现不重启热部署">Go 实现不重启热部署</a></li><li class="depth-0"><a href="#go-中的指针强转" data-for="go-中的指针强转">Go 中的指针强转</a></li><li class="depth-0"><a href="#go-支持什么形式的类型转换将整数转换为浮点数" data-for="go-支持什么形式的类型转换将整数转换为浮点数">Go 支持什么形式的类型转换？将整数转换为浮点数。</a></li><li class="depth-0"><a href="#golang-语言中-的使用" data-for="golang-语言中-的使用">Golang 语言中== 的使用</a></li><li class="depth-0"><a href="#go-语言实现小根堆" data-for="go-语言实现小根堆">Go 语言实现小根堆</a></li><li class="depth-0"><a href="#go-怎么实现-func-的自定义参数" data-for="go-怎么实现-func-的自定义参数">Go 怎么实现 func 的自定义参数</a></li><li class="depth-0"><a href="#为什么-go-的变量申请类型是为了什么" data-for="为什么-go-的变量申请类型是为了什么">为什么 go 的变量申请类型是为了什么？</a></li><li class="depth-0"><a href="#go-的闭包语法" data-for="go-的闭包语法">Go 的闭包语法</a></li><li class="depth-0"><a href="#go-语言中-int-占几个字节" data-for="go-语言中-int-占几个字节">Go 语言中 int 占几个字节</a></li><li class="depth-0"><a href="#golang-程序启动过程" data-for="golang-程序启动过程">Golang 程序启动过程</a></li><li class="depth-0"><a href="#golang-开发新手常犯的50个错误" data-for="golang-开发新手常犯的50个错误">Golang 开发新手常犯的50个错误</a></li><li class="depth-0"><a href="#go基础语法50问" data-for="go基础语法50问">go基础语法50问</a></li><li class="depth-0"><a href="#go-程序的基本结构" data-for="go-程序的基本结构">Go 程序的基本结构？</a></li><li class="depth-0"><a href="#go-有哪些关键字" data-for="go-有哪些关键字">Go 有哪些关键字？</a></li><li class="depth-0"><a href="#go-有哪些数据类型" data-for="go-有哪些数据类型">Go 有哪些数据类型？</a></li><li class="depth-0"><a href="#go-方法与函数的区别" data-for="go-方法与函数的区别">Go 方法与函数的区别？</a></li><li class="depth-0"><a href="#go-方法值接收者和指针接收者的区别" data-for="go-方法值接收者和指针接收者的区别">Go 方法值接收者和指针接收者的区别?</a></li><li class="depth-0"><a href="#go-函数返回局部变量的指针是否安全" data-for="go-函数返回局部变量的指针是否安全">Go 函数返回局部变量的指针是否安全?</a></li><li class="depth-0"><a href="#go-函数参数传递到底是值传递还是引用传递" data-for="go-函数参数传递到底是值传递还是引用传递">Go 函数参数传递到底是值传递还是引用传递？</a></li><li class="depth-0"><a href="#go-defer-关键字的实现原理" data-for="go-defer-关键字的实现原理">Go defer 关键字的实现原理？</a></li><li class="depth-0"><a href="#go-内置函数-make-和-new-的区别" data-for="go-内置函数-make-和-new-的区别">Go 内置函数 make 和 new 的区别？</a></li><li class="depth-0"><a href="#make-函数底层实现" data-for="make-函数底层实现">Make 函数底层实现</a></li></ul></div></div><div class="backlinks"><h3>Backlinks</h3><ul class="overflow"><li>No backlinks found</li></ul></div></div></div><footer class><hr/><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.2.3</a> © 2024</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></body><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">function c(){let t=this.parentElement;t.classList.toggle("is-collapsed");let l=t.classList.contains("is-collapsed")?this.scrollHeight:t.scrollHeight;t.style.maxHeight=l+"px";let o=t,e=t.parentElement;for(;e;){if(!e.classList.contains("callout"))return;let n=e.classList.contains("is-collapsed")?e.scrollHeight:e.scrollHeight+o.scrollHeight;e.style.maxHeight=n+"px",o=e,e=e.parentElement}}function i(){let t=document.getElementsByClassName("callout is-collapsible");for(let s of t){let l=s.firstElementChild;if(l){l.addEventListener("click",c),window.addCleanup(()=>l.removeEventListener("click",c));let e=s.classList.contains("is-collapsed")?l.scrollHeight:s.scrollHeight;s.style.maxHeight=e+"px"}}}document.addEventListener("nav",i);window.addEventListener("resize",i);
+</script><script type="module">
+          let mermaidImport = undefined
+          document.addEventListener('nav', async () => {
+            if (document.querySelector("code.mermaid")) {
+              mermaidImport ||= await import('https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs')
+              const mermaid = mermaidImport.default
+              const darkMode = document.documentElement.getAttribute('saved-theme') === 'dark'
+              mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: darkMode ? 'dark' : 'default'
+              })
+
+              await mermaid.run({
+                querySelector: '.mermaid'
+              })
+            }
+          });
+          </script><script src="../../postscript.js" type="module"></script></html>

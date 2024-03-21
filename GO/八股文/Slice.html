@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Slice</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="Slice"/><meta property="og:description" content="参考 你真的了解go语言中的切片吗 基本介绍 go 语言中的切片对标于其他编程语言中通俗意义上的“数组”. 切片中的元素存放在一块内存地址连续的区域，使用索引可以快速检索到指定位置的元素；切片长度和容量是可变的，在使用过程中可以根据需要进行扩容. Go slice 的底层实现原理? 切片是基于数组实现的，它的底层是数组，可以理解为对底层数组的抽象。 源码包中 src/runtime/slice."/><meta property="og:image" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="参考 你真的了解go语言中的切片吗 基本介绍 go 语言中的切片对标于其他编程语言中通俗意义上的“数组”. 切片中的元素存放在一块内存地址连续的区域，使用索引可以快速检索到指定位置的元素；切片长度和容量是可变的，在使用过程中可以根据需要进行扩容. Go slice 的底层实现原理? 切片是基于数组实现的，它的底层是数组，可以理解为对底层数组的抽象。 源码包中 src/runtime/slice."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="GO/八股文/Slice"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="../..">🪴 Quartz 4.0</a></h1><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>Search</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;awesome&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;elastic&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/Channel&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/分布式并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/原子操作&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/基础并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/扩展并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/netty&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring/Spring-cloud&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;journal&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua/用Go实现Lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;zookeeper&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/日志&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/监控&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列/Pulsar&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计/场景题&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true}]"><h1>Explorer</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="awesome"><button class="folder-button"><span class="folder-title">awesome</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="awesome"><li><a href="../../awesome/JavaGuide-知识星球优质主题汇总" data-for="awesome/JavaGuide-知识星球优质主题汇总">JavaGuide 知识星球优质主题汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="elastic"><button class="folder-button"><span class="folder-title">elastic</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="elastic"><li><a href="../../elastic/KQL" data-for="elastic/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程"><button class="folder-button"><span class="folder-title">并发编程</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/Channel"><button class="folder-button"><span class="folder-title">Channel</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/Channel"><li><a href="../../GO/并发编程/Channel/channel" data-for="GO/并发编程/Channel/channel">channel</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/分布式并发原语"><button class="folder-button"><span class="folder-title">分布式并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/分布式并发原语"><li><a href="../../GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁" data-for="GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁">Leader选举互斥锁和读写锁</a></li><li><a href="../../GO/并发编程/分布式并发原语/队列、栅栏和STM" data-for="GO/并发编程/分布式并发原语/队列、栅栏和STM">队列、栅栏和STM</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/原子操作"><button class="folder-button"><span class="folder-title">原子操作</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/原子操作"><li><a href="../../GO/并发编程/原子操作/atomic" data-for="GO/并发编程/原子操作/atomic">atomic</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/基础并发原语"><button class="folder-button"><span class="folder-title">基础并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/基础并发原语"><li><a href="../../GO/并发编程/基础并发原语/Cond" data-for="GO/并发编程/基础并发原语/Cond">Cond</a></li><li><a href="../../GO/并发编程/基础并发原语/Context" data-for="GO/并发编程/基础并发原语/Context">Context</a></li><li><a href="../../GO/并发编程/基础并发原语/map" data-for="GO/并发编程/基础并发原语/map">map</a></li><li><a href="../../GO/并发编程/基础并发原语/Mutex" data-for="GO/并发编程/基础并发原语/Mutex">Mutex</a></li><li><a href="../../GO/并发编程/基础并发原语/Once" data-for="GO/并发编程/基础并发原语/Once">Once</a></li><li><a href="../../GO/并发编程/基础并发原语/Pool" data-for="GO/并发编程/基础并发原语/Pool">Pool</a></li><li><a href="../../GO/并发编程/基础并发原语/RWMutex" data-for="GO/并发编程/基础并发原语/RWMutex">RWMutex</a></li><li><a href="../../GO/并发编程/基础并发原语/WaitGroup" data-for="GO/并发编程/基础并发原语/WaitGroup">WaitGroup</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/扩展并发原语"><button class="folder-button"><span class="folder-title">扩展并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/扩展并发原语"><li><a href="../../GO/并发编程/扩展并发原语/Semaphore-信号量" data-for="GO/并发编程/扩展并发原语/Semaphore-信号量">Semaphore-信号量</a></li><li><a href="../../GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏" data-for="GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏">SingleFlight 和 CyclicBarrier-请求合并和循环栅栏</a></li><li><a href="../../GO/并发编程/扩展并发原语/分组操作" data-for="GO/并发编程/扩展并发原语/分组操作">分组操作</a></li></ul></div></li><li><a href="../../GO/并发编程/开篇词" data-for="GO/并发编程/开篇词">开篇词</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java"><button class="folder-button"><span class="folder-title">Java</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/netty"><button class="folder-button"><span class="folder-title">netty</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/netty"><li><a href="../../Java/netty/1.-概念和体系结构" data-for="Java/netty/1.-概念和体系结构">1. 概念和体系结构</a></li><li><a href="../../Java/netty/BootStrap" data-for="Java/netty/BootStrap">BootStrap</a></li><li><a href="../../Java/netty/ByteBuf" data-for="Java/netty/ByteBuf">ByteBuf</a></li><li><a href="../../Java/netty/ChannelHandler、ChannelPipeline、ChannelContext" data-for="Java/netty/ChannelHandler、ChannelPipeline、ChannelContext">ChannelHandler、ChannelPipeline、ChannelContext</a></li><li><a href="../../Java/netty/EventLoop-和线程模型" data-for="Java/netty/EventLoop-和线程模型">EventLoop 和线程模型</a></li><li><a href="../../Java/netty/传输和Channel" data-for="Java/netty/传输和Channel">传输和Channel</a></li><li><a href="../../Java/netty/编解码器" data-for="Java/netty/编解码器">编解码器</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring"><button class="folder-button"><span class="folder-title">Spring</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring/Spring-cloud"><button class="folder-button"><span class="folder-title">Spring cloud</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring/Spring-cloud"><li><a href="../../Java/Spring/Spring-cloud/spring-cloud-alibaba" data-for="Java/Spring/Spring-cloud/spring-cloud-alibaba">spring cloud alibaba</a></li></ul></div></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="journal"><button class="folder-button"><span class="folder-title">journal</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="journal"><li><a href="../../journal/2023-07-25" data-for="journal/2023-07-25">2023-07-25</a></li><li><a href="../../journal/2023-07-26" data-for="journal/2023-07-26">2023-07-26</a></li><li><a href="../../journal/2023-07-27" data-for="journal/2023-07-27">2023-07-27</a></li><li><a href="../../journal/2023-07-31" data-for="journal/2023-07-31">2023-07-31</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua/用Go实现Lua"><button class="folder-button"><span class="folder-title">用Go实现Lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua/用Go实现Lua"><li><a href="../../lua/用Go实现Lua/1.二进制Chunk" data-for="lua/用Go实现Lua/1.二进制Chunk">1.二进制Chunk</a></li><li><a href="../../lua/用Go实现Lua/2.指令集" data-for="lua/用Go实现Lua/2.指令集">2.指令集</a></li><li><a href="../../lua/用Go实现Lua/3.lua-API" data-for="lua/用Go实现Lua/3.lua-API">3.lua API</a></li><li><a href="../../lua/用Go实现Lua/前言" data-for="lua/用Go实现Lua/前言">前言</a></li></ul></div></li><li><a href="../../lua/lua基础" data-for="lua/lua基础">lua基础</a></li><li><a href="../../lua/Lua高级" data-for="lua/Lua高级">Lua高级</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="zookeeper"><button class="folder-button"><span class="folder-title">zookeeper</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="zookeeper"><li><a href="../../zookeeper/Zookeeper-教程" data-for="zookeeper/Zookeeper-教程">Zookeeper 教程</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用"><button class="folder-button"><span class="folder-title">分布式高并发高性能高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/日志"><button class="folder-button"><span class="folder-title">日志</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/日志"><li><a href="../../分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？" data-for="分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？">服务治理：分布式下如何进行日志管理？</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/监控"><button class="folder-button"><span class="folder-title">监控</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/监控"><li><a href="../../分布式高并发高性能高可用/监控/服务治理：监控系统如何做？" data-for="分布式高并发高性能高可用/监控/服务治理：监控系统如何做？">服务治理：监控系统如何做？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境"><button class="folder-button"><span class="folder-title">工具和环境</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/emacs"><li><a href="../../工具和环境/emacs/安装" data-for="工具和环境/emacs/安装">安装</a></li><li><a href="../../工具和环境/emacs/快捷键" data-for="工具和环境/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/git"><li><a href="../../工具和环境/git/git" data-for="工具和环境/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/msys2"><li><a href="../../工具和环境/msys2/pacman" data-for="工具和环境/msys2/pacman">pacman</a></li></ul></div></li><li><a href="../../工具和环境/工具" data-for="工具和环境/工具">工具</a></li><li><a href="../../工具和环境/环境搭建" data-for="工具和环境/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列"><button class="folder-button"><span class="folder-title">消息队列</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列/Pulsar"><button class="folder-button"><span class="folder-title">Pulsar</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列/Pulsar"><li><a href="../../消息队列/Pulsar/1.Pulsar概述" data-for="消息队列/Pulsar/1.Pulsar概述">1.Pulsar概述</a></li><li><a href="../../消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar" data-for="消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar">2.doccker 中启动 standalone Pulsar</a></li></ul></div></li><li><a href="../../消息队列/消息队列对比" data-for="消息队列/消息队列对比">消息队列对比</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计"><button class="folder-button"><span class="folder-title">系统设计</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计/场景题"><button class="folder-button"><span class="folder-title">场景题</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计/场景题"><li><a href="../../系统设计/场景题/如何" data-for="系统设计/场景题/如何">如何</a></li><li><a href="../../系统设计/场景题/如何设计一个排行榜？" data-for="系统设计/场景题/如何设计一个排行榜？">如何设计一个排行榜？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../GO/">GO</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../GO/八股文/">八股文</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Slice</a></div></nav><h1 class="article-title">Slice</h1><p show-comma="true" class="content-meta"><span>Feb 25, 2024</span><span>24 min read</span></p><ul class="tags"><li><a href="../../tags/GO/八股文" class="internal tag-link">GO/八股文</a></li></ul></div></div><article class="popover-hint"><h1 id="参考">参考<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#参考" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxMjQzMjA0OQ==&amp;mid=2247484378&amp;idx=1&amp;sn=3d2d4a0055a96c8c76e620371bfec7f7&amp;chksm=c10c4d04f67bc412295034c5ad5a28bb11ffcd4d8fd2d8846e3bdb48d4137ecf6637557d9be4&amp;scene=178&amp;cur_album_id=2709593649634033668#rd" class="external">你真的了解go语言中的切片吗<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="基本介绍">基本介绍<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#基本介绍" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>go 语言中的切片对标于其他编程语言中通俗意义上的“数组”. <strong>切片中的元素存放在一块内存地址连续的区域</strong>，使用索引可以快速检索到指定位置的元素；切片长度和容量是可变的，在使用过程中可以根据需要进行扩容.</p>
+<h1 id="go-slice-的底层实现原理">Go slice 的底层实现原理?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-slice-的底层实现原理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>切片是基于数组实现的，它的底层是数组，可以理解为对底层数组的抽象。</p>
+<p>源码包中 src/runtime/slice. Go 定义了 slice 的数据结构：</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226175632.png" alt="image.png"/></p>
+<pre><code>type slice struct {
+	// 指向起点的地址
+    array unsafe.Pointer
+    // 切片长度
+    len   int
+    // 切片容量
+    cap   int
+}
+</code></pre>
+<p>Slice 占用 24 个字节</p>
+<ul>
+<li>
+<p>Array: 指向底层数组的指针，占用 8 个字节</p>
+</li>
+<li>
+<p>Len: 切片的长度，占用 8 个字节</p>
+</li>
+<li>
+<p>Cap: 切片的容量，cap 总是大于等于 len 的，占用 8 个字节</p>
+</li>
+</ul>
+<p>Slice 有 4 种初始化方式</p>
+<pre><code>// 初始化方式1：直接声明
+var slice1 []int
+
+// 初始化方式2：使用字面量
+slice2 := []int{1, 2, 3, 4}
+
+// 初始化方式3：使用make创建slice
+slice3 := make([]int, 3, 5)         
+
+// 初始化方式4: 从切片或数组“截取”
+slcie4 := arr[1:3]
+</code></pre>
+<p>通过一个简单程序，看下 slice 初始化调用的底层函数</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    slice := make([]int, 0)
+    slice = append(slice, 1)
+    fmt.Println(slice, len(slice), cap(slice))
+}
+</code></pre>
+<p>通过 <code>go tool compile -S test.go | grep CALL</code> 得到汇编代码</p>
+<pre><code>0x0042 00066 (test.go:6)        CALL    runtime.makeslice(SB)
+0x006d 00109 (test.go:7)        CALL    runtime.growslice(SB)
+0x00a4 00164 (test.go:8)        CALL    runtime.convTslice(SB)
+0x00c0 00192 (test.go:8)        CALL    runtime.convT64(SB)
+0x00d8 00216 (test.go:8)        CALL    runtime.convT64(SB)
+0x0166 00358 ($GOROOT/src/fmt/print.go:274)     CALL    fmt.Fprintln(SB)
+0x0180 00384 (test.go:5)        CALL    runtime.morestack_noctxt(SB)
+0x0079 00121 (&lt;autogenerated>:1)        CALL    runtime.efaceeq(SB)
+0x00a0 00160 (&lt;autogenerated>:1)        CALL    runtime.morestack_noctxt(SB)
+</code></pre>
+<p>初始化 slice 调用的是 <strong>runtime. Makeslice，makeslice 函数的工作主要就是计算 slice 所需内存大小，然后调用 mallocgc 进行内存的分配</strong></p>
+<p>所需内存大小 = 切片中元素大小 * 切片的容量</p>
+<pre><code>func makeslice(et *_type, len, cap int) unsafe.Pointer {
+    // 根据 cap 结合每个元素的大小，计算出消耗的总容量
+    mem, overflow := math.MulUintptr(et.size, uintptr(cap))
+    if overflow || mem > maxAlloc || len &lt; 0 || len > cap {
+        // 倘若容量超限，len 取负值或者 len 超过 cap，直接 panic
+        mem, overflow := math.MulUintptr(et.size, uintptr(len))
+        if overflow || mem > maxAlloc || len &lt; 0 {
+            panicmakeslicelen()
+        }
+        panicmakeslicecap()
+    }
+    // 走 mallocgc 进行内存分配以及切片初始化
+    return mallocgc(mem, et, true)
+}
+</code></pre>
+<h1 id="slice-切片的截取">Slice 切片的截取<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#slice-切片的截取" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code> x := make([]int, 2, 10)
+ _ = x[6:10]
+ _ = x[6:]
+ _ = x[2:]
+
+//_ = x[6:] 这⼀⾏会发⽣panic, 截取符号 [i:j]，
+//如果 j 省略，默认是原切⽚或者数组的⻓度，x 的⻓度是 2，⼩于起始下标 6 ，所以 panic
+</code></pre>
+<p>可以修改 slice 下标的方式，进行 slice 内容的截取，形如 s[a: b] 的格式，其中 a b 代表切片的索引 index，左闭右开，比如 s[a: b] 对应的范围是 [a,b)，代表的是取切片 slice index = a ~ index = b-1 范围的内容.</p>
+<p>此外，这里我聊到的 a 和 b 是可以缺省的：</p>
+<ul>
+<li>
+<p>如果 a 缺省不填则默认取 0 ，则代表从切片起始位置开始截取. 比如 s[:b] 等价于 s[0:b]</p>
+</li>
+<li>
+<p> 如果 b 缺省不填，则默认取 len(s)，则代表末尾截取到切片长度 len 的终点，比如 s[a:] 等价于 s[a:len(s)]</p>
+</li>
+<li>
+<p>•a 和 b 均缺省也是可以的，则代表截取整个切片长度的范围，比如 s[:] 等价于 s[0:len(s)</p>
+</li>
+</ul>
+<p>对切片 slice 执行截取操作时，本质上是一次引用传递操作，因为不论如何截取，<strong>底层复用的都是同一块内存空间中的数据</strong>，只不过，截取动作会创建出一个新的 slice header 实例</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226180202.png" alt="image.png"/></p>
+<h1 id="slice-元素追加">Slice 元素追加<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#slice-元素追加" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>通过 append 操作，可以在 slice 末尾，额外新增一个元素. 需要注意，这里的末尾指的是针对 slice 的长度 len 而言. <strong>这个过程中倘若发现 slice 的剩余容量已经不足了，则会对 slice 进行扩容</strong>.</p>
+<h1 id="slice-扩容">Slice 扩容<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#slice-扩容" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>版本 1.18 之前</strong>
+扩容会发生在 slice append 的时候，当 slice 的 cap 不足以容纳新元素，就会进行扩容，扩容规则如下</p>
+<ul>
+<li>如果原有 slice 长度小于 1024，那么每次就扩容为原来的 2 倍</li>
+<li>如果原 slice 长度大于等于 1024，那么每次扩容就扩为原来的 1.25 倍</li>
+</ul>
+<p><strong>1.18 +</strong></p>
+<p>切片的扩容流程源码位于 runtime/slice.go 文件的 growslice 方法当中，其中核心步骤如下：</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240226204620.png" alt="image.png"/></p>
+<ul>
+<li>
+<p>倘若扩容后预期的新容量小于原切片的容量，则 panic</p>
+</li>
+<li>
+<p>倘若切片元素大小为 0（元素类型为 struct{}），则直接复用一个全局的 zerobase 实例，直接返回</p>
+</li>
+<li>
+<p>倘若预期的新容量超过老容量的两倍，则直接采用预期的新容量</p>
+</li>
+<li>
+<p>倘若老容量小于 256，则直接采用老容量的2倍作为新容量</p>
+</li>
+<li>
+<p>倘若老容量已经大于等于 256，则在老容量的基础上扩容 1/4 的比例并且累加上 192 的数值，持续这样处理，直到得到的新容量已经大于等于预期的新容量为止</p>
+</li>
+<li>
+<p> 结合 mallocgc 流程中，对内存分配单元 mspan 的等级制度，推算得到实际需要申请的内存空间大小</p>
+</li>
+<li>
+<p>调用 mallocgc，对新切片进行内存初始化</p>
+</li>
+<li>
+<p>调用 memmove 方法，将老切片中的内容拷贝到新切片中</p>
+</li>
+<li>
+<p> 返回扩容后的新切片</p>
+</li>
+</ul>
+<pre><code>func growslice(et *_type, old slice, cap int) slice {
+    //... 
+    if cap &lt; old.cap {
+        panic(errorString(&quot;growslice: cap out of range&quot;))
+    }
+
+
+    if et.size == 0 {
+        // 倘若元素大小为 0，则无需分配空间直接返回
+        return slice{unsafe.Pointer(&amp;zerobase), old.len, cap}
+    }
+
+
+    // 计算扩容后数组的容量
+    newcap := old.cap
+    // 取原容量两倍的容量数值
+    doublecap := newcap + newcap
+    // 倘若新的容量大于原容量的两倍，直接取新容量作为数组扩容后的容量
+    if cap > doublecap {
+        newcap = cap
+    } else {
+        const threshold = 256
+        // 倘若原容量小于 256，则扩容后新容量为原容量的两倍
+        if old.cap &lt; threshold {
+            newcap = doublecap
+        } else {
+            // 在原容量的基础上，对原容量 * 5/4 并且加上 192
+            // 循环执行上述操作，直到扩容后的容量已经大于等于预期的新容量为止
+            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {             
+                newcap += (newcap + 3*threshold) / 4
+            }
+            // 倘若数值越界了，则取预期的新容量 cap 封顶
+            if newcap &lt;= 0 {
+                newcap = cap
+            }
+        }
+    }
+
+
+    var overflow bool
+    var lenmem, newlenmem, capmem uintptr
+    // 基于容量，确定新数组容器所需要的内存空间大小 capmem
+    switch {
+    // 倘若数组元素的大小为 1，则新容量大小为 1 * newcap.
+    // 同时会针对 span class 进行取整
+    case et.size == 1:
+        lenmem = uintptr(old.len)
+        newlenmem = uintptr(cap)
+        capmem = roundupsize(uintptr(newcap))
+        overflow = uintptr(newcap) > maxAlloc
+        newcap = int(capmem)
+    // 倘若数组元素为指针类型，则根据指针占用空间结合元素个数计算空间大小
+    // 并会针对 span class 进行取整
+    case et.size == goarch.PtrSize:
+        lenmem = uintptr(old.len) * goarch.PtrSize
+        newlenmem = uintptr(cap) * goarch.PtrSize
+        capmem = roundupsize(uintptr(newcap) * goarch.PtrSize)
+        overflow = uintptr(newcap) > maxAlloc/goarch.PtrSize
+        newcap = int(capmem / goarch.PtrSize)
+    // 倘若元素大小为 2 的指数，则直接通过位运算进行空间大小的计算   
+    case isPowerOfTwo(et.size):
+        var shift uintptr
+        if goarch.PtrSize == 8 {
+            // Mask shift for better code generation.
+            shift = uintptr(sys.Ctz64(uint64(et.size))) &amp; 63
+        } else {
+            shift = uintptr(sys.Ctz32(uint32(et.size))) &amp; 31
+        }
+        lenmem = uintptr(old.len) &lt;&lt; shift
+        newlenmem = uintptr(cap) &lt;&lt; shift
+        capmem = roundupsize(uintptr(newcap) &lt;&lt; shift)
+        overflow = uintptr(newcap) > (maxAlloc >> shift)
+        newcap = int(capmem >> shift)
+    // 兜底分支：根据元素大小乘以元素个数
+    // 再针对 span class 进行取整     
+    default:
+        lenmem = uintptr(old.len) * et.size
+        newlenmem = uintptr(cap) * et.size
+        capmem, overflow = math.MulUintptr(et.size, uintptr(newcap))
+        capmem = roundupsize(capmem)
+        newcap = int(capmem / et.size)
+    }
+
+
+
+
+    // 进行实际的切片初始化操作
+    var p unsafe.Pointer
+    // 非指针类型
+    if et.ptrdata == 0 {
+        p = mallocgc(capmem, nil, false)
+        // ...
+    } else {
+        // 指针类型
+        p = mallocgc(capmem, et, true)
+        // ...
+    }
+    // 将切片的内容拷贝到扩容后的位置 p 
+    memmove(p, old.array, lenmem)
+    return slice{p, old.len, newcap}
+}
+</code></pre>
+<h1 id="slice-元素删除">Slice 元素删除<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#slice-元素删除" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>从切片中删除元素的实现思路，本质上和切片内容截取的思路是一致的.</p>
+<p>需要删除 slice 中间的某个元素，<strong>操作思路则是采用内容截取加上元素追加的复合操作</strong>，可以先截取待删除元素的左侧部分内容，然后在此基础上追加上待删除元素后侧部分的内容：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="func" data-theme="github-light github-dark"><code data-language="func" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>    s := []int{0,1,2,3,4}</span></span>
+<span data-line><span>    // 删除 index = 2 的元素</span></span>
+<span data-line><span>    s = append(s[:2],s[3:]...)</span></span>
+<span data-line><span>    // s: [0,1,3,4], len: 4, cap: 5</span></span>
+<span data-line><span>    t.Logf(&quot;s: %v, len: %d, cap: %d&quot;, s, len(s), cap(s))</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Go 语言删除切片元素的方法：<br/>
+1、指定删除位置，如【index := 1】;<br/>
+2、查看删除位置之前的元素和之后的元素;<br/>
+3、将删除点前后的元素连接起来即可。<br/>
+Go 语言并没有对删除切片元素提供专用的语法或者接口，需要使用切片本身的特性来删除元素。<br/>
+示例代码如下：</p>
+<pre><code>str := []string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;}
+// step 1
+index := 1
+// step 2
+fmt.Println(str[:index], str[index+1])
+// step 3
+str = append(str[:index], str[index+1]...)
+// res
+fmt.Println(str)
+</code></pre>
+<h1 id="slice-切片拷贝">Slice 切片拷贝<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#slice-切片拷贝" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>slice 的拷贝可以分为简单拷贝和完整拷贝两种类型.</p>
+<ul>
+<li>简单拷贝，只需要对切片的字面量进行赋值传递即可，这样相当于创建出了一个新的 slice header 实例，但是其中的指针 array、容量 cap 和长度 len 仍和老的 slice header 实例相同.</li>
+</ul>
+<pre><code>func Test_slice(t *testing.T) {
+    s := []int{0, 1, 2, 3, 4}
+    s1 := s
+    t.Logf(&quot;address of s: %p, address of s1: %p&quot;, s, s1)
+}
+</code></pre>
+<ul>
+<li>slice 的完整复制，指的是会创建出一个和 slice 容量大小相等的独立的内存区域，并将原 slice 中的元素一一拷贝到新空间中.</li>
+</ul>
+<pre><code>func Test_slice(t *testing.T) {
+    s := []int{0, 1, 2, 3, 4}
+    s1 := make([]int, len(s))
+    copy(s1, s)
+    t.Logf(&quot;s: %v, s1: %v&quot;, s, s1)
+    t.Logf(&quot;address of s: %p, address of s1: %p&quot;, s, s1)
+}
+</code></pre>
+<h1 id="go-array-和-slice-的区别">Go array 和 slice 的区别？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-array-和-slice-的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>1）数组长度不同</strong></p>
+<p>数组初始化必须指定长度，并且长度就是固定的</p>
+<p>切片的长度是不固定的，可以追加元素，在追加时可能使切片的容量增大</p>
+<p><strong>2）函数传参不同</strong></p>
+<p>数组是值类型，将一个数组赋值给另一个数组时，传递的是一份深拷贝，函数传参操作都会复制整个数组数据，会占用额外的内存，函数内对数组元素值的<strong>修改</strong>，不会修改原数组内容。</p>
+<p>切片是引用类型，将一个切片赋值给另一个切片时，传递的是一份浅拷贝，函数传参操作不会拷贝整个切片，只会复制 len 和 cap，底层共用同一个数组，不会占用额外的内存，函数内对数组元素值的<strong>修改</strong>，会修改原数组内容。</p>
+<p><strong>3）计算数组长度方式不同</strong></p>
+<p>数组需要遍历计算数组长度，时间复杂度为 O (n)</p>
+<p>切片底层包含 len 字段，可以通过 len ()计算切片长度，时间复杂度为 O (1)</p>
+<h1 id="go-slice-深拷贝和浅拷贝">Go slice 深拷贝和浅拷贝<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-slice-深拷贝和浅拷贝" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>深拷贝：拷贝的是数据本身，创造一个新对象，新创建的对象与原对象不共享内存，新创建的对象在内存中开辟一个新的内存地址，新对象值修改时不会影响原对象值</p>
+<p>实现深拷贝的方式：</p>
+<ol>
+<li>Copy (slice 2, slice 1)</li>
+<li>遍历 append 赋值</li>
+</ol>
+<pre><code>func main() {
+    slice1 := []int{1, 2, 3, 4, 5}
+    slice2 := make([]int, 5, 5)
+    fmt.Printf(&quot;slice1: %v, %p\n&quot;, slice1, slice1)
+    copy(slice2, slice1)
+    fmt.Printf(&quot;slice2: %v, %p\n&quot;, slice2, slice2)
+    slice3 := make([]int, 0, 5)
+    for _, v := range slice1 {
+        slice3 = append(slice3, v)
+    }
+    fmt.Printf(&quot;slice3: %v, %p\n&quot;, slice3, slice3)
+}
+
+slice1: [1 2 3 4 5], 0xc0000b0030
+slice2: [1 2 3 4 5], 0xc0000b0060
+slice3: [1 2 3 4 5], 0xc0000b0090
+</code></pre>
+<p>浅拷贝：拷贝的是数据地址，只复制指向的对象的指针，此时新对象和老对象指向的内存地址是一样的，新对象值修改时老对象也会变化</p>
+<p>实现浅拷贝的方式：</p>
+<p>引用类型的变量，<strong>默认赋值操作就是浅拷贝</strong></p>
+<pre><code>func main() {
+    slice1 := []int{1, 2, 3, 4, 5}
+    fmt.Printf(&quot;slice1: %v, %p\n&quot;, slice1, slice1)
+    slice2 := slice1
+    fmt.Printf(&quot;slice2: %v, %p\n&quot;, slice2, slice2)
+}
+
+slice1: [1 2 3 4 5], 0xc00001a120
+slice2: [1 2 3 4 5], 0xc00001a120
+</code></pre>
+<h1 id="go-slice-为什么不是线程安全的">Go slice 为什么不是线程安全的？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-slice-为什么不是线程安全的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>先看下线程安全的定义</strong>：</p>
+<p>多个线程访问同一个对象时，调用这个对象的行为都可以获得正确的结果，那么这个对象就是线程安全的。</p>
+<p>若有多个线程同时执行写操作，一般都需要考虑线程同步，否则的话就可能影响线程安全。</p>
+<p><strong>再看 Go 语言实现线程安全常用的几种方式</strong>：</p>
+<ol>
+<li>互斥锁</li>
+<li>读写锁</li>
+<li>原子操作</li>
+<li>Sync. Once</li>
+<li>Sync. Atomic</li>
+<li>Channel</li>
+</ol>
+<p>Slice 底层结构并没有使用加锁等方式，不支持并发读写，所以并不是线程安全的，使用多个 goroutine 对类型为 slice 的变量进行操作，每次输出的值大概率都不会一样，与预期值不一致; <strong>slice 在并发执行中不会报错，但是数据会丢失</strong></p>
+<pre><code>/**
+* 切片非并发安全
+* 多次执行，每次得到的结果都不一样
+* 可以考虑使用 channel 本身的特性 (阻塞) 来实现安全的并发读写
+ */
+func TestSliceConcurrencySafe(t *testing.T) {
+ a := make([]int, 0)
+ var wg sync.WaitGroup
+ for i := 0; i &lt; 10000; i++ {
+  wg.Add(1)
+  go func(i int) {
+   a = append(a, i)
+   wg.Done()
+  }(i)
+ }
+ wg.Wait()
+ t.Log(len(a)) 
+ // not equal 10000
+}
+</code></pre>
+<h1 id="nil-切片和空切片指向的地址一样">nil 切片和空切片指向的地址一样？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nil-切片和空切片指向的地址一样" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>func main() {
+    var s1 []int
+    s2 := make([]int, 0)
+    s3 := make([]int, 0)
+    data1 := (*reflect.SliceHeader)(unsafe.Pointer(&amp;s1)).Data
+    data2 := (*reflect.SliceHeader)(unsafe.Pointer(&amp;s2)).Data
+    data3 := (*reflect.SliceHeader)(unsafe.Pointer(&amp;s3)).Data
+
+    fmt.Printf(&quot;s1 data:%+v\n&quot;, data1)
+    fmt.Printf(&quot;s2 data:%+v\n&quot;, data2)
+    fmt.Printf(&quot;s3 data:%+v\n&quot;, data3)
+
+    fmt.Printf(&quot;s1:s2=>%t\n&quot;, data1 == data2)
+    fmt.Printf(&quot;s2:s3=>%t\n&quot;, data2 == data3)
+}
+
+//输出
+s1 data:0
+s2 data:824634859200
+s3 data:824634859200
+s1:s2=>false
+s2:s3=>true
+</code></pre>
+<p><strong>Nil 切片和空切片指向的地址不一样</strong>。</p>
+<p><strong>Nil 切片引用数组指针地址为 0（无指向任何实际地址）</strong></p>
+<p><strong>空切片的引用数组指针地址是有的，且固定为一个值。</strong></p>
+<pre><code>//切片的数据结构
+type SliceHeader struct {
+    Data uintptr //引用数组指针地址
+    Len  int
+    Cap  int
+}
+</code></pre>
+<p><strong>Nil 切片和空切片最大的区别在于指向的数组引用地址是不一样的</strong></p>
+<h1 id="拷贝大切片一定比小切片代价大吗">拷贝大切片一定比小切片代价大吗？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#拷贝大切片一定比小切片代价大吗" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>并不是，所有切片的大小相同；三个字段（一个 uintptr，两个 int）。切片中的第一个字段是指向切片底层数组的指针，这是切片的存储空间，第二个字段是切片的长度，第三个字段是容量。将一个 slice 变量分配给另一个变量只会复制三个机器字。所<strong>以拷贝大切片跟小切片的代价应该是一样的</strong>。</p>
+<p>SliceHeader 是切片在 go 的底层结构。</p>
+<pre><code>type SliceHeader struct {
+    Data uintptr
+    Len  int
+    Cap  int
+}
+</code></pre>
+<p>大切片跟小切片的区别无非就是 Len 和 Cap 的值比小切片的这两个值大一些，如果发生拷贝，本质上就是拷贝上面的三个字段。</p>
+<h1 id="json-库对-nil-slice-和空-slice-的处理是一致的吗">json 库对 nil slice 和空 slice 的处理是一致的吗？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#json-库对-nil-slice-和空-slice-的处理是一致的吗" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Json 库对 nil slice 和空 slice 的处理是不一致的，</p>
+<p>因为 nil slice 只是声明了 slice，却没有给实例化的对象。</p>
+<pre><code>	var f1 []string
+    f2 := make([]string, 0)
+    json1, _ := json.Marshal(Person{f1})
+    json2, _ := json.Marshal(Person{f2})
+    fmt.Printf(&quot;%s\n&quot;, string(json1))
+    fmt.Printf(&quot;%s\n&quot;, string(json2))
+
+//输出
+{&quot;Friends&quot;:null}
+{&quot;Friends&quot;:[]}
+</code></pre>
+<p><strong>Json 库对 nil slice 编码为 null, json 库对空 slice 编码为[]。</strong></p>
+<h1 id="扩容前后的-slice-是否相同">扩容前后的 Slice 是否相同?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#扩容前后的-slice-是否相同" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>情况一：<strong>原数组还有容量可以扩容（实际容量没有填充完），这种情况下，扩容以后的数组还是指向原来的数组</strong>，对一个切片的操作可能影响多个指针指向相同地址的 slice。</p>
+<p>情况二：<strong>原来数组的容量已经达到了最大值，再想扩容，go 默认会先开一片内存区域，把原来的值拷贝过来，然后再执行 append ()操作</strong>。这种情况丝毫不影响原数组。要复制一个 slice，最好使用 copy 函数。</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20230906170544338.png" alt="image-20230906170544338"/></p>
+<p><strong>输出：</strong></p>
+<pre><code>函数内s=[1,2]
+主函数内s=[1]
+</code></pre>
+<h1 id="使用值为-nil-的-slicemap-会发生啥">使用值为 nil 的 slice、map 会发生啥<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#使用值为-nil-的-slicemap-会发生啥" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>允许对值为 nil 的 slice 添加元素，但对值为 nil 的 map 添加元素，则会造成运行时 panic</strong>。</p>
+<pre><code>// map 错误示例  
+func main () {  
+    var m map[string]int  
+    m[&quot;one&quot;] = 1  // error: panic: assignment to entry in nil map  
+    // m := make (map[string]int)// map 的正确声明，分配了实际的内存  
+}      
+  
+// slice 正确示例  
+func main () {  
+ var s []int  
+ s = append (s, 1)  
+}
+</code></pre>
+<p>如果先使用 <code>make()</code>,那么可以使用 <code>m[&quot;one&quot;]=1</code>,因为分配了内存。</p>
+<h1 id="slice-分配在堆上还是栈上">slice 分配在堆上还是栈上<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#slice-分配在堆上还是栈上" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>有可能分配到栈上，也有可能分配到栈上。当开辟切片空间较大时，会逃逸到堆上</strong>。</p>
+<p>通过命令 <code>go build -gcflags &quot;-m -l&quot; xxx.go</code> 观察 golang 是如何进行逃逸分析的</p>
+<pre><code>// map 错误示例
+func main() {
+    var m map[string]int
+    m[&quot;one&quot;] = 1  // error: panic: assignment to entry in nil map
+    // m := make(map[string]int)// map 的正确声明，分配了实际的内存
+}    
+
+// slice 正确示例
+func main() {
+ var s []int
+ s = append(s, 1)
+}
+</code></pre>
+<h1 id="go-中如果-new-一个切片会怎么样">Go 中如果 new 一个切片会怎么样<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-中如果-new-一个切片会怎么样" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>new ([]int) 之后的 list 是⼀个未设置⻓度的  * []int 类型的指针不能对未设置⻓度的指针执⾏ append 操作。</strong></p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticimage-20230724165822059.png" alt="image-20230724165822059"/></p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func main() {
+	list := new([]int)
+	// 编译错误
+	// new([]int) 之后的 list 是⼀个未设置⻓度的 *[]int 类型的指针
+	// 不能对未设置⻓度的指针执⾏ append 操作。
+	*list = append(*list, 1)
+	fmt.Println(*list)
+	s1 := []int{1, 2, 3}
+	s2 := []int{4, 5}
+	// 编译错误，s2需要展开
+	s1 = append(s1, s2...)
+	fmt.Println(s1)
+}//正确写法
+</code></pre>
+<h1 id="整型切片如何初始化">整型切片如何初始化？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#整型切片如何初始化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>//数组初始化
+arr1 := [3]int{1, 2, 3}
+arr2 := [...]int{1, 2, 3}
+arr3 := [3]int{0:3,1:4}
+</code></pre>
+<h1 id="数组怎么转集合-">数组怎么转集合 ?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数组怎么转集合-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>可以使用数组的索引作为 map 的 key，数组的值作为 map 的值。</p>
+<pre><code>//数组初始化
+arr1 := [3]int{1, 2, 3}
+arr2 := [...]int{1, 2, 3}
+arr3 := [3]int{0:3,1:4}
+</code></pre>
+<h1 id="数组是如何实现根据下标随机访问数组元素的吗">数组是如何实现根据下标随机访问数组元素的吗？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数组是如何实现根据下标随机访问数组元素的吗" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>例如： a := [10]int{0}</p>
+<ul>
+<li>计算机给数组 a，分配了一组连续的内存空间。</li>
+<li>比如内存块的首地址为 base_address=1000。</li>
+<li>当计算给每个内存单元分配一个地址，计算机通过地址来访问数据。当计算机需要访问数组的某个元素的时候，会通过一个寻址公式来计算存储的内存地址。</li>
+</ul>
+<h1 id="一个函数传参一个-slice先-append-再赋值和另一个函数先赋值再-append哪个会发生变化">一个函数传参一个 slice，先 append 再赋值和另一个函数先赋值再 append，哪个会发生变化？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一个函数传参一个-slice先-append-再赋值和另一个函数先赋值再-append哪个会发生变化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func BeforeAppend(s []int) []int {
+	s = append(s, 1)
+	s = []int{1, 2, 3}
+	return s
+}
+
+func AfterAppend(s []int) []int {
+	s = []int{1, 2, 3}
+	s = append(s, 1)
+	return s
+}
+
+func main() {
+	s := make([]int, 0)
+	fmt.Println(BeforeAppend(s))
+	fmt.Println(AfterAppend(s))
+}
+</code></pre></article></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+	c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+	v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+	s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+	C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+	S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+	s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+	s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></div><div id="global-graph-outer"><div id="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" id="toc" class><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#参考" data-for="参考">参考</a></li><li class="depth-0"><a href="#基本介绍" data-for="基本介绍">基本介绍</a></li><li class="depth-0"><a href="#go-slice-的底层实现原理" data-for="go-slice-的底层实现原理">Go slice 的底层实现原理?</a></li><li class="depth-0"><a href="#slice-切片的截取" data-for="slice-切片的截取">Slice 切片的截取</a></li><li class="depth-0"><a href="#slice-元素追加" data-for="slice-元素追加">Slice 元素追加</a></li><li class="depth-0"><a href="#slice-扩容" data-for="slice-扩容">Slice 扩容</a></li><li class="depth-0"><a href="#slice-元素删除" data-for="slice-元素删除">Slice 元素删除</a></li><li class="depth-0"><a href="#slice-切片拷贝" data-for="slice-切片拷贝">Slice 切片拷贝</a></li><li class="depth-0"><a href="#go-array-和-slice-的区别" data-for="go-array-和-slice-的区别">Go array 和 slice 的区别？</a></li><li class="depth-0"><a href="#go-slice-深拷贝和浅拷贝" data-for="go-slice-深拷贝和浅拷贝">Go slice 深拷贝和浅拷贝</a></li><li class="depth-0"><a href="#go-slice-为什么不是线程安全的" data-for="go-slice-为什么不是线程安全的">Go slice 为什么不是线程安全的？</a></li><li class="depth-0"><a href="#nil-切片和空切片指向的地址一样" data-for="nil-切片和空切片指向的地址一样">nil 切片和空切片指向的地址一样？</a></li><li class="depth-0"><a href="#拷贝大切片一定比小切片代价大吗" data-for="拷贝大切片一定比小切片代价大吗">拷贝大切片一定比小切片代价大吗？</a></li><li class="depth-0"><a href="#json-库对-nil-slice-和空-slice-的处理是一致的吗" data-for="json-库对-nil-slice-和空-slice-的处理是一致的吗">json 库对 nil slice 和空 slice 的处理是一致的吗？</a></li><li class="depth-0"><a href="#扩容前后的-slice-是否相同" data-for="扩容前后的-slice-是否相同">扩容前后的 Slice 是否相同?</a></li><li class="depth-0"><a href="#使用值为-nil-的-slicemap-会发生啥" data-for="使用值为-nil-的-slicemap-会发生啥">使用值为 nil 的 slice、map 会发生啥</a></li><li class="depth-0"><a href="#slice-分配在堆上还是栈上" data-for="slice-分配在堆上还是栈上">slice 分配在堆上还是栈上</a></li><li class="depth-0"><a href="#go-中如果-new-一个切片会怎么样" data-for="go-中如果-new-一个切片会怎么样">Go 中如果 new 一个切片会怎么样</a></li><li class="depth-0"><a href="#整型切片如何初始化" data-for="整型切片如何初始化">整型切片如何初始化？</a></li><li class="depth-0"><a href="#数组怎么转集合-" data-for="数组怎么转集合-">数组怎么转集合 ?</a></li><li class="depth-0"><a href="#数组是如何实现根据下标随机访问数组元素的吗" data-for="数组是如何实现根据下标随机访问数组元素的吗">数组是如何实现根据下标随机访问数组元素的吗？</a></li><li class="depth-0"><a href="#一个函数传参一个-slice先-append-再赋值和另一个函数先赋值再-append哪个会发生变化" data-for="一个函数传参一个-slice先-append-再赋值和另一个函数先赋值再-append哪个会发生变化">一个函数传参一个 slice，先 append 再赋值和另一个函数先赋值再 append，哪个会发生变化？</a></li></ul></div></div><div class="backlinks"><h3>Backlinks</h3><ul class="overflow"><li>No backlinks found</li></ul></div></div></div><footer class><hr/><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.2.3</a> © 2024</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></body><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">function c(){let t=this.parentElement;t.classList.toggle("is-collapsed");let l=t.classList.contains("is-collapsed")?this.scrollHeight:t.scrollHeight;t.style.maxHeight=l+"px";let o=t,e=t.parentElement;for(;e;){if(!e.classList.contains("callout"))return;let n=e.classList.contains("is-collapsed")?e.scrollHeight:e.scrollHeight+o.scrollHeight;e.style.maxHeight=n+"px",o=e,e=e.parentElement}}function i(){let t=document.getElementsByClassName("callout is-collapsible");for(let s of t){let l=s.firstElementChild;if(l){l.addEventListener("click",c),window.addCleanup(()=>l.removeEventListener("click",c));let e=s.classList.contains("is-collapsed")?l.scrollHeight:s.scrollHeight;s.style.maxHeight=e+"px"}}}document.addEventListener("nav",i);window.addEventListener("resize",i);
+</script><script type="module">
+          let mermaidImport = undefined
+          document.addEventListener('nav', async () => {
+            if (document.querySelector("code.mermaid")) {
+              mermaidImport ||= await import('https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs')
+              const mermaid = mermaidImport.default
+              const darkMode = document.documentElement.getAttribute('saved-theme') === 'dark'
+              mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: darkMode ? 'dark' : 'default'
+              })
+
+              await mermaid.run({
+                querySelector: '.mermaid'
+              })
+            }
+          });
+          </script><script src="../../postscript.js" type="module"></script></html>

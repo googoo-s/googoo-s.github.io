@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>快捷键</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="快捷键"/><meta property="og:description" content="Emacs 这个东东听说功能很强大。不过感觉有些难学，还好网络上的资源还是比较丰富的。目前基于最基本的文本编辑来学习。而且它的快捷键很多，所以要在使用过程中学习会比较容易记住。这个是从网上搜索来的，总结的比较好的，贴在自己这里当做摘录了，方便查询。 C = Control M = Meta = Alt S = Super = ..."/><meta property="og:image" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Emacs 这个东东听说功能很强大。不过感觉有些难学，还好网络上的资源还是比较丰富的。目前基于最基本的文本编辑来学习。而且它的快捷键很多，所以要在使用过程中学习会比较容易记住。这个是从网上搜索来的，总结的比较好的，贴在自己这里当做摘录了，方便查询。 C = Control M = Meta = Alt S = Super = ..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="工具和环境/emacs/快捷键"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="../..">🪴 Quartz 4.0</a></h1><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>Search</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;awesome&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;elastic&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/Channel&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/分布式并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/原子操作&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/基础并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/扩展并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/netty&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring/Spring-cloud&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;journal&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua/用Go实现Lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;zookeeper&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/日志&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/监控&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列/Pulsar&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计/场景题&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true}]"><h1>Explorer</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="awesome"><button class="folder-button"><span class="folder-title">awesome</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="awesome"><li><a href="../../awesome/JavaGuide-知识星球优质主题汇总" data-for="awesome/JavaGuide-知识星球优质主题汇总">JavaGuide 知识星球优质主题汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="elastic"><button class="folder-button"><span class="folder-title">elastic</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="elastic"><li><a href="../../elastic/KQL" data-for="elastic/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程"><button class="folder-button"><span class="folder-title">并发编程</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/Channel"><button class="folder-button"><span class="folder-title">Channel</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/Channel"><li><a href="../../GO/并发编程/Channel/channel" data-for="GO/并发编程/Channel/channel">channel</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/分布式并发原语"><button class="folder-button"><span class="folder-title">分布式并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/分布式并发原语"><li><a href="../../GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁" data-for="GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁">Leader选举互斥锁和读写锁</a></li><li><a href="../../GO/并发编程/分布式并发原语/队列、栅栏和STM" data-for="GO/并发编程/分布式并发原语/队列、栅栏和STM">队列、栅栏和STM</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/原子操作"><button class="folder-button"><span class="folder-title">原子操作</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/原子操作"><li><a href="../../GO/并发编程/原子操作/atomic" data-for="GO/并发编程/原子操作/atomic">atomic</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/基础并发原语"><button class="folder-button"><span class="folder-title">基础并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/基础并发原语"><li><a href="../../GO/并发编程/基础并发原语/Cond" data-for="GO/并发编程/基础并发原语/Cond">Cond</a></li><li><a href="../../GO/并发编程/基础并发原语/Context" data-for="GO/并发编程/基础并发原语/Context">Context</a></li><li><a href="../../GO/并发编程/基础并发原语/map" data-for="GO/并发编程/基础并发原语/map">map</a></li><li><a href="../../GO/并发编程/基础并发原语/Mutex" data-for="GO/并发编程/基础并发原语/Mutex">Mutex</a></li><li><a href="../../GO/并发编程/基础并发原语/Once" data-for="GO/并发编程/基础并发原语/Once">Once</a></li><li><a href="../../GO/并发编程/基础并发原语/Pool" data-for="GO/并发编程/基础并发原语/Pool">Pool</a></li><li><a href="../../GO/并发编程/基础并发原语/RWMutex" data-for="GO/并发编程/基础并发原语/RWMutex">RWMutex</a></li><li><a href="../../GO/并发编程/基础并发原语/WaitGroup" data-for="GO/并发编程/基础并发原语/WaitGroup">WaitGroup</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/扩展并发原语"><button class="folder-button"><span class="folder-title">扩展并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/扩展并发原语"><li><a href="../../GO/并发编程/扩展并发原语/Semaphore-信号量" data-for="GO/并发编程/扩展并发原语/Semaphore-信号量">Semaphore-信号量</a></li><li><a href="../../GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏" data-for="GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏">SingleFlight 和 CyclicBarrier-请求合并和循环栅栏</a></li><li><a href="../../GO/并发编程/扩展并发原语/分组操作" data-for="GO/并发编程/扩展并发原语/分组操作">分组操作</a></li></ul></div></li><li><a href="../../GO/并发编程/开篇词" data-for="GO/并发编程/开篇词">开篇词</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java"><button class="folder-button"><span class="folder-title">Java</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/netty"><button class="folder-button"><span class="folder-title">netty</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/netty"><li><a href="../../Java/netty/1.-概念和体系结构" data-for="Java/netty/1.-概念和体系结构">1. 概念和体系结构</a></li><li><a href="../../Java/netty/BootStrap" data-for="Java/netty/BootStrap">BootStrap</a></li><li><a href="../../Java/netty/ByteBuf" data-for="Java/netty/ByteBuf">ByteBuf</a></li><li><a href="../../Java/netty/ChannelHandler、ChannelPipeline、ChannelContext" data-for="Java/netty/ChannelHandler、ChannelPipeline、ChannelContext">ChannelHandler、ChannelPipeline、ChannelContext</a></li><li><a href="../../Java/netty/EventLoop-和线程模型" data-for="Java/netty/EventLoop-和线程模型">EventLoop 和线程模型</a></li><li><a href="../../Java/netty/传输和Channel" data-for="Java/netty/传输和Channel">传输和Channel</a></li><li><a href="../../Java/netty/编解码器" data-for="Java/netty/编解码器">编解码器</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring"><button class="folder-button"><span class="folder-title">Spring</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring/Spring-cloud"><button class="folder-button"><span class="folder-title">Spring cloud</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring/Spring-cloud"><li><a href="../../Java/Spring/Spring-cloud/spring-cloud-alibaba" data-for="Java/Spring/Spring-cloud/spring-cloud-alibaba">spring cloud alibaba</a></li></ul></div></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="journal"><button class="folder-button"><span class="folder-title">journal</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="journal"><li><a href="../../journal/2023-07-25" data-for="journal/2023-07-25">2023-07-25</a></li><li><a href="../../journal/2023-07-26" data-for="journal/2023-07-26">2023-07-26</a></li><li><a href="../../journal/2023-07-27" data-for="journal/2023-07-27">2023-07-27</a></li><li><a href="../../journal/2023-07-31" data-for="journal/2023-07-31">2023-07-31</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua/用Go实现Lua"><button class="folder-button"><span class="folder-title">用Go实现Lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua/用Go实现Lua"><li><a href="../../lua/用Go实现Lua/1.二进制Chunk" data-for="lua/用Go实现Lua/1.二进制Chunk">1.二进制Chunk</a></li><li><a href="../../lua/用Go实现Lua/2.指令集" data-for="lua/用Go实现Lua/2.指令集">2.指令集</a></li><li><a href="../../lua/用Go实现Lua/3.lua-API" data-for="lua/用Go实现Lua/3.lua-API">3.lua API</a></li><li><a href="../../lua/用Go实现Lua/前言" data-for="lua/用Go实现Lua/前言">前言</a></li></ul></div></li><li><a href="../../lua/lua基础" data-for="lua/lua基础">lua基础</a></li><li><a href="../../lua/Lua高级" data-for="lua/Lua高级">Lua高级</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="zookeeper"><button class="folder-button"><span class="folder-title">zookeeper</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="zookeeper"><li><a href="../../zookeeper/Zookeeper-教程" data-for="zookeeper/Zookeeper-教程">Zookeeper 教程</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用"><button class="folder-button"><span class="folder-title">分布式高并发高性能高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/日志"><button class="folder-button"><span class="folder-title">日志</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/日志"><li><a href="../../分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？" data-for="分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？">服务治理：分布式下如何进行日志管理？</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/监控"><button class="folder-button"><span class="folder-title">监控</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/监控"><li><a href="../../分布式高并发高性能高可用/监控/服务治理：监控系统如何做？" data-for="分布式高并发高性能高可用/监控/服务治理：监控系统如何做？">服务治理：监控系统如何做？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境"><button class="folder-button"><span class="folder-title">工具和环境</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/emacs"><li><a href="../../工具和环境/emacs/安装" data-for="工具和环境/emacs/安装">安装</a></li><li><a href="../../工具和环境/emacs/快捷键" data-for="工具和环境/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/git"><li><a href="../../工具和环境/git/git" data-for="工具和环境/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/msys2"><li><a href="../../工具和环境/msys2/pacman" data-for="工具和环境/msys2/pacman">pacman</a></li></ul></div></li><li><a href="../../工具和环境/工具" data-for="工具和环境/工具">工具</a></li><li><a href="../../工具和环境/环境搭建" data-for="工具和环境/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列"><button class="folder-button"><span class="folder-title">消息队列</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列/Pulsar"><button class="folder-button"><span class="folder-title">Pulsar</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列/Pulsar"><li><a href="../../消息队列/Pulsar/1.Pulsar概述" data-for="消息队列/Pulsar/1.Pulsar概述">1.Pulsar概述</a></li><li><a href="../../消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar" data-for="消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar">2.doccker 中启动 standalone Pulsar</a></li></ul></div></li><li><a href="../../消息队列/消息队列对比" data-for="消息队列/消息队列对比">消息队列对比</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计"><button class="folder-button"><span class="folder-title">系统设计</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计/场景题"><button class="folder-button"><span class="folder-title">场景题</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计/场景题"><li><a href="../../系统设计/场景题/如何" data-for="系统设计/场景题/如何">如何</a></li><li><a href="../../系统设计/场景题/如何设计一个排行榜？" data-for="系统设计/场景题/如何设计一个排行榜？">如何设计一个排行榜？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../工具和环境/">工具和环境</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../工具和环境/emacs/">emacs</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>快捷键</a></div></nav><h1 class="article-title">快捷键</h1><p show-comma="true" class="content-meta"><span>Mar 21, 2024</span><span>19 min read</span></p><ul class="tags"><li><a href="../../tags/name" class="internal tag-link">name</a></li></ul></div></div><article class="popover-hint"><p>Emacs 这个东东听说功能很强大。不过感觉有些难学，还好网络上的资源还是比较丰富的。目前基于最基本的文本编辑来学习。而且它的快捷键很多，所以要在使用过程中学习会比较容易记住。这个是从网上搜索来的，总结的比较好的，贴在自己这里当做摘录了，方便查询。</p>
+<p>C = Control<br/>
+M = Meta = Alt
+S =  Super = APPs
+Del = Backspace<br/>
+RET = Enter</p>
+<p><strong>我常用的</strong>
+M-x  所以命令
+C-x  C-r 最近的文件
+C-c C-l 重新加载配置</p>
+<p><f11> 全屏</f11></p>
+<p><f6> 功能配置</f6></p>
+<p>C-<f6>  mode-line功能配置</f6></p>
+<p><strong>基本快捷键 (Basic)</strong><br/>
+C-x C-f  “find”文件, 即在缓冲区打开/新建一个文件<br/>
+C-x C-s 保存文件<br/>
+C-x C-w 使用其他文件名另存为文件<br/>
+C-x C-v 关闭当前缓冲区文件并打开新文件<br/>
+C-x i 在当前光标处插入文件<br/>
+C-x b 新建/切换缓冲区<br/>
+C-x C-b 显示缓冲区列表<br/>
+C-x k 关闭当前缓冲区<br/>
+C-z 挂起 emacs<br/>
+C-x C-c 关闭 emacs</p>
+<p><strong>光标移动基本快捷键 (Basic Movement)</strong><br/>
+C-f 后一个字符<br/>
+C-b 前一个字符<br/>
+C-p 上一行<br/>
+C-n 下一行<br/>
+M-f 后一个单词<br/>
+M-b 前一个单词<br/>
+C-a 行首<br/>
+C-e 行尾<br/>
+C-v 向下翻一页<br/>
+M-v 向上翻一页<br/>
+M-&lt; 到文件开头注意这里是‘&lt;’不是‘,’需要按 shift，遇到相同情况下同<br/>
+M<span>→</span> 到文件末尾</p>
+<p><strong>编辑 (Editint)</strong><br/>
+M-n 重复执行后一个命令 n 次<br/>
+C-u 重复执行后一个命令 4 次<br/>
+C-u n 重复执行后一个命令 n 次<br/>
+C-d 删除 (delete)后一个字符<br/>
+M-d 删除后一个单词<br/>
+Del 删除前一个字符<br/>
+M-Del 删除前一个单词<br/>
+C-k 移除 (kill)一行</p>
+<p>C-Space 设置开始标记 (例如标记区域)<br/>
+C-@ 功能同上, 用于 C-Space 被操作系统拦截的情况<br/>
+C-w 移除 (kill)标记区域的内容<br/>
+M-w 复制标记区域的内容<br/>
+C-y 召回 (yank)复制/移除的区域/行<br/>
+M-y 召回更早的内容 (在 kill 缓冲区内循环)<br/>
+C-x C-x 交换光标和标记</p>
+<p>C-t 交换两个字符的位置<br/>
+M-t 交换两个单词的位置<br/>
+C-x C-t 交换两行的位置<br/>
+M-u 使从光标位置到单词结尾处的字母变成大写<br/>
+M-l 与 M-u 相反<br/>
+M-c 使从光标位置开始的单词的首字母变为大写</p>
+<p><strong>重要快捷键 (Important)</strong><br/>
+C-g 停止当前运行/输入的命令<br/>
+C-x u 撤销前一个命令<br/>
+M-x revert-buffer RETURN (照着这个输入)撤销上次存盘后所有改动<br/>
+M-x recover-file RETURN 从自动存盘文件恢复<br/>
+M-x recover-session RETURN 如果你编辑了几个文件, 用这个恢复</p>
+<p><strong>在线帮助 (Online-Help)</strong><br/>
+C-h c 显示快捷键绑定的命令<br/>
+C-h k 显示快捷键绑定的命令和它的作用<br/>
+C-h l 显示最后 100 个键入的内容<br/>
+C-h w 显示命令被绑定到哪些快捷键上<br/>
+C-h f 显示函数的功能<br/>
+C-h v 显示变量的含义和值<br/>
+C-h b 显示当前缓冲区所有可用的快捷键<br/>
+C-h t 打开 emacs 教程<br/>
+C-h i 打开 info 阅读器<br/>
+C-h C-f 显示 emacs FAQ<br/>
+C-h p 显示本机 Elisp 包的信息</p>
+<p><strong>搜索/替换 (Seach/Replace)</strong><br/>
+C-s 向后搜索<br/>
+C-r 向前搜索<br/>
+C-g 回到搜索开始前的位置 (如果你仍然在搜索模式中)<br/>
+M-% 询问并替换 (query replace)</p>
+<p>Space 或 y 替换当前匹配<br/>
+Del 或 n 不要替换当前匹配<br/>
+. 仅仅替换当前匹配并退出 (替换)<br/>
+, 替换并暂停 (按 Space 或 y 继续)<br/>
+! 替换以下所有匹配<br/>
+^ 回到上一个匹配位置<br/>
+RETURN 或 q 退出替换</p>
+<p><strong>使用正则表达式 (Regular expression)搜索/替换</strong><br/>
+可在正则表达式中使用的符号:<br/>
+^ 行首<br/>
+$ 行尾<br/>
+. 单个字符<br/>
+.* 任意多个 (包括没有)字符<br/>
+/&lt; 单词开头<br/>
+/> 单词结尾<br/>
+[] 括号中的任意一个字符 (例如[a-z]表示所有的小写字母)</p>
+<p>M C-s RETURN 使用正则表达式向后搜索<br/>
+M C-r RETURN 使用正则表达式向前搜索<br/>
+C-s 增量搜索<br/>
+C-s 重复增量搜索<br/>
+C-r 向前增量搜索<br/>
+C-r 重复向前增量搜索<br/>
+M-x query-replace-regexp 使用正则表达式搜索并替换</p>
+<p><strong>窗口命令 (Window Commands)</strong><br/>
+C-x 2 水平分割窗格<br/>
+C-x 3 垂直分割窗格<br/>
+C-x o 切换至其他窗格<br/>
+C-x 0 关闭窗格<br/>
+C-x 1 关闭除了光标所在窗格外所有窗格<br/>
+C-x ^ 扩大窗格<br/>
+M-x shrink-window 缩小窗格<br/>
+M C-v 滚动其他窗格内容<br/>
+C-x 4 f 在其他窗格中打开文件<br/>
+C-x 4 0 关闭当前缓冲区和窗格<br/>
+C-x 5 2 新建窗口 (frame)<br/>
+C-x 5 f 在新窗口中打开文件<br/>
+C-x 5 o 切换至其他窗口<br/>
+C-x 5 0 关闭当前窗口</p>
+<p><strong>书签命令 (Bookmark commands)</strong><br/>
+C-x r m 在光标当前位置创建书签<br/>
+C-x r b 转到书签<br/>
+M-x bookmark-rename 重命名书签<br/>
+M-x bookmark-delete 删除书签<br/>
+M-x bookmark-save 保存书签<br/>
+C-x r l 列出书签清单</p>
+<p>D 标记等待删除<br/>
+Del 取消删除标记<br/>
+X 删除被标记的书签<br/>
+R 重命名<br/>
+S 保存列表内所有书签<br/>
+F 转到当前书签指向的位置<br/>
+M 标记在多窗口中打开<br/>
+V 显示被标记的书签 (或者光标当前位置的书签)<br/>
+T 切换是否显示路径列表<br/>
+W 显示当前文件路径<br/>
+Q 退出书签列表</p>
+<p>M-x bookmark-write 将所有书签导出至指定文件<br/>
+M-x bookmark-load 从指定文件导入书签</p>
+<p><strong>Shell</strong><br/>
+M-x shell 打开 shell 模式<br/>
+C-c C-c 类似 unix 里的 C-c (停止正在运行的程序)<br/>
+C-d 删除光标后一个字符<br/>
+C-c C-d 发送 EOF<br/>
+C-c C-z 挂起程序 (unix 下的 C-z)<br/>
+M-p 显示前一条命令<br/>
+M-n 显示后一条命令</p>
+<p><strong>DIRectory EDitor (dired)</strong><br/>
+C-x d 打开 dired<br/>
+C (大写 C) 复制<br/>
+D 标记等待删除<br/>
+D 立即删除<br/>
+E 或 f 打开文件或目录<br/>
+G 刷新当前目录<br/>
+G 改变文件所属组 (chgrp)<br/>
+K 从屏幕上的列表里删除一行 (不是真的删除)<br/>
+M 用*标记<br/>
+N 光标移动到下一行<br/>
+O 在另一个窗格打开文件并移动光标<br/>
+C-o 在另一个窗格打开文件但不移动光标<br/>
+P 打印文件<br/>
+Q 退出 dired<br/>
+Q 在标记的文件中替换<br/>
+R 重命名文件<br/>
+U 移除标记<br/>
+V 显示文件内容<br/>
+X 删除有 D 标记的文件<br/>
+Z 压缩/解压缩文件<br/>
+M-Del 移除标记 (默认为所有类型的标记)<br/>
+~ 标记备份文件 (文件名有~的文件)等待删除<br/>
+# 标记自动保存文件 (文件名形如<a href="../.././../tags/name" class="tag-link internal alias" data-slug="tags/name">name</a> #)等待删除<br/>
+*/ 用*标记所有文件夹 (用 C-u */n 移除标记)<br/>
+= 将当前文件和标记文件 (使用 C-@标记而不是 dired 的 m 标记)比较<br/>
+M-= 将当前文件和它的备份比较<br/>
+! 对当前文件应用 shell 命令<br/>
+M-} 移动光标至下一个用*或 D 标记的文件<br/>
+M-{ 移动光标至上一个用*或 D 标记的文件<br/>
+% d 使用正则表达式标记文件等待删除<br/>
+% m 使用正则表达式标记文件为*<br/>
++ 新建文件夹<br/>
+> 移动光标至后一个文件夹<br/>
+&lt; 移动光标至前一个文件夹<br/>
+S 切换排序模式 (按文件名/日期)</p>
+<p>或许把这个命令归入这一类也很合适:<br/>
+M-x speedbar 打开一个独立的目录显示窗口</p>
+<p><strong>Telnet</strong>（大致了解）<br/>
+M-x telnet 打开 telnet 模式<br/>
+C-d 删除后一个字符或发送 EOF<br/>
+C-c C-c 停止正在运行的程序 (和 unix 下的 C-c 类似)<br/>
+C-c C-d 发送 EOF<br/>
+C-c C-o 清除最后一个命令的输出<br/>
+C-c C-z 挂起正在运行的命令<br/>
+C-c C-u 移除前一行<br/>
+M-p 显示前一条命令</p>
+<p><strong>Text</strong><br/>
+只能在 text 模式里使用<br/>
+M-s 使当前行居中<br/>
+M-S 使当前段落居中<br/>
+M-x center-region 使被选中的区域居中</p>
+<p><strong>宏命令 (Macro-commands)</strong>（大致了解）<br/>
+C-x ( 开始定义宏<br/>
+C-x ) 结束定义宏<br/>
+C-x e 运行最近定义的宏<br/>
+M-n C-x e 运行最近定义的宏 n 次<br/>
+M-x name-last-kbd-macro 给最近定义的宏命名 (用来保存)<br/>
+M-x insert-kbd-macro 将已命名的宏保存到文件<br/>
+M-x load-file 载入宏</p>
+<p><strong>编程 (Programming)</strong><br/>
+M C-/ 自动缩进光标和标记间的区域<br/>
+M-m 移动光标到行首第一个 (非空格)字符<br/>
+M-^ 将当前行接到上一行末尾处<br/>
+M-; 添加缩进并格式化的注释<br/>
+C, C++和 Java 模式<br/>
+M-a 移动光标到声明的开始处<br/>
+M-e 移动光标到声明的结尾处<br/>
+M C-a 移动光标到函数的开始处<br/>
+M C-e 移动光标到函数的结尾处<br/>
+C-c RETURN 将光标移动到函数的开始处并标记到结尾处<br/>
+C-c C-q 根据缩进风格缩进整个函数<br/>
+C-c C-a 切换自动换行功能<br/>
+C-c C-d 一次性删除光标后的一串空格 (greedy delete)</p>
+<p>为了实现下面的一些技术, 你需要在保存源代码的目录里运行”etags<br/>
+*. C *. H *. Cpp”(或者源代码的其他的扩展名)<br/>
+M-. (点) 搜索标签<br/>
+M-x tags-search ENTER 在所有标签里搜索 (使用正则表达式)<br/>
+M-, (逗号) 在 tags-search 里跳至下一个匹配处<br/>
+M-x tags-query-replace 在设置过标签的所有文件里替换文本</p>
+<p><strong>GDB (调试器)（大致了解）</strong><br/>
+M-x gdb 在另一个的窗格中打开 gdb</p>
+<p><strong>版本控制 (Version Control)（以后会用到现在大致了解就可以了）</strong><br/>
+C-x v d 显示当前目录下所有注册过的文件 (show all registered files in this dir)<br/>
+C-x v = 比较不同版本间的差异 (show diff between versions)<br/>
+C-x v u 移除上次提交之后的更改 (remove all changes since last checkin)<br/>
+C-x v ~ 在不同窗格中显示某个版本 (show certain version in different window)<br/>
+C-x v l 打印日志 (print log)<br/>
+C-x v i 标记文件等待添加版本控制 (mark file for version control add)<br/>
+C-x v h 给文件添加版本控制文件头 (insert version control header into file)<br/>
+C-x v r 获取命名过的快照 (check out named snapshot)<br/>
+C-x v s 创建命名的快照 (create named snapshot)<br/>
+C-x v a 创建 gnu 风格的更改日志 (create changelog file in gnu-style)</p>
+<p><strong>文件操作：</strong></p>
+<p>C+x C+f<br/>
+打开文件<br/>
+C+x C+r<br/>
+以只读的方式打开文件<br/>
+C+x C+q<br/>
+进行只读/读写模式切换<br/>
+C+x C+v<br/>
+切换缓冲区<br/>
+C+x C+s<br/>
+保存文件<br/>
+C+x C+w<br/>
+文件另存为<br/>
+C+x i<br/>
+向缓冲区中插入文件</p>
+<p>移动操作：C+f<br/>
+前进一个字符 C+b<br/>
+后退一个字符 M+f<br/>
+前进一个单词 M+b<br/>
+后退一个单词 C+a<br/>
+移动到行首 C+e<br/>
+移动到行尾 M+a<br/>
+移动到句首 M+e<br/>
+移动到句尾 C+p<br/>
+后退一行 C+n<br/>
+前进一行 M+g g<br/>
+跳到指定行 C+v<br/>
+向下翻页 M+v<br/>
+向上翻页 M+&lt; 移动到缓冲区首M+><br/>
+移动到缓冲区尾 C+M+f<br/>
+向前匹配括号 C+M+b<br/>
+向后匹配括号标记/复制/剪切/粘贴：C+xh<br/>
+全选 C+@<br/>
+标记开始 M+w<br/>
+复制区域到 kill ring 中，但不删除 C+w<br/>
+删除区域 C+y<br/>
+将 kill ring 中的内容粘贴到缓冲区 C+Del<br/>
+剪切光标到单词结束 M+Del<br/>
+剪切光标到单词开始 C+k<br/>
+剪切光标到行结尾 M+k<br/>
+剪切光标到句结尾 (C+d)/Del<br/>
+删除光标上的字 M+d<br/>
+剪切光标到下一个单词结尾 ctrl-S (shift+s)-Backspace<br/>
+删除当前行</p>
+<p><strong>缓冲区操作：</strong></p>
+<p>C+x C+f 打开/创建一个文件，并创建一个新的缓冲区</p>
+<p>C+x C+s 保存缓冲区内容到文件</p>
+<p>C+x C+w 保存缓冲区内容到其它文件</p>
+<p>C+xk 关闭当前缓冲区</p>
+<p>C+x C+b 显示缓冲区列表，可以使用方向键来选择缓冲区</p>
+<p>C+x C+c 关闭所有缓冲区，并推出 emacs</p>
+<p><strong>M+x 命令：</strong></p>
+<p>查找和替换：<br/>
+C+s 向前查找 C+r 向后查找按下这两个快捷键后，<br/>
+M+p 显示上一个搜索词，<br/>
+M+n 显示下一个搜索词。输入查找内容后，按 C+s 跳到下一个结果，<br/>
+C+r 跳到上一个结果。<br/>
+Enter 结束查找光标在当前位置，C+g 取消查找光标返回原处。</p>
+<p>2，查找单词</p>
+<p>按 C - s RET C - w 或 C - r RET C - w 来使用单词搜索。</p>
+<p>3，查找及替换</p>
+<p>按 M - %启动查找替换，输入要被替换的词，回车，然后输入要替换的词，再回车。</p>
+<p>被替换的词会高亮起来，这时，输入 y 替换并跳到下一个，输入 n 忽略并跳到下一个，输入 q 结束，输入！替换剩下的全部。</p>
+<p>一些常用的选项：</p>
+<p>C - g 中断查找替换过程。</p>
+<p>^ 返回上一个替换点，按 y 继续下一个，如果不想替换上一个的话，用^返回到上一个，然后按 C - r 进入编辑，修改完后按 C- M - c 退出继续下一个。</p>
+<p>C - l 使当前匹配显示在文档中间。</p>
+<p>C - r 进入修改。</p>
+<p>4，列出匹配的模式</p>
+<p>有时候想列出匹配的全面模式，而不是在文档中浏览，这个可以使用 occur 这个函数。</p>
+<p>例子：M - x occur RET Create RET</p>
+<p>这时，emacs 会新开一个窗口来列出匹配的行，用鼠标点击或把光标移到一行按回车就会跳转到那里。</p>
+<p>执行 SHELL 命令</p>
+<p>M-x shell<br/>
+打开 shell 命令<br/>
+M-!<br/>
+执行 shell 命令（shell-command）<br/>
+M-1 M-!<br/>
+执行 Shell 命令，命令输出插入光标位置，不打开新输入窗口<br/>
+M-|<br/>
+针对某一特定区域执行命令 (shell-command-on-region), 比如 C-x h M-juuencode</p>
+<p>窗口操作</p>
+<p>C-x 0<br/>
+关闭本窗口<br/>
+C-x 1<br/>
+只留下一个窗口<br/>
+C-x 2<br/>
+垂直均分窗口<br/>
+C-x 3<br/>
+水平均分窗口<br/>
+C-x o<br/>
+切换到别的窗口<br/>
+C-x s<br/>
+保存所有窗口的缓冲<br/>
+C-x b<br/>
+选择当前窗口的缓冲区<br/>
+C-x ^<br/>
+纵向扩大窗口<br/>
+C-x }<br/>
+横向扩大窗口</p>
+<p>目录操作</p>
+<p>C-x d<br/>
+打开目录模式<br/>
+S<br/>
+按日期/文件名排序显示<br/>
+V<br/>
+阅读光标所在的文件<br/>
+Q<br/>
+退出阅读的文件<br/>
+D<br/>
+标记为删除<br/>
+X<br/>
+执行标记<br/>
+D<br/>
+马上删除当前文件<br/>
+C<br/>
+拷贝当前文件<br/>
+R<br/>
+重命名当前文件<br/>
++<br/>
+新建文件<br/>
+Z<br/>
+压缩文件<br/>
+！<br/>
+对光标所在的文件执行 SHELL 命令<br/>
+G<br/>
+刷新显示<br/>
+I<br/>
+在当前缓冲区的末尾插入子目录的内容<br/>
+[n]m<br/>
+标记光标所在的文件，如果指定 n, 则从光标所在的文件后 n 个文件被标记<br/>
+[n]u<br/>
+取消当前光标标记的文件，n 的含义同上<br/>
+T<br/>
+反向标记文件<br/>
+%-m<br/>
+正则标记<br/>
+Q<br/>
+退出目录模式</p>
+<p>其他：</p>
+<p>C+x u 撤销</p>
+<p>C+x C+c 退出 emacs</p></article></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+	c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+	v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+	s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+	C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+	S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+	s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+	s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></div><div id="global-graph-outer"><div id="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true}"></div></div></div><div class="backlinks"><h3>Backlinks</h3><ul class="overflow"><li>No backlinks found</li></ul></div></div></div><footer class><hr/><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.2.3</a> © 2024</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></body><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">function c(){let t=this.parentElement;t.classList.toggle("is-collapsed");let l=t.classList.contains("is-collapsed")?this.scrollHeight:t.scrollHeight;t.style.maxHeight=l+"px";let o=t,e=t.parentElement;for(;e;){if(!e.classList.contains("callout"))return;let n=e.classList.contains("is-collapsed")?e.scrollHeight:e.scrollHeight+o.scrollHeight;e.style.maxHeight=n+"px",o=e,e=e.parentElement}}function i(){let t=document.getElementsByClassName("callout is-collapsible");for(let s of t){let l=s.firstElementChild;if(l){l.addEventListener("click",c),window.addCleanup(()=>l.removeEventListener("click",c));let e=s.classList.contains("is-collapsed")?l.scrollHeight:s.scrollHeight;s.style.maxHeight=e+"px"}}}document.addEventListener("nav",i);window.addEventListener("resize",i);
+</script><script type="module">
+          let mermaidImport = undefined
+          document.addEventListener('nav', async () => {
+            if (document.querySelector("code.mermaid")) {
+              mermaidImport ||= await import('https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs')
+              const mermaid = mermaidImport.default
+              const darkMode = document.documentElement.getAttribute('saved-theme') === 'dark'
+              mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: darkMode ? 'dark' : 'default'
+              })
+
+              await mermaid.run({
+                querySelector: '.mermaid'
+              })
+            }
+          });
+          </script><script src="../../postscript.js" type="module"></script></html>

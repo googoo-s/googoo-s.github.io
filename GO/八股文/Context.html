@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Context</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="Context"/><meta property="og:description" content="参考 Golang context 实现原理 go 之 Context 基本使用 前言 context 是 golang 中的经典工具 主要在异步场景中用于实现并发协调以及对 goroutine 的生命周期控制. 除此之外，context 还兼有一定的数据存储能力. 本着知其然知其所以然的精神，本文和大家一起深入 context 源码一探究竟，较为细节地对其实现原理进行梳理."/><meta property="og:image" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="参考 Golang context 实现原理 go 之 Context 基本使用 前言 context 是 golang 中的经典工具 主要在异步场景中用于实现并发协调以及对 goroutine 的生命周期控制. 除此之外，context 还兼有一定的数据存储能力. 本着知其然知其所以然的精神，本文和大家一起深入 context 源码一探究竟，较为细节地对其实现原理进行梳理."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="GO/八股文/Context"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="../..">🪴 Quartz 4.0</a></h1><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>Search</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;awesome&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;elastic&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/Channel&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/分布式并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/原子操作&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/基础并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/并发编程/扩展并发原语&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/netty&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java/Spring/Spring-cloud&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;journal&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua/用Go实现Lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;zookeeper&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/日志&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;分布式高并发高性能高可用/监控&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列/Pulsar&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;系统设计/场景题&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true}]"><h1>Explorer</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="awesome"><button class="folder-button"><span class="folder-title">awesome</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="awesome"><li><a href="../../awesome/JavaGuide-知识星球优质主题汇总" data-for="awesome/JavaGuide-知识星球优质主题汇总">JavaGuide 知识星球优质主题汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="elastic"><button class="folder-button"><span class="folder-title">elastic</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="elastic"><li><a href="../../elastic/KQL" data-for="elastic/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程"><button class="folder-button"><span class="folder-title">并发编程</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/Channel"><button class="folder-button"><span class="folder-title">Channel</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/Channel"><li><a href="../../GO/并发编程/Channel/channel" data-for="GO/并发编程/Channel/channel">channel</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/分布式并发原语"><button class="folder-button"><span class="folder-title">分布式并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/分布式并发原语"><li><a href="../../GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁" data-for="GO/并发编程/分布式并发原语/Leader选举互斥锁和读写锁">Leader选举互斥锁和读写锁</a></li><li><a href="../../GO/并发编程/分布式并发原语/队列、栅栏和STM" data-for="GO/并发编程/分布式并发原语/队列、栅栏和STM">队列、栅栏和STM</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/原子操作"><button class="folder-button"><span class="folder-title">原子操作</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/原子操作"><li><a href="../../GO/并发编程/原子操作/atomic" data-for="GO/并发编程/原子操作/atomic">atomic</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/基础并发原语"><button class="folder-button"><span class="folder-title">基础并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/基础并发原语"><li><a href="../../GO/并发编程/基础并发原语/Cond" data-for="GO/并发编程/基础并发原语/Cond">Cond</a></li><li><a href="../../GO/并发编程/基础并发原语/Context" data-for="GO/并发编程/基础并发原语/Context">Context</a></li><li><a href="../../GO/并发编程/基础并发原语/map" data-for="GO/并发编程/基础并发原语/map">map</a></li><li><a href="../../GO/并发编程/基础并发原语/Mutex" data-for="GO/并发编程/基础并发原语/Mutex">Mutex</a></li><li><a href="../../GO/并发编程/基础并发原语/Once" data-for="GO/并发编程/基础并发原语/Once">Once</a></li><li><a href="../../GO/并发编程/基础并发原语/Pool" data-for="GO/并发编程/基础并发原语/Pool">Pool</a></li><li><a href="../../GO/并发编程/基础并发原语/RWMutex" data-for="GO/并发编程/基础并发原语/RWMutex">RWMutex</a></li><li><a href="../../GO/并发编程/基础并发原语/WaitGroup" data-for="GO/并发编程/基础并发原语/WaitGroup">WaitGroup</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/并发编程/扩展并发原语"><button class="folder-button"><span class="folder-title">扩展并发原语</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/并发编程/扩展并发原语"><li><a href="../../GO/并发编程/扩展并发原语/Semaphore-信号量" data-for="GO/并发编程/扩展并发原语/Semaphore-信号量">Semaphore-信号量</a></li><li><a href="../../GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏" data-for="GO/并发编程/扩展并发原语/SingleFlight-和-CyclicBarrier-请求合并和循环栅栏">SingleFlight 和 CyclicBarrier-请求合并和循环栅栏</a></li><li><a href="../../GO/并发编程/扩展并发原语/分组操作" data-for="GO/并发编程/扩展并发原语/分组操作">分组操作</a></li></ul></div></li><li><a href="../../GO/并发编程/开篇词" data-for="GO/并发编程/开篇词">开篇词</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java"><button class="folder-button"><span class="folder-title">Java</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/netty"><button class="folder-button"><span class="folder-title">netty</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/netty"><li><a href="../../Java/netty/1.-概念和体系结构" data-for="Java/netty/1.-概念和体系结构">1. 概念和体系结构</a></li><li><a href="../../Java/netty/BootStrap" data-for="Java/netty/BootStrap">BootStrap</a></li><li><a href="../../Java/netty/ByteBuf" data-for="Java/netty/ByteBuf">ByteBuf</a></li><li><a href="../../Java/netty/ChannelHandler、ChannelPipeline、ChannelContext" data-for="Java/netty/ChannelHandler、ChannelPipeline、ChannelContext">ChannelHandler、ChannelPipeline、ChannelContext</a></li><li><a href="../../Java/netty/EventLoop-和线程模型" data-for="Java/netty/EventLoop-和线程模型">EventLoop 和线程模型</a></li><li><a href="../../Java/netty/传输和Channel" data-for="Java/netty/传输和Channel">传输和Channel</a></li><li><a href="../../Java/netty/编解码器" data-for="Java/netty/编解码器">编解码器</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring"><button class="folder-button"><span class="folder-title">Spring</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java/Spring/Spring-cloud"><button class="folder-button"><span class="folder-title">Spring cloud</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java/Spring/Spring-cloud"><li><a href="../../Java/Spring/Spring-cloud/spring-cloud-alibaba" data-for="Java/Spring/Spring-cloud/spring-cloud-alibaba">spring cloud alibaba</a></li></ul></div></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="journal"><button class="folder-button"><span class="folder-title">journal</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="journal"><li><a href="../../journal/2023-07-25" data-for="journal/2023-07-25">2023-07-25</a></li><li><a href="../../journal/2023-07-26" data-for="journal/2023-07-26">2023-07-26</a></li><li><a href="../../journal/2023-07-27" data-for="journal/2023-07-27">2023-07-27</a></li><li><a href="../../journal/2023-07-31" data-for="journal/2023-07-31">2023-07-31</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua/用Go实现Lua"><button class="folder-button"><span class="folder-title">用Go实现Lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua/用Go实现Lua"><li><a href="../../lua/用Go实现Lua/1.二进制Chunk" data-for="lua/用Go实现Lua/1.二进制Chunk">1.二进制Chunk</a></li><li><a href="../../lua/用Go实现Lua/2.指令集" data-for="lua/用Go实现Lua/2.指令集">2.指令集</a></li><li><a href="../../lua/用Go实现Lua/3.lua-API" data-for="lua/用Go实现Lua/3.lua-API">3.lua API</a></li><li><a href="../../lua/用Go实现Lua/前言" data-for="lua/用Go实现Lua/前言">前言</a></li></ul></div></li><li><a href="../../lua/lua基础" data-for="lua/lua基础">lua基础</a></li><li><a href="../../lua/Lua高级" data-for="lua/Lua高级">Lua高级</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="zookeeper"><button class="folder-button"><span class="folder-title">zookeeper</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="zookeeper"><li><a href="../../zookeeper/Zookeeper-教程" data-for="zookeeper/Zookeeper-教程">Zookeeper 教程</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用"><button class="folder-button"><span class="folder-title">分布式高并发高性能高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/日志"><button class="folder-button"><span class="folder-title">日志</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/日志"><li><a href="../../分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？" data-for="分布式高并发高性能高可用/日志/服务治理：分布式下如何进行日志管理？">服务治理：分布式下如何进行日志管理？</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="分布式高并发高性能高可用/监控"><button class="folder-button"><span class="folder-title">监控</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="分布式高并发高性能高可用/监控"><li><a href="../../分布式高并发高性能高可用/监控/服务治理：监控系统如何做？" data-for="分布式高并发高性能高可用/监控/服务治理：监控系统如何做？">服务治理：监控系统如何做？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境"><button class="folder-button"><span class="folder-title">工具和环境</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/emacs"><li><a href="../../工具和环境/emacs/安装" data-for="工具和环境/emacs/安装">安装</a></li><li><a href="../../工具和环境/emacs/快捷键" data-for="工具和环境/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/git"><li><a href="../../工具和环境/git/git" data-for="工具和环境/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/msys2"><li><a href="../../工具和环境/msys2/pacman" data-for="工具和环境/msys2/pacman">pacman</a></li></ul></div></li><li><a href="../../工具和环境/工具" data-for="工具和环境/工具">工具</a></li><li><a href="../../工具和环境/环境搭建" data-for="工具和环境/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列"><button class="folder-button"><span class="folder-title">消息队列</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列/Pulsar"><button class="folder-button"><span class="folder-title">Pulsar</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列/Pulsar"><li><a href="../../消息队列/Pulsar/1.Pulsar概述" data-for="消息队列/Pulsar/1.Pulsar概述">1.Pulsar概述</a></li><li><a href="../../消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar" data-for="消息队列/Pulsar/2.doccker-中启动-standalone-Pulsar">2.doccker 中启动 standalone Pulsar</a></li></ul></div></li><li><a href="../../消息队列/消息队列对比" data-for="消息队列/消息队列对比">消息队列对比</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计"><button class="folder-button"><span class="folder-title">系统设计</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="系统设计/场景题"><button class="folder-button"><span class="folder-title">场景题</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="系统设计/场景题"><li><a href="../../系统设计/场景题/如何" data-for="系统设计/场景题/如何">如何</a></li><li><a href="../../系统设计/场景题/如何设计一个排行榜？" data-for="系统设计/场景题/如何设计一个排行榜？">如何设计一个排行榜？</a></li></ul></div></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../GO/">GO</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../GO/八股文/">八股文</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Context</a></div></nav><h1 class="article-title">Context</h1><p show-comma="true" class="content-meta"><span>Mar 21, 2024</span><span>28 min read</span></p><ul class="tags"><li><a href="../../tags/" class="internal tag-link"></a></li></ul></div></div><article class="popover-hint"><h1 id="参考">参考<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#参考" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzkxMjQzMjA0OQ==&amp;mid=2247483677&amp;idx=1&amp;sn=d1c0e52b1fd31932867ec9b1d00f4ec2&amp;chksm=c10c4fc3f67bc6d590141040342153004ea4e420d83f4e2b2afc068e8bb904778b02b5be3f97&amp;scene=178&amp;cur_album_id=2709593649634033668#rd" class="external">Golang context 实现原理<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p><a href="https://www.cnblogs.com/huyiCloud/p/16120294.html" class="external">go 之 Context 基本使用<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="前言">前言<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#前言" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>context 是 golang 中的经典工具</p>
+<ul>
+<li>主要在异步场景中用于实现并发协调以及对 goroutine 的生命周期控制.</li>
+<li>除此之外，context 还兼有一定的数据存储能力.</li>
+<li>本着知其然知其所以然的精神，本文和大家一起深入 context 源码一探究竟，较为细节地对其实现原理进行梳理.</li>
+</ul>
+<h1 id="为啥使用-context">为啥使用 Context<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为啥使用-context" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>比如以下这个例子，一旦主协程关闭<code>done channel</code>，那么子协程就可以退出了，这样就实现了主协程通知子协程的需求</p>
+<pre><code>  
+func main() {
+    // 数据通道
+    messages := make(chan int, 10)
+    // 信号通道
+    done := make(chan bool)
+
+    defer close(messages)
+    // consumer
+    go func() {
+        // 每隔一秒执行一次，定时器
+        ticker := time.NewTicker(1 * time.Second)
+        for _ = range ticker.C {
+            select {
+            // 若关闭了通道则 执行下面的代码
+            case &lt;-done:
+                fmt.Println(&quot;child process interrupt...&quot;)
+                return
+            default:
+                fmt.Printf(&quot;send message: %d\n&quot;, &lt;-messages)
+            }
+        }
+    }()
+
+    // producer
+    for i := 0; i &lt; 10; i++ {
+        messages &lt;- i
+    }
+    time.Sleep(5 * time.Second)
+    // 关闭通道, 退出上面的匿名函数
+    close(done)
+    time.Sleep(1 * time.Second)
+    fmt.Println(&quot;main process exit!&quot;)
+}
+</code></pre>
+<p>假如主协程中有多个任务1, 2, …m，主协程对这些任务有超时控制。如果还是使用<code>done channel</code>的用法 ，那么使用<code>done channel</code>的方式将会变得非常繁琐且混乱</p>
+<p>我们需要一种优雅的方案来实现这样一种机制：</p>
+<ul>
+<li><strong>上层任务取消后，所有的下层任务都会被取消；</strong></li>
+<li><strong>中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务</strong>。</li>
+</ul>
+<p>这个时候<code>context</code>就派上用场了</p>
+<h1 id="context-的使用">Context 的使用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#context-的使用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>注意: 这两种方式是创建根context，不具备任何功能，需要用到with系列函数来实现具体功能`</p>
+<h2 id="根-context">根 Context<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#根-context" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>context.Backgroud()
+<ul>
+<li>是上下文的默认值，所有其他的上下文都应该从它衍生（Derived）出来, ,一般情况下我们用这个</li>
+</ul>
+</li>
+<li>context.TODO()
+<ul>
+<li> 应该只在不确定应该使用哪种上下文时使用；</li>
+</ul>
+</li>
+</ul>
+<h2 id="with-系列函数">With 系列函数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#with-系列函数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="contextwithcancel-取消控制"> context.withCancel() 取消控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextwithcancel-取消控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>就可以使用withCancel来衍生一个context传递到不同的goroutine中，当我想让这些goroutine停止运行，就可以调用cancel来进行取消</p>
+<pre><code>// 案例一
+
+/*  
+	代码逻辑:
+    我们使用withCancel创建一个基于Background的ctx，然后启动一个讲话程序，
+    每隔1s说一话，main函数在10s后执行cancel，那么speak检测到取消信号就会退出。
+*/
+
+package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;time&quot;
+)
+
+// context.Background()函数创建根上下文，返回父context和cancel函数
+func NewWithCancel() (context.Context, context.CancelFunc) {
+	return context.WithCancel(context.Background())
+
+}
+
+//  业务逻辑
+func Speak(ctx context.Context) {
+	for range time.Tick(time.Second) {
+		select {
+		case &lt;-ctx.Done():
+			fmt.Println(&quot;关闭线程...&quot;)
+			fmt.Println(ctx.Err())
+		default:
+			fmt.Println(&quot;hahahhaa&quot;)
+		}
+	}
+}
+
+func main() {
+        // 创建父context和cancel函数
+	ctx, cancel := NewWithCancel()
+
+        // 使用协程来启动业务逻辑
+	go Speak(ctx)
+
+	time.Sleep(10 * time.Second)
+
+        // 取消的信号，结束Speak函数的运行
+	cancel()
+
+	time.Sleep(1 * time.Second)
+
+}
+</code></pre>
+<pre><code>  
+// 案例二
+
+/*
+代码逻辑: 
+1. 利用根Context创建一个父Context，使用父Context创建一个协程，
+2. 利用上面的父Context再创建一个子Context，使用该子Context创建一个协程
+3. 一段时间后，调用父Context的cancel函数，会发现父Context的协程和子Context的协程都收到了信号，被结束了
+
+*/
+package main
+ 
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;time&quot;
+)
+ 
+func main() {
+	// 父context(利用根context得到)
+	ctx, cancel := context.WithCancel(context.Background())
+ 
+	// 父context的子协程
+	go watch1(ctx)
+ 
+	// 子context，注意：这里虽然也返回了cancel的函数对象，但是未使用
+	valueCtx, _ := context.WithCancel(ctx)
+	// 子context的子协程
+	go watch2(valueCtx)
+ 
+	fmt.Println(&quot;现在开始等待3秒,time=&quot;, time.Now().Unix())
+	time.Sleep(3 * time.Second)
+ 
+	// 调用cancel()
+	fmt.Println(&quot;等待3秒结束,调用cancel()函数&quot;)
+	cancel()
+ 
+	// 再等待5秒看输出，可以发现父context的子协程和子context的子协程都会被结束掉
+	time.Sleep(5 * time.Second)
+	fmt.Println(&quot;最终结束,time=&quot;, time.Now().Unix())
+}
+ 
+// 父context的协程
+func watch1(ctx context.Context) {
+	for {
+		select {
+		case &lt;-ctx.Done(): //取出值即说明是结束信号
+			fmt.Println(&quot;收到信号，父context的协程退出,time=&quot;, time.Now().Unix())
+			return
+		default:
+			fmt.Println(&quot;父context的协程监控中,time=&quot;, time.Now().Unix())
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
+ 
+// 子context的协程
+func watch2(ctx context.Context) {
+	for {
+		select {
+		case &lt;-ctx.Done(): //取出值即说明是结束信号
+			fmt.Println(&quot;收到信号，子context的协程退出,time=&quot;, time.Now().Unix())
+			return
+		default:
+			fmt.Println(&quot;子context的协程监控中,time=&quot;, time.Now().Unix())
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
+</code></pre>
+<h3 id="contextwithtimeout-超时控制">context.WithTimeout 超时控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextwithtimeout-超时控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>withTimeout</code>或者<code>withDeadline</code>来做超时控制，当一次请求到达我们设置的超时时间，就会及时取消，不在往下执行。<code>withTimeout</code>和<code>withDeadline</code>作用是一样的，就是传递的时间参数不同而已，他们都会通过传入的时间来自动取消<code>Context</code>，这里要注意的是他们都会返回一个<code>cancelFunc</code>方法，通过调用这个方法可以达到提前进行取消</p>
+<pre><code>  
+// 案例一
+
+package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;time&quot;
+)
+
+// 创建一个带超时context， 三秒后退出执行
+func NewContextWithTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), 3*time.Second)
+}
+
+// 处理程序
+func HttpHandler() {
+	ctx, cancel := NewContextWithTimeout()
+	defer cancel()
+	deal(ctx)
+
+}
+
+// 业务逻辑代码
+func deal(ctx context.Context) {
+	for i := 0; i &lt; 10; i++ {
+		time.Sleep(1 * time.Second)
+		select {
+		case &lt;-ctx.Done():
+			fmt.Println(ctx.Err())
+			return
+		default:
+			fmt.Printf(&quot;deal time is %d\n&quot;, i)
+		}
+	}
+}
+func main() {
+	HttpHandler()
+}
+</code></pre>
+<pre><code>// 案例二
+
+package main
+ 
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;time&quot;
+)
+ 
+func main() {
+	// 创建一个子节点的context,3秒后自动超时
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+ 
+	go watch(ctx, &quot;监控1&quot;)
+	go watch(ctx, &quot;监控2&quot;)
+ 
+	fmt.Println(&quot;现在开始等待8秒,time=&quot;, time.Now().Unix())
+	time.Sleep(8 * time.Second)
+ 
+	fmt.Println(&quot;等待8秒结束,准备调用cancel()函数，发现两个子协程已经结束了，time=&quot;, time.Now().Unix())
+	cancel()
+}
+ 
+// 单独的监控协程
+func watch(ctx context.Context, name string) {
+	for {
+		select {
+		case &lt;-ctx.Done():
+			fmt.Println(name, &quot;收到信号，监控退出,time=&quot;, time.Now().Unix())
+			return
+		default:
+			fmt.Println(name, &quot;goroutine监控中,time=&quot;, time.Now().Unix())
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
+</code></pre>
+<h3 id="-contextwithvalue-携带数据-谨慎使用"><a href="../.././../tags/" class="tag-link internal alias" data-slug="tags/index"></a> context.WithValue() 携带数据 <code>[谨慎使用]</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-contextwithvalue-携带数据-谨慎使用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>日常在业务开发中都希望能有一个<code>trace_id</code>能串联所有的日志，这就需要我们打印日志时能够获取到这个<code>trace_id</code>，在<code>python</code>中我们可以用<code>gevent.local</code>来传递，在<code>java</code>中我们可以用<code>ThreadLocal</code>来传递，在<code>Go</code>语言中我们就可以使用<code>Context</code>来传递，通过使用<code>WithValue</code>来创建一个携带<code>trace_id</code>的<code>context</code>，然后不断透传下去，打印日志时输出即可</p>
+<pre><code>/*
+我们基于context.Background创建一个携带trace_id的ctx，然后通过context树一起传递，
+从中派生的任何context都会获取此值，我们最后打印日志的时候就可以从ctx中取值输出到日志中。
+目前一些RPC框架都是支持了Context，所以trace_id的向下传递就更方便了
+*/
+package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;strings&quot;
+	&quot;time&quot;
+
+	&quot;github.com/google/uuid&quot;
+)
+
+type MyKEY string
+
+const (
+	KEY MyKEY = &quot;trace_id&quot;
+)
+
+// 返回一个UUID
+func NewRequestID1() MyKEY {
+	return MyKEY(strings.Replace(uuid.New().String(), &quot;-&quot;, &quot;&quot;, -1))
+
+}
+
+// 创建一个携带trace_id 的ctx
+func NewContextWithTraceID() context.Context {
+	ctx := context.WithValue(context.Background(), KEY, NewRequestID1())
+	return ctx
+}
+
+// 打印值
+func PrintLog(ctx context.Context, message string) {
+	fmt.Printf(&quot;%s|info|trace_id=%s|%s&quot;, time.Now().Format(&quot;2006-01-02 15:04:05&quot;), GetContextValue1(ctx, KEY), message)
+}
+
+// 获取设置的key对应的值,并断言
+func GetContextValue1(ctx context.Context, k MyKEY) MyKEY {
+	v, ok := ctx.Value(k).(MyKEY)
+	fmt.Println(&quot;打印k:&quot; + k)
+	fmt.Printf(&quot;打印v: %v\n&quot;, v)
+	if !ok {
+		return &quot;&quot;
+	}
+	return v
+}
+
+func ProcessEnter(ctx context.Context) {
+	PrintLog(ctx, &quot;Golang&quot;)
+}
+
+func main() {
+	ProcessEnter(NewContextWithTraceID())
+}
+</code></pre>
+<ul>
+<li>不建议使用 context 值传递关键参数，关键参数应该显示的声明出来</li>
+<li>因为携带value也是key value，避免context多个包使用带来的冲突,建议使用内置类型</li>
+<li>context 传递的数据 key value 都是 interface，所以类型断言时别忘了保证程序的健壮性</li>
+</ul>
+<h1 id="应用场景">应用场景<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#应用场景" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p><code>RPC调用</code></p>
+</li>
+<li>
+<p><code>PipeLine</code></p>
+</li>
+<li>
+<p><code>超时请求</code></p>
+</li>
+<li>
+<p>`HTTP服务器的request互相传递数据</p>
+</li>
+</ul>
+<p>注意：</p>
+<ol>
+<li>不要将 Context 塞到结构体里。直接将 Context 类型作为函数的第一参数，而且一般都命名为 ctx。</li>
+<li>不要向函数传入一个 nil 的 context，如果你实在不知道传什么，标准库给你准备好了一个 context：todo。</li>
+<li>不要把本应该作为函数参数的类型塞到 context 中，context 存储的应该是一些共同的数据。例如：登陆的 session、cookie 等。</li>
+<li>同一个 context 可能会被传递到多个 goroutine，别担心，context 是并发安全的</li>
+</ol>
+<h1 id="核心数据结构">核心数据结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心数据结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="contextcontext">context.Context<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextcontext" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHalqnGibXKxgD9owqhL6ZPBtpQxADvrGa5qKXvibs1Pib5we53dy1iaabuv0w/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>context数据结构</p>
+<pre><code>type Context interface {
+    Deadline() (deadline time.Time, ok bool)
+    Done() &lt;-chan struct{}
+    Err() error
+    Value(key any) any
+}
+</code></pre>
+<p>Context 为 interface，定义了四个核心 api：</p>
+<ul>
+<li>
+<p>Deadline：返回 context 的过期时间；也就是完成工作的截止日期；如果没有设定期限，将返回ok == false</p>
+</li>
+<li>
+<p>Done：返回 context 中的 channel；当绑定当前context的任务被取消时，将返回一个关闭的channel；如果当前context不会被取消，将返回nil</p>
+</li>
+<li>
+<p>Err：返回错误；</p>
+<ul>
+<li>如果 Done 返回的 channel 没有关闭，将返回 nil;如果 Done 返回的 channel 已经关闭，将返回非空的值表示任务结束的原因</li>
+<li>如果是 context 被取消，Err 将返回 Canceled；如果是 context 超时，Err 将返回 DeadlineExceeded
+Err() error</li>
+</ul>
+</li>
+<li>
+<p>Value：返回 context 中的对应 key 的值.</p>
+</li>
+</ul>
+<h2 id="标准-error">标准 error<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#标准-error" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>var Canceled = errors.New(&quot;context canceled&quot;)
+
+var DeadlineExceeded error = deadlineExceededError{}
+
+type deadlineExceededError struct{}
+
+func (deadlineExceededError) Error() string   { return &quot;context deadline exceeded&quot; }
+func (deadlineExceededError) Timeout() bool   { return true }
+func (deadlineExceededError) Temporary() bool { return true
+</code></pre>
+<ul>
+<li>
+<p>• Canceled：context 被 cancel 时会报此错误；</p>
+</li>
+<li>
+<p>• DeadlineExceeded：context 超时时会报此错误.</p>
+</li>
+</ul>
+<h1 id="emptyctx">emptyCtx<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#emptyctx" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="类的实现">类的实现<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#类的实现" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>type emptyCtx int
+
+func (*emptyCtx) Deadline() (deadline time.Time, ok bool) {
+    return
+}
+
+func (*emptyCtx) Done() &lt;-chan struct{} {
+    return nil
+}
+
+func (*emptyCtx) Err() error {
+    return nil
+}
+
+func (*emptyCtx) Value(key any) any {
+    return 
+}
+</code></pre>
+<ul>
+<li>
+<p>emptyCtx 是一个空的 context，本质上类型为一个整型；</p>
+</li>
+<li>
+<p>Deadline 方法会返回一个公元元年时间以及 false 的 flag，标识当前 context 不存在过期时间；</p>
+</li>
+<li>
+<p>Done 方法返回一个 nil 值，用户无论往 nil 中写入或者读取数据，均会陷入阻塞；</p>
+</li>
+<li>
+<p>Err 方法返回的错误永远为 nil；</p>
+</li>
+<li>
+<p> Value 方法返回的 value 同样永远为 nil.</p>
+</li>
+</ul>
+<h2 id="contextbackground--contexttodo">context.Background() &amp; context.TODO()<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextbackground--contexttodo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>var (
+    background = new(emptyCtx)
+    todo       = new(emptyCtx)
+)
+
+func Background() Context {
+    return background
+}
+
+func TODO() Context {
+    return todo
+}
+</code></pre>
+<p>我们所常用的 context.Background() 和 context.TODO() 方法返回的均是 emptyCtx 类型的一个实例.</p>
+<h1 id="cancelctx">cancelCtx<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cancelctx" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="cancelctx-数据结构">cancelCtx 数据结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cancelctx-数据结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHal10nWicjtGfpuhrAe1eXPFNmJMUgYctII58yAtkGM3m7FcnbDniaUyWuQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>cancelCtx数据结构</p>
+<pre><code>type cancelCtx struct {
+    Context
+   
+    mu       sync.Mutex            // protects following fields
+    done     atomic.Value          // of chan struct{}, created lazily, closed by first cancel call
+    children map[canceler]struct{} // set to nil by the first cancel call
+    err      error                 // set to non-nil by the first cancel call
+}
+
+type canceler interface {
+    cancel(removeFromParent bool, err error)
+    Done() &lt;-chan struct{}
+}
+</code></pre>
+<ul>
+<li>
+<p>embed 了一个 context 作为其父 context. 可见，cancelCtx 必然为某个 context 的子 context；</p>
+</li>
+<li>
+<p>Mu 内置了一把锁，用以协调并发场景下的资源获取；</p>
+</li>
+<li>
+<p>done：实际类型为 chan struct{}，即用以反映 cancelCtx 生命周期的通道；<strong>c.done 是“懒汉式”创建</strong>，只有调用了 Done() 方法的时候才会被创建。再次说明，函数返回的是<strong>一个只读的 channel，而且没有地方向这个 channel 里面写数据</strong>。所以，直接调用读这个 channel，协程会被 block 住。一般通过搭配 select 来使用。一旦关闭，就会立即读出零值。</p>
+</li>
+<li>
+<p>children：一个 set，指向 cancelCtx 的所有子 context；</p>
+</li>
+<li>
+<p>err：记录了当前 cancelCtx 的错误. 必然为某个 context 的子 context；</p>
+</li>
+</ul>
+<h2 id="deadline-方法">Deadline 方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#deadline-方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>cancelCtx 未实现该方法，仅是 embed 了一个带有 Deadline 方法的 Context interface，因此倘若直接调用会报错.</p>
+<h2 id="done-方法">Done 方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#done-方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHal2PYOJJPIf6FMVCSqzVoFFnMvHIQuALvRg3CfutoztqKHaT3OdrnXcA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>cancelCtx.Done</p>
+<p>.done 是“懒汉式”创建**，只有调用了 Done () 方法的时候才会被创建。再次说明，函数返回的是<strong>一个只读的 channel，而且没有地方向这个 channel 里面写数据</strong>。所以，直接调用读这个 channel，协程会被 block 住。一般通过搭配 select 来使用。</p>
+<pre><code>func (c *cancelCtx) Done() &lt;-chan struct{} {
+    d := c.done.Load()
+    if d != nil {
+        return d.(chan struct{})
+    }
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    d = c.done.Load()
+    if d == nil {
+        d = make(chan struct{})
+        c.done.Store(d)
+    }
+    return d.(chan struct{})
+}
+</code></pre>
+<ul>
+<li>
+<p>基于 atomic 包，读取 cancelCtx 中的 chan；倘若已存在，则直接返回；</p>
+</li>
+<li>
+<p>加锁后，在此检查 chan 是否存在，若存在则返回；（double check）</p>
+</li>
+<li>
+<p>初始化 chan 存储到 aotmic.Value 当中，并返回.（懒加载机制）</p>
+</li>
+</ul>
+<h2 id="err-方法">Err 方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#err-方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>func (c *cancelCtx) Err() error {
+    c.mu.Lock()
+    err := c.err
+    c.mu.Unlock()
+    return err
+}
+</code></pre>
+<ul>
+<li>
+<p>• 加锁；</p>
+</li>
+<li>
+<p>• 读取 cancelCtx.err；</p>
+</li>
+<li>
+<p>• 解锁；</p>
+</li>
+<li>
+<p>• 返回结果.</p>
+</li>
+</ul>
+<h2 id="value-方法">Value 方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#value-方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>func (c *cancelCtx) Value(key any) any {
+    if key == &amp;cancelCtxKey {
+        return c
+    }
+    return value(c.Context, key)
+}
+</code></pre>
+<ul>
+<li>
+<p>• 倘若 key 特定值 &amp;cancelCtxKey，则返回 cancelCtx 自身的指针；</p>
+</li>
+<li>
+<p>• 否则遵循 valueCtx 的思路取值返回</p>
+</li>
+</ul>
+<h2 id="contextwithcancel">context.WithCancel()<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextwithcancel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="contextwithcancel-1">context.WithCancel()<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextwithcancel-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>func WithCancel(parent Context) (ctx Context, cancel CancelFunc) {
+    if parent == nil {
+        panic(&quot;cannot create context from nil parent&quot;)
+    }
+    c := newCancelCtx(parent)
+    propagateCancel(parent, &amp;c)
+    return &amp;c, func() { c.cancel(true, Canceled) }
+}
+
+func newCancelCtx(parent Context) cancelCtx {
+    return cancelCtx{Context: parent}
+}
+</code></pre>
+<ul>
+<li>
+<p>• 校验父 context 非空；</p>
+</li>
+<li>
+<p>• 注入父 context 构造好一个新的 cancelCtx；</p>
+</li>
+<li>
+<p>• 在 propagateCancel 方法内启动一个守护协程，以保证父 context 终止时，该 cancelCtx 也会被终止；</p>
+</li>
+<li>
+<p>• 将 cancelCtx 返回，连带返回一个用以终止该 cancelCtx 的闭包函数.</p>
+</li>
+</ul>
+<p>这是一个暴露给用户的方法，传入一个父 Context（这通常是一个 <code>background</code>，作为根节点），返回新建的 context，<strong>新 context 的 done channel 是新建的（前文讲过）。</strong></p>
+<p>当 WithCancel 函数返回的 CancelFunc 被调用或者是父节点的 done channel 被关闭（父节点的 CancelFunc 被调用），此 context（子节点） 的 done channel 也会被关闭。</p>
+<p>注意传给 WithCancel 方法的参数，前者是 true，也就是说取消的时候，需要将自己从父节点里删除。第二个参数则是一个固定的取消错误类型：</p>
+<h3 id="propagatecancel">propagateCancel<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#propagatecancel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHaliaDlicS0KjfkKRoflkGOImE2xamdv9H3AQuZUgib0ib78dticA5ic0S8f6RA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>这个方法的作用就是向上寻找可以“挂靠”的“可取消”的 context，并且“挂靠”上去。这样，调用上层 cancel 方法的时候，由上层的协程来管理对子 context 的取消。如果没有父 context ，就自己新建一个携程</p>
+<p>propagate流程</p>
+<pre><code>func propagateCancel(parent Context, child canceler) {
+	// 父节点是个空节点
+	if parent.Done() == nil {
+		return // parent is never canceled
+	}
+	// 找到可以取消的父 context
+	if p, ok := parentCancelCtx(parent); ok {
+		p.mu.Lock()
+		if p.err != nil {
+			// 父节点已经被取消了，本节点（子节点）也要取消
+			child.cancel(false, p.err)
+		} else {
+			// 父节点未取消
+			if p.children == nil {
+				p.children = make(map[canceler]struct{})
+			}
+			// &quot;挂到&quot;父节点上
+			p.children[child] = struct{}{}
+		}
+		p.mu.Unlock()
+	} else {
+		// 如果没有找到可取消的父 context。新启动一个协程监控父节点或子节点取消信号
+		go func() {
+			select {
+			case &lt;-parent.Done():
+				child.cancel(false, parent.Err())
+			case &lt;-child.Done():
+			}
+		}()
+	}
+}
+</code></pre>
+<p>propagateCancel 方法顾名思义，用以传递父子 context 之间的 cancel 事件：</p>
+<ul>
+<li>
+<p>倘若 parent 是不会被 cancel 的类型（如 emptyCtx），则直接返回；</p>
+</li>
+<li>
+<p> 倘若 parent 已经被 cancel，则直接终止子 context，并以 parent 的 err 作为子 context 的 err；</p>
+</li>
+<li>
+<p> 假如 parent 是 cancelCtx 的类型，则加锁，并将子 context 添加到 parent 的 children map 当中；</p>
+</li>
+<li>
+<p> 假如 parent 不是 cancelCtx 类型，但又存在 cancel 的能力（比如用户自定义实现的 context），则启动一个协程，通过多路复用的方式监控 parent 状态，倘若其终止，则同时终止子 context，并透传 parent 的 err.</p>
+</li>
+<li>
+<p>• 倘若 parent 的 channel 已关闭或者是不会被 cancel 的类型，则返回 false；</p>
+</li>
+<li>
+<p>• 倘若以特定的 cancelCtxKey 从 parent 中取值，取得的 value 是 parent 本身，则返回 true. （基于 cancelCtxKey 为 key 取值时返回 cancelCtx 自身，是 cancelCtx 特有的协议）.</p>
+</li>
+</ul>
+<h3 id="cancelctxcancel">cancelCtx.cancel<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cancelctxcancel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHalkvwNxYrbVJsn2LorIG3ibESumuwIUTo8wEkWXf7sclgVYd33uQx0ticA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p><code>cancel()</code> 方法的功能就是关闭 channel：c.done；递归地取消它的所有子节点；从父节点从删除自己。达到的效果是通过关闭 channel，将取消信号传递给了它的所有子节点。Goroutine 接收到取消信号的方式就是 select 语句中的 <code>读 c.done</code> 被选中</p>
+<pre><code>func (c *cancelCtx) cancel(removeFromParent bool, err error) {
+    // 必须要传 err
+	if err == nil {
+		panic(&quot;context: internal error: missing cancel error&quot;)
+	}
+	c.mu.Lock()
+	if c.err != nil {
+		c.mu.Unlock()
+		return // 已经被其他协程取消
+	}
+	// 给 err 字段赋值
+	c.err = err
+	// 关闭 channel，通知其他协程
+	if c.done == nil {
+		c.done = closedchan
+	} else {
+		close(c.done)
+	}
+	
+	// 遍历它的所有子节点
+	for child := range c.children {
+	    // 递归地取消所有子节点
+		child.cancel(false, err)
+	}
+	// 将子节点置空
+	c.children = nil
+	c.mu.Unlock()
+
+	if removeFromParent {
+	    // 从父节点中移除自己 
+		removeChild(c.Context, c)
+	}
+}
+</code></pre>
+<ul>
+<li>
+<p>• cancelCtx.cancel 方法有两个入参，第一个 removeFromParent 是一个 bool 值，表示当前 context 是否需要从父 context 的 children set 中删除；第二个 err 则是 cancel 后需要展示的错误；</p>
+</li>
+<li>
+<p>• 进入方法主体，首先校验传入的 err 是否为空，若为空则 panic；</p>
+</li>
+<li>
+<p>• 加锁；</p>
+</li>
+<li>
+<p>• 校验 cancelCtx 自带的 err 是否已经非空，若非空说明已被 cancel，则解锁返回；</p>
+</li>
+<li>
+<p>• 将传入的 err 赋给 cancelCtx.err；</p>
+</li>
+<li>
+<p>• 处理 cancelCtx 的 channel，若 channel 此前未初始化，则直接注入一个 closedChan，否则关闭该 channel；</p>
+</li>
+<li>
+<p>• 遍历当前 cancelCtx 的 children set，依次将 children context 都进行 cancel；</p>
+</li>
+<li>
+<p>• 解锁.</p>
+</li>
+<li>
+<p>• 根据传入的 removeFromParent flag 判断是否需要手动把 cancelCtx 从 parent 的 children set 中移除.</p>
+</li>
+</ul>
+<p>走进 removeChild 方法中，观察如何将 cancelCtx 从 parent 的 children set 中移除：</p>
+<pre><code>func removeChild(parent Context, child canceler) {
+    p, ok := parentCancelCtx(parent)
+    if !ok {
+        return
+    }
+    p.mu.Lock()
+    if p.children != nil {
+        delete(p.children, child)
+    }
+    p.mu.Unlock()
+}
+</code></pre>
+<ul>
+<li>
+<p>• 如果 parent 不是 cancelCtx，直接返回（因为只有 cancelCtx 才有 children set） </p>
+</li>
+<li>
+<p>• 加锁；</p>
+</li>
+<li>
+<p>• 从 parent 的 children set 中删除对应 child</p>
+</li>
+<li>
+<p>• 解锁返回.</p>
+</li>
+</ul>
+<h1 id="timerctx">timerCtx<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#timerctx" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="类">类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHal41XDibicmYv3qXYlDp6gMDA0mCB9f3h1BDsUqwpBIPEVwBQAVTadIE0A/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>timerCtx数据结构</p>
+<pre><code>type timerCtx struct {
+    cancelCtx
+    timer *time.Timer // Under cancelCtx.mu.
+
+    deadline time.Time
+}
+</code></pre>
+<p>timerCtx 在 cancelCtx 基础上又做了一层封装，除了继承 cancelCtx 的能力之外，新增了一个 time.Timer 用于定时终止 context；另外新增了一个 deadline 字段用于字段 timerCtx 的过期时间.</p>
+<h2 id="timerctxdeadline">timerCtx.Deadline()<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#timerctxdeadline" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>func (c *timerCtx) Deadline() (deadline time.Time, ok bool) {
+    return c.deadline, true
+}
+</code></pre>
+<p>context.Context interface 下的 Deadline api 仅在 timerCtx 中有效，由于展示其过期时间.</p>
+<h2 id="timerctxcancel">timerCtx.cancel<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#timerctxcancel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>func (c *timerCtx) cancel(removeFromParent bool, err error) {
+    c.cancelCtx.cancel(false, err)
+    if removeFromParent {
+        removeChild(c.cancelCtx.Context, c)
+    }
+    c.mu.Lock()
+    if c.timer != nil {
+        c.timer.Stop()
+        c.timer = nil
+    }
+    c.mu.Unlock()
+}
+</code></pre>
+<ul>
+<li>
+<p>• 复用继承的 cancelCtx 的 cancel 能力，进行 cancel 处理；</p>
+</li>
+<li>
+<p>• 判断是否需要手动从 parent 的 children set 中移除，若是则进行处理</p>
+</li>
+<li>
+<p>• 加锁；</p>
+</li>
+<li>
+<p>• 停止 time.Timer</p>
+</li>
+<li>
+<p>• 解锁返回.</p>
+</li>
+</ul>
+<h2 id="contextwithtimeout--contextwithdeadline">context.WithTimeout &amp; context.WithDeadline<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextwithtimeout--contextwithdeadline" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc) {
+    return WithDeadline(parent, time.Now().Add(timeout))
+}
+</code></pre>
+<p>context.WithTimeout 方法用于构造一个 timerCtx，本质上会调用 context.WithDeadline 方法：</p>
+<pre><code>func WithDeadline(parent Context, d time.Time) (Context, CancelFunc) {
+    if parent == nil {
+        panic(&quot;cannot create context from nil parent&quot;)
+    }
+    if cur, ok := parent.Deadline(); ok &amp;&amp; cur.Before(d) {
+        // The current deadline is already sooner than the new one.
+        return WithCancel(parent)
+    }
+    c := &amp;timerCtx{
+        cancelCtx: newCancelCtx(parent),
+        deadline:  d,
+    }
+    propagateCancel(parent, c)
+    dur := time.Until(d)
+    if dur &lt;= 0 {
+        c.cancel(true, DeadlineExceeded) // deadline has already passed
+        return c, func() { c.cancel(false, Canceled) }
+    }
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    if c.err == nil {
+        c.timer = time.AfterFunc(dur, func() {
+            c.cancel(true, DeadlineExceeded)
+        })
+    }
+    return c, func() { c.cancel(true, Canceled) }
+}
+</code></pre>
+<ul>
+<li>
+<p>• 校验 parent context 非空；</p>
+</li>
+<li>
+<p>• 校验 parent 的过期时间是否早于自己，若是，则构造一个 cancelCtx 返回即可；</p>
+</li>
+<li>
+<p>• 构造出一个新的 timerCtx；</p>
+</li>
+<li>
+<p>• 启动守护方法，同步 parent 的 cancel 事件到子 context；</p>
+</li>
+<li>
+<p>• 判断过期时间是否已到，若是，直接 cancel timerCtx，并返回 DeadlineExceeded 的错误；</p>
+</li>
+<li>
+<p>• 加锁；</p>
+</li>
+<li>
+<p>• 启动 time.Timer，设定一个延时时间，即达到过期时间后会终止该 timerCtx，并返回 DeadlineExceeded 的错误；</p>
+</li>
+<li>
+<p>• 解锁；</p>
+</li>
+<li>
+<p>• 返回 timerCtx，已经一个封装了 cancel 逻辑的闭包 cancel 函数.</p>
+</li>
+</ul>
+<h1 id="valuectx">valueCtx<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#valuectx" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="类-1">类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#类-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHalIVWfu4T9C1icgjPVgm72em5XEmkWMWcNeiatmNGGBerBtkcJ27XHCoVQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>valueCtx数据结构</p>
+<pre><code>type valueCtx struct {
+    Context
+    key, val any
+}
+</code></pre>
+<ul>
+<li>
+<p>• valueCtx 同样继承了一个 parent context；</p>
+</li>
+<li>
+<p>• 一个 valueCtx 中仅有一组 kv 对.</p>
+</li>
+</ul>
+<h2 id="valuectxvalue">valueCtx.Value()<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#valuectxvalue" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/3ic3aBqT2ibZvfwRgTAXo1RdShVNkHZHal2tHrS8XW75EIQC6BbgHbQchXplMw7nviagAUOhDKBGHQMqqYogcwZpg/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"/></p>
+<p>valueCtx.Value</p>
+<pre><code>func (c *valueCtx) Value(key any) any {
+    if c.key == key {
+        return c.val
+    }
+    return value(c.Context, key)
+}
+</code></pre>
+<ul>
+<li>
+<p>• 假如当前 valueCtx 的 key 等于用户传入的 key，则直接返回其 value；</p>
+</li>
+<li>
+<p>• 假如不等，则从 parent context 中依次向上寻找.</p>
+</li>
+</ul>
+<pre><code>func value(c Context, key any) any {
+    for {
+        switch ctx := c.(type) {
+        case *valueCtx:
+            if key == ctx.key {
+                return ctx.val
+            }
+            c = ctx.Context
+        case *cancelCtx:
+            if key == &amp;cancelCtxKey {
+                return c
+            }
+            c = ctx.Context
+        case *timerCtx:
+            if key == &amp;cancelCtxKey {
+                return &amp;ctx.cancelCtx
+            }
+            c = ctx.Context
+        case *emptyCtx:
+            return nil
+        default:
+            return c.Value(key)
+        }
+    }
+}
+</code></pre>
+<ul>
+<li>
+<p>• 启动一个 for 循环，由下而上，由子及父，依次对 key 进行匹配；</p>
+</li>
+<li>
+<p>• 其中 cancelCtx、timerCtx、emptyCtx 类型会有特殊的处理方式；</p>
+</li>
+<li>
+<p>• 找到匹配的 key，则将该组 value 进行返回.</p>
+</li>
+</ul>
+<h2 id="valuectx-用法小结">valueCtx 用法小结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#valuectx-用法小结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>阅读源码可以看出，valueCtx 不适合视为存储介质，存放大量的 kv 数据，原因有三：</p>
+<ul>
+<li>
+<p>• 一个 valueCtx 实例只能存一个 kv 对，因此 n 个 kv 对会嵌套 n 个 valueCtx，造成空间浪费；</p>
+</li>
+<li>
+<p>• 基于 k 寻找 v 的过程是线性的，时间复杂度 O(N)；</p>
+</li>
+<li>
+<p>• 不支持基于 k 的去重，相同 k 可能重复存在，并基于起点的不同，返回不同的 v. 由此得知，valueContext 的定位类似于请求头，只适合存放少量作用域较大的全局 meta 数据.</p>
+</li>
+</ul>
+<h2 id="contextwithvalue">context.WithValue()<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#contextwithvalue" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>func WithValue(parent Context, key, val any) Context {
+    if parent == nil {
+        panic(&quot;cannot create context from nil parent&quot;)
+    }
+    if key == nil {
+        panic(&quot;nil key&quot;)
+    }
+    if !reflectlite.TypeOf(key).Comparable() {
+        panic(&quot;key is not comparable&quot;)
+    }
+    return &amp;valueCtx{parent, key, val}
+}
+</code></pre>
+<ul>
+<li>
+<p>• 倘若 parent context 为空，panic；</p>
+</li>
+<li>
+<p>• 倘若 key 为空 panic；</p>
+</li>
+<li>
+<p>• 倘若 key 的类型不可比较，panic；</p>
+</li>
+<li>
+<p>• 包括 parent context 以及 kv 对，返回一个新的 valueCtx.</p>
+</li>
+</ul>
+<p>通过层层传递 Context ，最终形成这样一棵树：</p>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statistic20240227175739.png" alt="image.png"/></p>
+<p>和链表有点像，只是它的方向相反：Context 指向它的父节点，链表则指向下一个节点。通过 WithValue 函数，可以创建层层的 valueCtx，存储 goroutine 间可以共享的变量。</p>
+<p>取值的过程，实际上是一个递归查找的过程：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="golang" data-theme="github-light github-dark"><code data-language="golang" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>func (c *valueCtx) Value(key interface{}) interface{} {</span></span>
+<span data-line><span>	if c.key == key {</span></span>
+<span data-line><span>		return c.val</span></span>
+<span data-line><span>	}</span></span>
+<span data-line><span>	return c.Context.Value(key)</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>它会顺着链路一直往上找，比较当前节点的 key 是否是要找的 key，如果是，则直接返回 value。否则，一直顺着 context 往前，最终找到根节点（一般是 emptyCtx），直接返回一个 nil。所以用 Value 方法的时候要判断结果是否为 nil。</p></article></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+	c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+	v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+	s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+	C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+	S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+	s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+	s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></div><div id="global-graph-outer"><div id="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" id="toc" class><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#参考" data-for="参考">参考</a></li><li class="depth-0"><a href="#前言" data-for="前言">前言</a></li><li class="depth-0"><a href="#为啥使用-context" data-for="为啥使用-context">为啥使用 Context</a></li><li class="depth-0"><a href="#context-的使用" data-for="context-的使用">Context 的使用</a></li><li class="depth-1"><a href="#根-context" data-for="根-context">根 Context</a></li><li class="depth-1"><a href="#with-系列函数" data-for="with-系列函数">With 系列函数</a></li><li class="depth-2"><a href="#contextwithcancel-取消控制" data-for="contextwithcancel-取消控制"> context.withCancel() 取消控制</a></li><li class="depth-2"><a href="#contextwithtimeout-超时控制" data-for="contextwithtimeout-超时控制">context.WithTimeout 超时控制</a></li><li class="depth-2"><a href="#-contextwithvalue-携带数据-谨慎使用" data-for="-contextwithvalue-携带数据-谨慎使用"> context.WithValue() 携带数据 [谨慎使用]</a></li><li class="depth-0"><a href="#应用场景" data-for="应用场景">应用场景</a></li><li class="depth-0"><a href="#核心数据结构" data-for="核心数据结构">核心数据结构</a></li><li class="depth-1"><a href="#contextcontext" data-for="contextcontext">context.Context</a></li><li class="depth-1"><a href="#标准-error" data-for="标准-error">标准 error</a></li><li class="depth-0"><a href="#emptyctx" data-for="emptyctx">emptyCtx</a></li><li class="depth-1"><a href="#类的实现" data-for="类的实现">类的实现</a></li><li class="depth-1"><a href="#contextbackground--contexttodo" data-for="contextbackground--contexttodo">context.Background() &amp; context.TODO()</a></li><li class="depth-0"><a href="#cancelctx" data-for="cancelctx">cancelCtx</a></li><li class="depth-1"><a href="#cancelctx-数据结构" data-for="cancelctx-数据结构">cancelCtx 数据结构</a></li><li class="depth-1"><a href="#deadline-方法" data-for="deadline-方法">Deadline 方法</a></li><li class="depth-1"><a href="#done-方法" data-for="done-方法">Done 方法</a></li><li class="depth-1"><a href="#err-方法" data-for="err-方法">Err 方法</a></li><li class="depth-1"><a href="#value-方法" data-for="value-方法">Value 方法</a></li><li class="depth-1"><a href="#contextwithcancel" data-for="contextwithcancel">context.WithCancel()</a></li><li class="depth-2"><a href="#contextwithcancel-1" data-for="contextwithcancel-1">context.WithCancel()</a></li><li class="depth-2"><a href="#propagatecancel" data-for="propagatecancel">propagateCancel</a></li><li class="depth-2"><a href="#cancelctxcancel" data-for="cancelctxcancel">cancelCtx.cancel</a></li><li class="depth-0"><a href="#timerctx" data-for="timerctx">timerCtx</a></li><li class="depth-1"><a href="#类" data-for="类">类</a></li><li class="depth-1"><a href="#timerctxdeadline" data-for="timerctxdeadline">timerCtx.Deadline()</a></li><li class="depth-1"><a href="#timerctxcancel" data-for="timerctxcancel">timerCtx.cancel</a></li><li class="depth-1"><a href="#contextwithtimeout--contextwithdeadline" data-for="contextwithtimeout--contextwithdeadline">context.WithTimeout &amp; context.WithDeadline</a></li><li class="depth-0"><a href="#valuectx" data-for="valuectx">valueCtx</a></li><li class="depth-1"><a href="#类-1" data-for="类-1">类</a></li><li class="depth-1"><a href="#valuectxvalue" data-for="valuectxvalue">valueCtx.Value()</a></li><li class="depth-1"><a href="#valuectx-用法小结" data-for="valuectx-用法小结">valueCtx 用法小结</a></li><li class="depth-1"><a href="#contextwithvalue" data-for="contextwithvalue">context.WithValue()</a></li></ul></div></div><div class="backlinks"><h3>Backlinks</h3><ul class="overflow"><li><a href="../../GO/八股文/并发" class="internal">并发</a></li></ul></div></div></div><footer class><hr/><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.2.3</a> © 2024</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></body><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">function c(){let t=this.parentElement;t.classList.toggle("is-collapsed");let l=t.classList.contains("is-collapsed")?this.scrollHeight:t.scrollHeight;t.style.maxHeight=l+"px";let o=t,e=t.parentElement;for(;e;){if(!e.classList.contains("callout"))return;let n=e.classList.contains("is-collapsed")?e.scrollHeight:e.scrollHeight+o.scrollHeight;e.style.maxHeight=n+"px",o=e,e=e.parentElement}}function i(){let t=document.getElementsByClassName("callout is-collapsible");for(let s of t){let l=s.firstElementChild;if(l){l.addEventListener("click",c),window.addCleanup(()=>l.removeEventListener("click",c));let e=s.classList.contains("is-collapsed")?l.scrollHeight:s.scrollHeight;s.style.maxHeight=e+"px"}}}document.addEventListener("nav",i);window.addEventListener("resize",i);
+</script><script type="module">
+          let mermaidImport = undefined
+          document.addEventListener('nav', async () => {
+            if (document.querySelector("code.mermaid")) {
+              mermaidImport ||= await import('https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs')
+              const mermaid = mermaidImport.default
+              const darkMode = document.documentElement.getAttribute('saved-theme') === 'dark'
+              mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: darkMode ? 'dark' : 'default'
+              })
+
+              await mermaid.run({
+                querySelector: '.mermaid'
+              })
+            }
+          });
+          </script><script src="../../postscript.js" type="module"></script></html>
