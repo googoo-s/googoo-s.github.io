@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh"><head><title>lua基础</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="lua基础"/><meta property="og:description" content="Lua 简介 Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组并于 1993 年开发。其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。Lua 由标准 C 编写而成，几乎在所有操作系统和平台上都可以编译、运行。Lua ..."/><meta property="og:image" content="https://googoo-s.github.io/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Lua 简介 Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组并于 1993 年开发。其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。Lua 由标准 C 编写而成，几乎在所有操作系统和平台上都可以编译、运行。Lua ..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="lua/lua基础"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="..">googoo-s</a></h1><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>搜索</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;elastic&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;zookeeper&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/maven&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具和环境/msys2&quot;,&quot;collapsed&quot;:true}]"><h1>探索</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="elastic"><button class="folder-button"><span class="folder-title">elastic</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="elastic"><li><a href="../elastic/KQL" data-for="elastic/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li></ul></div></li><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><a href="../lua/lua基础" data-for="lua/lua基础">lua基础</a></li><li><a href="../lua/Lua高级" data-for="lua/Lua高级">Lua高级</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="zookeeper"><button class="folder-button"><span class="folder-title">zookeeper</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="zookeeper"><li><a href="../zookeeper/Zookeeper-教程" data-for="zookeeper/Zookeeper-教程">Zookeeper 教程</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境"><button class="folder-button"><span class="folder-title">工具和环境</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/emacs"><li><a href="../工具和环境/emacs/安装" data-for="工具和环境/emacs/安装">安装</a></li><li><a href="../工具和环境/emacs/快捷键" data-for="工具和环境/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/git"><li><a href="../工具和环境/git/git" data-for="工具和环境/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/maven"><button class="folder-button"><span class="folder-title">maven</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/maven"><li><a href="../工具和环境/maven/maven基础" data-for="工具和环境/maven/maven基础">maven基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具和环境/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具和环境/msys2"><li><a href="../工具和环境/msys2/pacman" data-for="工具和环境/msys2/pacman">pacman</a></li><li><a href="../工具和环境/msys2/再-msys-中使用fish" data-for="工具和环境/msys2/再-msys-中使用fish">再 msys 中使用fish</a></li></ul></div></li><li><a href="../工具和环境/工具" data-for="工具和环境/工具">工具</a></li><li><a href="../工具和环境/环境搭建" data-for="工具和环境/环境搭建">环境搭建</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div><div class="recent-notes desktop-only"><h3>最近的笔记</h3><ul class="recent-ul"><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../工具和环境/git/git" class="internal">git</a></h3></div><p class="meta">2024年3月21日</p><ul class="tags"><li><a class="internal tag-link" href="../tags/Git">Git</a></li></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../工具和环境/工具" class="internal">工具</a></h3></div><p class="meta">2024年3月21日</p><ul class="tags"></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../工具和环境/环境搭建" class="internal">环境搭建</a></h3></div><p class="meta">2024年3月21日</p><ul class="tags"></ul></div></li></ul></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../lua/">lua</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lua基础</a></div></nav><h1 class="article-title">lua基础</h1><p show-comma="true" class="content-meta"><span>2023年7月31日</span><span>60分钟阅读</span></p><ul class="tags"><li><a href="../tags/lua" class="internal tag-link">lua</a></li></ul></div></div><article class="popover-hint"><h1 id="lua-简介">Lua 简介<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lua-简介" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<html lang="zh"><head><title>lua基础</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="lua基础"/><meta property="og:description" content="Lua 简介 Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组并于 1993 年开发。其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。Lua 由标准 C 编写而成，几乎在所有操作系统和平台上都可以编译、运行。Lua ..."/><meta property="og:image" content="https://googoo-s.github.io/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Lua 简介 Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组并于 1993 年开发。其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。Lua 由标准 C 编写而成，几乎在所有操作系统和平台上都可以编译、运行。Lua ..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="lua/lua"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="..">googoo-s</a></h1><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>搜索</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;docker&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;ElasticSearch&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;linux&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/maven&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;高可用&quot;,&quot;collapsed&quot;:true}]"><h1>探索</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="docker"><button class="folder-button"><span class="folder-title">docker</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="docker"><li><a href="../docker/docker" data-for="docker/docker">docker</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="ElasticSearch"><button class="folder-button"><span class="folder-title">ElasticSearch</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="ElasticSearch"><li><a href="../ElasticSearch/KQL" data-for="ElasticSearch/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li></ul></div></li><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="linux"><button class="folder-button"><span class="folder-title">linux</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="linux"><li><a href="../linux/Linux-基础知识总结" data-for="linux/Linux-基础知识总结">Linux 基础知识总结</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><a href="../lua/lua" data-for="lua/lua">lua基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具"><button class="folder-button"><span class="folder-title">工具</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/emacs"><li><a href="../工具/emacs/安装" data-for="工具/emacs/安装">安装</a></li><li><a href="../工具/emacs/快捷键" data-for="工具/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/git"><li><a href="../工具/git/git" data-for="工具/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/maven"><button class="folder-button"><span class="folder-title">maven</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/maven"><li><a href="../工具/maven/maven基础" data-for="工具/maven/maven基础">maven基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/msys2"><li><a href="../工具/msys2/pacman" data-for="工具/msys2/pacman">pacman</a></li><li><a href="../工具/msys2/再-msys-中使用fish" data-for="工具/msys2/再-msys-中使用fish">再 msys 中使用fish</a></li></ul></div></li><li><a href="../工具/工具" data-for="工具/工具">工具</a></li><li><a href="../工具/环境搭建" data-for="工具/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="高可用"><button class="folder-button"><span class="folder-title">高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="高可用"><li><a href="../高可用/高可用" data-for="高可用/高可用">高可用</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div><div class="recent-notes desktop-only"><h3>最近的笔记</h3><ul class="recent-ul"><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../高可用/高可用" class="internal">高可用</a></h3></div><p class="meta">2024年3月21日</p><ul class="tags"></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../资源/资源汇总" class="internal">资源汇总</a></h3></div><p class="meta">2024年3月21日</p><ul class="tags"></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../工具/git/git" class="internal">git</a></h3></div><p class="meta">2024年3月21日</p><ul class="tags"><li><a class="internal tag-link" href="../tags/Git">Git</a></li></ul></div></li></ul></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../lua/">lua</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lua基础</a></div></nav><h1 class="article-title">lua基础</h1><p show-comma="true" class="content-meta"><span>2023年7月31日</span><span>92分钟阅读</span></p><ul class="tags"><li><a href="../tags/lua" class="internal tag-link">lua</a></li><li><a href="../tags/NAME" class="internal tag-link">NAME</a></li></ul></div></div><article class="popover-hint"><h1 id="lua-简介">Lua 简介<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lua-简介" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
 <p>Lua 是一个小巧的脚本语言。是巴西里约热内卢天主教大学（Pontifical Catholic University of Rio de Janeiro）里的一个研究小组并于 1993 年开发。<strong>其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能</strong>。Lua 由标准 C 编写而成，几乎在所有操作系统和平台上都可以编译、运行。Lua 并没有提供强大的库，这是由它的定位决定的。所以 Lua 不适合作为开发独立应用程序的语言。<strong>Lua 有一个同时进行的 JIT 项目，提供在特定平台上的即时编译功能</strong>。</p>
 <ul>
 <li>
@@ -1698,7 +1698,1329 @@
 
 
 <div class="table-container"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>模式</td><td>含义</td></tr><tr><td>”no”</td><td>没有缓冲，即直接输出</td></tr><tr><td>”full”</td><td>全缓冲，即当缓冲满后才进行输出操作 (也可调用 flush 马上输出)</td></tr><tr><td>“line”</td><td>以行为单位，进行输出</td></tr></tbody></table></div>
-<p>最后两种模式，size 可以指定缓冲的大小（按字节），忽略 size 将自动调整为最佳的大小。</p></article></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" id="toc" class><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#lua-简介" data-for="lua-简介">Lua 简介</a></li><li class="depth-0"><a href="#lua-环境搭建" data-for="lua-环境搭建">Lua 环境搭建</a></li><li class="depth-1"><a href="#helloworld" data-for="helloworld">Helloworld</a></li><li class="depth-0"><a href="#基本数据类型" data-for="基本数据类型">基本数据类型</a></li><li class="depth-1"><a href="#nil" data-for="nil">Nil</a></li><li class="depth-1"><a href="#boolean-布尔" data-for="boolean-布尔">Boolean (布尔)</a></li><li class="depth-1"><a href="#number数字" data-for="number数字">number（数字）</a></li><li class="depth-1"><a href="#string字符串" data-for="string字符串">String（字符串）</a></li><li class="depth-1"><a href="#table-表" data-for="table-表">Table (表)</a></li><li class="depth-1"><a href="#function-函数" data-for="function-函数">Function (函数)</a></li><li class="depth-0"><a href="#表达式" data-for="表达式">表达式</a></li><li class="depth-1"><a href="#算术运算符" data-for="算术运算符">算术运算符</a></li><li class="depth-1"><a href="#关系运算符" data-for="关系运算符">关系运算符</a></li><li class="depth-1"><a href="#逻辑运算符" data-for="逻辑运算符">逻辑运算符</a></li><li class="depth-1"><a href="#字符串连接" data-for="字符串连接">字符串连接</a></li><li class="depth-1"><a href="#优先级" data-for="优先级">优先级</a></li><li class="depth-0"><a href="#控制结构" data-for="控制结构">控制结构</a></li><li class="depth-1"><a href="#if-else" data-for="if-else">If-else</a></li><li class="depth-2"><a href="#单个-if-分支型" data-for="单个-if-分支型">单个 if 分支型</a></li><li class="depth-2"><a href="#两个分支-if-else-型" data-for="两个分支-if-else-型">两个分支 if-else 型</a></li><li class="depth-2"><a href="#多个分支的-if-elseif-else" data-for="多个分支的-if-elseif-else">多个分支的 if-elseif-else</a></li><li class="depth-1"><a href="#while" data-for="while">While</a></li><li class="depth-1"><a href="#repeat" data-for="repeat">Repeat</a></li><li class="depth-1"><a href="#for" data-for="for">For</a></li><li class="depth-2"><a href="#for-数字型" data-for="for-数字型">for 数字型</a></li><li class="depth-1"><a href="#for-泛型" data-for="for-泛型">For 泛型</a></li><li class="depth-1"><a href="#break" data-for="break">Break</a></li><li class="depth-1"><a href="#return" data-for="return">Return</a></li><li class="depth-1"><a href="#goto" data-for="goto">Goto</a></li><li class="depth-0"><a href="#函数" data-for="函数">函数</a></li><li class="depth-1"><a href="#定义" data-for="定义">定义</a></li><li class="depth-1"><a href="#参数" data-for="参数">参数</a></li><li class="depth-2"><a href="#按值传递" data-for="按值传递">按值传递</a></li><li class="depth-2"><a href="#变长参数" data-for="变长参数">变长参数</a></li><li class="depth-2"><a href="#具名参数" data-for="具名参数">具名参数</a></li><li class="depth-2"><a href="#按引用传递" data-for="按引用传递">按引用传递</a></li><li class="depth-1"><a href="#函数返回值" data-for="函数返回值">函数返回值</a></li><li class="depth-0"><a href="#全动态函数调用" data-for="全动态函数调用">全动态函数调用</a></li><li class="depth-0"><a href="#模块" data-for="模块">模块</a></li><li class="depth-0"><a href="#string" data-for="string">String</a></li><li class="depth-1"><a href="#stringbyte-s--i--j-" data-for="stringbyte-s--i--j-">string.Byte (s [, i [, j ]])</a></li><li class="depth-1"><a href="#string-char-" data-for="string-char-">string. Char (…)</a></li><li class="depth-1"><a href="#stringupper-s" data-for="stringupper-s">string.Upper (s)</a></li><li class="depth-1"><a href="#stringlower-s" data-for="stringlower-s">string.Lower (s)</a></li><li class="depth-1"><a href="#stringlen-s" data-for="stringlen-s">string.Len (s)</a></li><li class="depth-1"><a href="#stringfind-s-p--init--plain" data-for="stringfind-s-p--init--plain">string.Find (s, p [, init [, plain]])</a></li><li class="depth-1"><a href="#stringformat-formatstring-" data-for="stringformat-formatstring-">string.Format (formatstring, …)</a></li><li class="depth-1"><a href="#stringmatch-s-p--init" data-for="stringmatch-s-p--init">string.Match (s, p [, init])</a></li><li class="depth-1"><a href="#stringgmatch-s-p" data-for="stringgmatch-s-p">string.Gmatch (s, p)</a></li><li class="depth-1"><a href="#stringrep-s-n" data-for="stringrep-s-n">string.Rep (s, n)</a></li><li class="depth-1"><a href="#stringsub-s-i--j" data-for="stringsub-s-i--j">string.Sub (s, i [, j])</a></li><li class="depth-1"><a href="#stringgsub-s-p-r--n" data-for="stringgsub-s-p-r--n">string.Gsub (s, p, r [, n])</a></li><li class="depth-1"><a href="#string-reverse-s" data-for="string-reverse-s">string. Reverse (s)</a></li><li class="depth-0"><a href="#table" data-for="table">Table</a></li><li class="depth-1"><a href="#下标从-1-开始" data-for="下标从-1-开始">下标从 1 开始</a></li><li class="depth-1"><a href="#table-getn-获取长度" data-for="table-getn-获取长度">table. Getn 获取长度</a></li><li class="depth-1"><a href="#table-concat-table--sep--i--j---" data-for="table-concat-table--sep--i--j---">table. Concat (table [, sep [, i [, j ] ] ])</a></li><li class="depth-1"><a href="#table-insert-table-pos--value" data-for="table-insert-table-pos--value">table. Insert (table, [pos ,] value)</a></li><li class="depth-1"><a href="#table-maxn-table" data-for="table-maxn-table">table. Maxn (table)</a></li><li class="depth-1"><a href="#table-remove-table--pos" data-for="table-remove-table--pos">table. Remove (table [, pos])</a></li><li class="depth-1"><a href="#table-sort-table--comp" data-for="table-sort-table--comp">table. Sort (table [, comp])</a></li><li class="depth-1"><a href="#其他" data-for="其他">其他</a></li><li class="depth-0"><a href="#日期时间" data-for="日期时间">日期时间</a></li><li class="depth-1"><a href="#os-time-table" data-for="os-time-table">os. Time ([table])</a></li><li class="depth-1"><a href="#os-difftime-t-2-t-1" data-for="os-difftime-t-2-t-1">os. Difftime (t 2, t 1)</a></li><li class="depth-1"><a href="#os-date-format--time" data-for="os-date-format--time">os. Date ([format [, time]])</a></li><li class="depth-0"><a href="#数学库" data-for="数学库">数学库</a></li><li class="depth-0"><a href="#文件" data-for="文件">文件</a></li><li class="depth-1"><a href="#隐式文件描述" data-for="隐式文件描述">隐式文件描述</a></li><li class="depth-1"><a href="#显式文件描述" data-for="显式文件描述">显式文件描述</a></li><li class="depth-1"><a href="#文件操作函数" data-for="文件操作函数">文件操作函数</a></li></ul></div></div><div class="backlinks"><h3>反向链接</h3><ul class="overflow"><li>无法找到反向链接</li></ul></div><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+<p>最后两种模式，size 可以指定缓冲的大小（按字节），忽略 size 将自动调整为最佳的大小。</p>
+<h1 id="元表">元表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#元表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>元表 <em>(metatable)</em> 的<strong>表现行为类似于 C++ 语言中的操作符重载</strong>，例如我们可以重载 “__add” 元方法 <em>(metamethod)</em>，来计算两个 Lua 数组的并集；或者重载 “__index” 方法，来定义我们自己的 Hash 函数。Lua 提供了两个十分重要的用来处理元表的方法</p>
+<ul>
+<li>
+<p>Setmetatable (table, metatable)：此方法用于为一个表设置元表。</p>
+</li>
+<li>
+<p>Getmetatable (table)：此方法用于获取表的元表对象</p>
+</li>
+</ul>
+<p>设置元表</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local mytable = {}</span></span>
+<span data-line><span>local mymetatable = {}</span></span>
+<span data-line><span>setmetatable(mytable, mymetatable)</span></span></code></pre></figure>
+<h2 id="修改表的操作符行为"><strong>修改表的操作符行为</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#修改表的操作符行为" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>通过重载 “__add” 元方法来计算集合的并集实例</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local set1 = {10, 20, 30}   -- 集合</span></span>
+<span data-line><span>local set2 = {20, 40, 50}   -- 集合</span></span>
+<span data-line> </span>
+<span data-line><span>-- 将用于重载__add的函数，注意第一个参数是self</span></span>
+<span data-line><span>local union = function (self, another)</span></span>
+<span data-line><span>    local set = {}</span></span>
+<span data-line><span>    local result = {}</span></span>
+<span data-line> </span>
+<span data-line><span>    -- 利用数组来确保集合的互异性</span></span>
+<span data-line><span>    for i, j in pairs(self) do set[j] = true end</span></span>
+<span data-line><span>    for i, j in pairs(another) do set[j] = true end</span></span>
+<span data-line> </span>
+<span data-line><span>    -- 加入结果集合</span></span>
+<span data-line><span>    for i, j in pairs(set) do table.insert(result, i) end</span></span>
+<span data-line><span>    return result</span></span>
+<span data-line><span>end</span></span>
+<span data-line><span>setmetatable(set1, {__add = union}) -- 重载 set1 表的 __add 元方法</span></span>
+<span data-line> </span>
+<span data-line><span>local set3 = set1 + set2</span></span>
+<span data-line><span>for _, j in pairs(set3) do</span></span>
+<span data-line><span>    io.write(j..&quot; &quot;)               -->output：30 50 20 40 10</span></span>
+<span data-line><span>end</span></span></code></pre></figure>
+<p>除了加法可以被重载之外，Lua 提供的所有操作符都可以被重载：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>元方法</th><th>含义</th></tr></thead><tbody><tr><td>”__add</td><td><a href=".././tags/NAME" class="tag-link internal alias" data-slug="tags/NAME">NAME</a> ?</td></tr><tr><td>”__sub</td><td>- 操作其行为类似于 “add” 操作</td></tr><tr><td>”__mul</td><td>* 操作其行为类似于 “add” 操作</td></tr><tr><td>”__div</td><td>/ 操作其行为类似于 “add” 操作</td></tr><tr><td>”__mod</td><td>% 操作其行为类似于 “add” 操作</td></tr><tr><td>”__pow</td><td>^ （幂）操作其行为类似于 “add” 操作</td></tr><tr><td>”__unm”</td><td>一元 - 操作</td></tr><tr><td>”__concat”</td><td>.. （字符串连接）操作</td></tr><tr><td>”__len”</td><td># 操作</td></tr><tr><td>”__eq”</td><td>== 操作函数 getcomphandler 定义了 Lua 怎样选择一个处理器来作比较操作仅在两个对象类型相同且有对应操作相同的元方法时才起效</td></tr><tr><td>”__lt”</td><td>&lt; 操作</td></tr><tr><td>”__le”</td><td><span>⇐</span> 操作</td></tr></tbody></table></div>
+<p>除了操作符之外，如下元方法也可以被重载，下面会依次解释使用方法：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>元方法</td><td>含义</td></tr><tr><td>”__index”</td><td>取下标操作用于访问 table[key]</td></tr><tr><td>“__newindex”</td><td>赋值给指定下标 table[key] = value</td></tr><tr><td>”__tostring”</td><td>转换成字符串</td></tr><tr><td>”__call”</td><td>当 Lua 调用一个值时调用</td></tr><tr><td>”__mode”</td><td>用于弱表 (week table)</td></tr><tr><td>“__metatable”</td><td>用于保护 metatable 不被访问</td></tr></tbody></table></div>
+<h2 id="__index-元方法"><strong>__index 元方法</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#__index-元方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>mytable = setmetatable({key1 = &quot;value1&quot;},   --原始表</span></span>
+<span data-line><span>{__index = function(self, key)            --重载函数</span></span>
+<span data-line><span>    if key == &quot;key2&quot; then</span></span>
+<span data-line><span>        return &quot;metatablevalue&quot;</span></span>
+<span data-line><span>    end</span></span>
+<span data-line><span>end</span></span>
+<span data-line><span>})</span></span>
+<span data-line> </span>
+<span data-line><span>print(mytable.key1,mytable.key2)  --> output：value1 metatablevalue</span></span></code></pre></figure>
+<p>关于 __index 元方法，有很多比较高阶的技巧，例如：__index 的元方法不需要非是一个函数，他也可以是一个表。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>t = setmetatable({[1] = &quot;hello&quot;}, {__index = {[2] = &quot;world&quot;}})</span></span>
+<span data-line><span>print(t[1], t[2])   -->hello wor</span></span></code></pre></figure>
+<h2 id="__tostring-元方法"><strong>__tostring 元方法</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#__tostring-元方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>与 Java 中的 toString () 函数类似，可以实现自定义的字符串转换。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>arr = {1, 2, 3, 4}</span></span>
+<span data-line><span>arr = setmetatable(arr, {__tostring = function (self)</span></span>
+<span data-line><span>    local result = '{'</span></span>
+<span data-line><span>    local sep = ''</span></span>
+<span data-line><span>    for _, i in pairs(self) do</span></span>
+<span data-line><span>        result = result ..sep .. i</span></span>
+<span data-line><span>        sep = ', '</span></span>
+<span data-line><span>    end</span></span>
+<span data-line><span>    result = result .. '}'</span></span>
+<span data-line><span>    return result</span></span>
+<span data-line><span>end})</span></span>
+<span data-line><span>print(arr)  --> {1, 2, 3, 4}</span></span></code></pre></figure>
+<h2 id="__call-元方法"><strong>__call 元方法</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#__call-元方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>__call 元方法的功能类似于 C++ 中的仿函数，使得普通的表也可以被调用。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>functor = {}</span></span>
+<span data-line><span>function func1(self, arg)</span></span>
+<span data-line><span>    print (&quot;called from&quot;, arg)</span></span>
+<span data-line><span>end</span></span>
+<span data-line><span>setmetatable(functor, {__call = func1})</span></span>
+<span data-line> </span>
+<span data-line><span>functor(&quot;functor&quot;)  --> called from functor</span></span>
+<span data-line><span>print(functor)      --> output：0x00076fc8 （后面这串数字可能不一样）</span></span></code></pre></figure>
+<h2 id="__metatable-元方法"><strong>__metatable 元方法</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#__metatable-元方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>假如我们想保护我们的对象使其使用者既看不到也不能修改 metatables。我<strong>们可以对 metatable 设置了 __metatable 的值，getmetatable 将返回这个域的值，而调用 setmetatable 将会出错</strong>：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>bject = setmetatable({}, {__metatable = &quot;You cannot access here&quot;})</span></span>
+<span data-line> </span>
+<span data-line><span>print(getmetatable(Object)) --> You cannot access heresetmetatable(Object, {})    --> 引发编译器报错</span></span></code></pre></figure>
+<h1 id="面向对象">面向对象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#面向对象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="类">类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在 Lua 中，我们可以使用表和函数实现面向对象。<strong>将函数和相关的数据放置于同一个表中就形成了一个对象。</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local _M = {}</span></span>
+<span data-line> </span>
+<span data-line><span>local mt = { __index = _M }</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.deposit (self, v)</span></span>
+<span data-line><span>    self.balance = self.balance + v</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.withdraw (self, v)</span></span>
+<span data-line><span>    if self.balance > v then</span></span>
+<span data-line><span>        self.balance = self.balance - v</span></span>
+<span data-line><span>    else</span></span>
+<span data-line><span>        error(&quot;insufficient funds&quot;)</span></span>
+<span data-line><span>    end</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.new (self, balance)</span></span>
+<span data-line><span>    balance = balance or 0</span></span>
+<span data-line><span>    return setmetatable({balance = balance}, mt)</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>return _M</span></span></code></pre></figure>
+<p>引用</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local account = require(&quot;account&quot;)</span></span>
+<span data-line> </span>
+<span data-line><span>local a = account:new()</span></span>
+<span data-line><span>a:deposit(100)</span></span>
+<span data-line> </span>
+<span data-line><span>local b = account:new()</span></span>
+<span data-line><span>b:deposit(50)</span></span>
+<span data-line> </span>
+<span data-line><span>print(a.balance)  --> output: 100</span></span>
+<span data-line><span>print(b.balance)  --> output: 50</span></span></code></pre></figure>
+<p>上面这段代码 “setmetatable ({balance = balance}, mt)“，其中 mt 代表 <code>{ __index = _M }</code> ，这句话值得注意。根据我们在元表这一章学到的知识，我们明白，setmetatable 将 <code>_M</code> 作为新建表的原型，所以在自己的表内找不到 ‘deposit’、‘withdraw’ 这些方法和变量的时候，便会到 __index 所指定的 _M 类型中去寻找。</p>
+<h2 id="继承">继承<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#继承" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>继承可以用元表实现，它提供了在父类中查找存在的方法和变量的机制。在 Lua 中是不推荐使用继承方式完成构造的，这样做引入的问题可能比解决的问题要多，下面一个是字符串操作类库，给大家演示一下。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>---------- s_base.lualocal _M = {}</span></span>
+<span data-line> </span>
+<span data-line><span>local mt = { __index = _M }</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.upper (s)return string.upper(s)</span></span>
+<span data-line><span>endreturn _M</span></span>
+<span data-line> </span>
+<span data-line><span>---------- s_more.lualocal s_base = require(&quot;s_base&quot;)</span></span>
+<span data-line> </span>
+<span data-line><span>local _M = {}</span></span>
+<span data-line><span>_M = setmetatable(_M, { __index = s_base })</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span>function _M.lower (s)return string.lower(s)</span></span>
+<span data-line><span>endreturn _M</span></span>
+<span data-line> </span>
+<span data-line><span>---------- test.lualocal s_more = require(&quot;s_more&quot;)</span></span>
+<span data-line> </span>
+<span data-line><span>print(s_more.upper(&quot;Hello&quot;))   -- output: HELLOprint(s_more.lower(&quot;Hello&quot;))   -- output: hello</span></span></code></pre></figure>
+<h2 id="成员私有性">成员私有性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#成员私有性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在动态语言中引入成员私有性并没有太大的必要，反而会显著增加运行时的开销，毕竟这种检查无法像许多静态语言那样在编译期完成。下面的技巧把对象作为各方法的 upvalue，本身是很巧妙的，但会让子类继承变得困难，同时构造函数动态创建了函数，会导致构造函数无法被 JIT 编译。</p>
+<p>在 Lua 中，成员的私有性，使用类似于函数闭包的形式来实现。在我们之前的银行账户的例子中，我们使用一个工厂方法来创建新的账户实例，通过工厂方法对外提供的闭包来暴露对外接口。而不想暴露在外的例如 balance 成员变量，则被很好的隐藏起来。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>function newAccount (initialBalance)</span></span>
+<span data-line><span>    local self = {balance = initialBalance}</span></span>
+<span data-line><span>    local withdraw = function (v)</span></span>
+<span data-line><span>        self.balance = self.balance - v</span></span>
+<span data-line><span>    end</span></span>
+<span data-line><span>    local deposit = function (v)</span></span>
+<span data-line><span>        self.balance = self.balance + v</span></span>
+<span data-line><span>    end</span></span>
+<span data-line><span>    local getBalance = function () </span></span>
+<span data-line><span>        return self.balance </span></span>
+<span data-line><span>    end</span></span>
+<span data-line><span>    </span></span>
+<span data-line><span>    return {</span></span>
+<span data-line><span>        withdraw = withdraw,</span></span>
+<span data-line><span>        deposit = deposit,</span></span>
+<span data-line><span>        getBalance = getBalance</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>a = newAccount(100)</span></span>
+<span data-line><span>a.deposit(100)</span></span>
+<span data-line><span>print(a.getBalance()) --> 200print(a.balance)      --> nil</span></span></code></pre></figure>
+<h1 id="局部变量">局部变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#局部变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Lua 的设计有一点很奇怪，<strong>在一个 block 中的变量，如果之前没有定义过，那么认为它是一个全局变量</strong>，<strong>而不是这个 block 的局部变量</strong>。这一点和别的语言不同。<strong>容易造成不小心覆盖了全局同名变量的错误</strong>。</p>
+<h2 id="定义-1"><strong>定义</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#定义-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Lua 中的局部变量要用 local 关键字来显式定义，不使用 local 显式定义的变量就是全局变量</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>g_var = 1         -- global var</span></span>
+<span data-line><span>local l_var = 2   -- local var</span></span></code></pre></figure>
+<h2 id="作用域"><strong>作用域</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#作用域" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>局部变量的生命周期是有限的，它的作用域仅限于声明它的块（block）</strong>。一个块是一个控制结构的执行体、或者是一个函数的执行体再或者是一个程序块（chunk）。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>x = 10</span></span>
+<span data-line><span>local i = 1         -- 程序块中的局部变量 i</span></span>
+<span data-line> </span>
+<span data-line><span>while i &lt;=x do</span></span>
+<span data-line><span>    local x = i * 2   -- while 循环体中的局部变量 x</span></span>
+<span data-line><span>    print(x)          -- output： 2, 4, 6, 8, ...</span></span>
+<span data-line><span>    i = i + 1</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>if i > 20 then</span></span>
+<span data-line><span>    local x           -- then 中的局部变量 x</span></span>
+<span data-line><span>    x = 20</span></span>
+<span data-line><span>    print(x + 2)      -- 如果i > 20 将会打印 22，此处的 x 是局部变量</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>    print(x)          -- 打印 10，这里 x 是全局变量</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>print(x)            -- 打印 10</span></span></code></pre></figure>
+<h2 id="使用局部变量的好处">使用局部变量的好处<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#使用局部变量的好处" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>
+<p>局部变量可以避免因为命名问题污染了全局环境</p>
+</li>
+<li>
+<p>Local 变量的访问比全局变量更快</p>
+</li>
+<li>
+<p>由于局部变量出了作用域之后生命周期结束，这样可以被垃圾回收器及时释放</p>
+</li>
+</ol>
+<h2 id="检测模块的函数使用局部变量">检测模块的函数使用局部变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#检测模块的函数使用局部变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Foo. Lua</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local _M = { _VERSION = '0.01' }</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.add(a, b)     --两个number型变量相加</span></span>
+<span data-line><span>    return a + b</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.update_A()    --更新变量值</span></span>
+<span data-line><span>    A = 365               -- A 是全局变量</span></span>
+<span data-line><span>end</span></span>
+<span data-line> </span>
+<span data-line><span>return _M</span></span></code></pre></figure>
+<p>Use_foo. Lua</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>A = 360     --定义全局变量</span></span>
+<span data-line> </span>
+<span data-line><span>local foo = require(&quot;foo&quot;)</span></span>
+<span data-line> </span>
+<span data-line><span>local b = foo.add(A, A)</span></span>
+<span data-line><span>print(&quot;b = &quot;, b)</span></span>
+<span data-line> </span>
+<span data-line><span>foo.update_A()</span></span>
+<span data-line><span>print(&quot;A = &quot;, A)</span></span></code></pre></figure>
+<p>因为 A 是全局变量，改变了 A 的值</p>
+<p>Lua 上下文中应当严格避免使用自己定义的全局变量。<strong>可以使用一个 lj-releng 工具来扫描 Lua 代码，定位使用 Lua 全局变量的地方</strong>。Lj-releng 的相关链接：<a href="https://github.com/openresty/openresty-devel-utils/blob/master/lj-releng" class="external">https://github.com/openresty/openresty-devel-utils/blob/master/lj-releng<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Windows 用户把 lj-releng 文件所在的目录的绝对路径添加进 PATH 环境变量。然后进入你自己的 Lua 文件所在的工作目录，得到如下结果：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#  lj-releng</span></span>
+<span data-line><span>foo.lua: 0.01 (0.01)</span></span>
+<span data-line><span>Checking use of Lua global variables in file foo.lua...</span></span>
+<span data-line><span>op no.  line  instruction args  ; code</span></span>
+<span data-line><span>2  [8] SETGLOBAL 0 -1  ; A</span></span>
+<span data-line><span>Checking line length exceeding 80...</span></span>
+<span data-line><span>WARNING: No &quot;_VERSION&quot; or &quot;version&quot; field found in `use_foo.lua`.</span></span>
+<span data-line><span>Checking use of Lua global variables in file use_foo.lua...</span></span>
+<span data-line><span>op no.  line  instruction args  ; code</span></span>
+<span data-line><span>2  [1] SETGLOBAL 0 -1  ; A</span></span>
+<span data-line><span>7  [4] GETGLOBAL 2 -1  ; A</span></span>
+<span data-line><span>8  [4] GETGLOBAL 3 -1  ; A</span></span>
+<span data-line><span>18 [8] GETGLOBAL 4 -1  ; A</span></span></code></pre></figure>
+<p>当然，更推荐采用 <strong>luacheck 来检查项目中全局变量，之后的“代码静态分析”一节，我们还会讲到如何使用 luacheck</strong>。</p>
+<h1 id="判断数组的大小">判断数组的大小<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#判断数组的大小" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>
+<p>Table.Getn (t) 等价于 t 但<strong>计算的是数组元素，不包括 hash 键值</strong>。而且数组是以第一个 nil 元素来判断数组结束。</p>
+</li>
+<li>
+<p><code>#</code> 只计算 array 的元素个数，它实际上调用了对象的 metatable 的 <code>__len</code> 函数。对于有 <code>__len</code> 方法的函数返回函数返回值，不然就返回数组成员数目</p>
+</li>
+<li>
+<p><em>Lua</em> 内部实际采用哈希表和数组分别保存键值对、普通值，所以不推荐混合使用这两种赋值方式。</p>
+</li>
+<li>
+<p>Lua 数组中允许 nil 值的存在，但是数组默认结束标志却是 nil。这类比于 C 语言中的字符串，字符串中允许 ‘\0’ 存在，但当读到 ‘\0’ 时，就认为字符串已经结束了。</p>
+</li>
+<li>
+<p>初始化是例外，在 Lua 相关源码中，初始化数组时首先判断数组的长度，若长度大于 0 ，并且最后一个值不为 nil，返回包括 nil 的长度；若最后一个值为 nil，则返回截至第一个非 nil 值的长度。</p>
+</li>
+<li>
+<p><strong>如果你要删除一个数组中的元素，请使用 remove 函数，而不是用 nil 赋值</strong></p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>-- test.lua</span></span>
+<span data-line><span>local tblTest1 = { 1, a = 2, 3 }</span></span>
+<span data-line><span>print(&quot;Test1 &quot; .. #(tblTest1))</span></span>
+<span data-line> </span>
+<span data-line><span>local tblTest2 = { 1, nil }</span></span>
+<span data-line><span>print(&quot;Test2 &quot; .. #(tblTest2))</span></span>
+<span data-line> </span>
+<span data-line><span>local tblTest3 = { 1, nil, 2 }</span></span>
+<span data-line><span>print(&quot;Test3 &quot; .. #(tblTest3))</span></span>
+<span data-line> </span>
+<span data-line><span>local tblTest4 = { 1, nil, 2, nil }</span></span>
+<span data-line><span>print(&quot;Test4 &quot; .. #(tblTest4))</span></span>
+<span data-line> </span>
+<span data-line><span>local tblTest5 = { 1, nil, 2, nil, 3, nil }</span></span>
+<span data-line><span>print(&quot;Test5 &quot; .. #(tblTest5))</span></span>
+<span data-line> </span>
+<span data-line><span>local tblTest6 = { 1, nil, 2, nil, 3, nil, 4, nil }</span></span>
+<span data-line><span>print(&quot;Test6 &quot; .. #(tblTest6))</span></span></code></pre></figure>
+<p>我们分别使用 Lua 和 LuaJIT 来执行一下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>➜ luajit test.lua</span></span>
+<span data-line><span>Test1 2</span></span>
+<span data-line><span>Test2 1</span></span>
+<span data-line><span>Test3 1</span></span>
+<span data-line><span>Test4 1</span></span>
+<span data-line><span>Test5 1</span></span>
+<span data-line><span>Test6 1</span></span>
+<span data-line> </span>
+<span data-line><span>➜ lua test.lua</span></span>
+<span data-line><span>Test1 2</span></span>
+<span data-line><span>Test2 1</span></span>
+<span data-line><span>Test3 3</span></span>
+<span data-line><span>Test4 1</span></span>
+<span data-line><span>Test5 3</span></span>
+<span data-line><span>Test6 1</span></span></code></pre></figure>
+<p>这一段的输出结果，就是这么 <strong>匪夷所思</strong>。不要在 Lua 的 table 中使用 nil 值，<strong>如果一个元素要删除，直接 remove，不要用 nil 去代替</strong>。</p>
+<h1 id="非空判断">非空判断<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#非空判断" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>有时候不小心引用了一个没有赋值的变量，这时它的值默认为 nil。如果对一个 nil 进行索引的话，会导致异常。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local person = {name = &quot;Bob&quot;, sex = &quot;M&quot;}</span></span>
+<span data-line> </span>
+<span data-line><span>-- do something</span></span>
+<span data-line><span>person = nil</span></span>
+<span data-line><span>-- do something</span></span>
+<span data-line><span>print(person.name)</span></span></code></pre></figure>
+<p>会报错</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>stdin:1:attempt to index global 'person' (a nil value)</span></span>
+<span data-line><span>stack traceback:</span></span>
+<span data-line><span>   stdin:1: in main chunk</span></span>
+<span data-line><span>   [C]: ?</span></span></code></pre></figure>
+<p>在实际的工程代码中，我们很难这么轻易地发现我们引用了 nil 变量。因此，在很多情况下我们在访问一些 table 型变量时，需要先判断该变量是否为 nil，例如将上面的代码改成</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local person = {name = &quot;Bob&quot;, sex = &quot;M&quot;}</span></span>
+<span data-line> </span>
+<span data-line><span>-- do something</span></span>
+<span data-line><span>person = nil</span></span>
+<span data-line><span>-- do something</span></span>
+<span data-line><span>if person ~= nil and person.name ~= nil then</span></span>
+<span data-line><span>    print(person.name)</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>-- do somethingend</span></span></code></pre></figure>
+<p>对于简单类型的变量，我们可以用 <em>if (var == nil) then</em> 这样的简单句子来判断。<strong>但是对于 table 型的 Lua 对象，就不能这么简单判断它是否为空了。一个 table 型变量的值可能是</strong> <strong><code>{}</code></strong>，这时它不等于 nil。我们来看下面这段代码：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>local next = next</span></span>
+<span data-line><span>local a = {}</span></span>
+<span data-line><span>local b = {name = &quot;Bob&quot;, sex = &quot;Male&quot;}</span></span>
+<span data-line><span>local c = {&quot;Male&quot;, &quot;Female&quot;}</span></span>
+<span data-line><span>local d = nil</span></span>
+<span data-line> </span>
+<span data-line><span>print(#a)</span></span>
+<span data-line><span>print(#b)</span></span>
+<span data-line><span>print(#c)</span></span>
+<span data-line><span>--print(#d)    -- error</span></span>
+<span data-line> </span>
+<span data-line><span>if a == nil then</span></span>
+<span data-line><span>    Print (&quot;a == nil&quot;)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>If b == nil then</span></span>
+<span data-line><span>    Print (&quot;b == nil&quot;)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>If c == nil then</span></span>
+<span data-line><span>    Print (&quot;c == nil&quot;)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>If d== nil then</span></span>
+<span data-line><span>    Print (&quot;d == nil&quot;)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>If next (a) == nil then</span></span>
+<span data-line><span>    Print (&quot;next (a) == nil&quot;)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>If next (b) == nil then</span></span>
+<span data-line><span>    Print (&quot;next (b) == nil&quot;)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>If next (c) == nil then</span></span>
+<span data-line><span>    Print (&quot;next (c) == nil&quot;)</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<p>输出</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0</span></span>
+<span data-line><span>0</span></span>
+<span data-line><span>2</span></span>
+<span data-line><span>D == nil</span></span>
+<span data-line><span>Next (a) == nil</span></span></code></pre></figure>
+<p>因此，我们要判断一个 table 是否为 <code>{}</code>，不能采用 <code> #table == 0</code> 的方式来判断。可以用下面这样的方法来判断：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Function isTableEmpty (t)</span></span>
+<span data-line><span>    Return t == nil or next (t) == nil</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<p>注意：<strong><code>next</code></strong> <strong>指令是不能被 LuaJIT 的 JIT 编译优化，并且 LuaJIT 貌似没有明确计划支持这个指令优化，在不是必须的情况下，尽量少用。</strong></p>
+<h1 id="正则表达式">正则表达式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#正则表达式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>同时存在两套正则表达式规范：<em>Lua</em> 语言的规范和 <code>ngx. Re.*</code> 的规范，即使您对 <em>Lua</em> 语言中的规范非常熟悉，我们仍不建议使用 <em>Lua</em> 中的正则表达式。</p>
+<ul>
+<li>
+<p>一是因为 <em>Lua</em> 中正则表达式的性能并不如 <code>ngx. Re.*</code> 中的正则表达式优秀；</p>
+</li>
+<li>
+<p>二是 <em>Lua</em> 中的正则表达式并不符合 <em>POSIX</em> 规范，而 <code>ngx. Re.*</code> 中实现的是标准的 <em>POSIX</em> 规范，后者明显更具备通用性。</p>
+</li>
+</ul>
+<p><code>ngx. Re.*</code> 中的 <code>o</code> 选项，指明该参数，被编译的 Pattern 将会在工作进程中缓存，并且被当前工作进程的每次请求所共享。Pattern 缓存的上限值通过 <code>lua_regex_cache_max_entries</code> 来修改，它的默认值为 1024。</p>
+<p><code>ngx. Re.*</code> 中的 <code>j</code> 选项，指明该参数，如果使用的 PCRE 库支持 JIT，OpenResty 会在编译 Pattern 时启用 JIT。启用 JIT 后正则匹配会有明显的性能提升。较新的平台，自带的 PCRE 库均支持 JIT。如果系统自带的 PCRE 库不支持 JIT，出于性能考虑，最好自己编译一份 libpcre. So，然后在编译 OpenResty 时链接过去。要想验证当前 PCRE 库是否支持 JIT，可以这么做</p>
+<ol>
+<li>
+<p>编译 OpenResty 时在 <code>./configure</code> 中指定 <code>--with-debug</code> 选项</p>
+</li>
+<li>
+<p>在 <code>error_log</code> 指令中指定日志级别为 <code>debug</code></p>
+</li>
+<li>
+<p>运行正则匹配代码，查看日志中是否有 <code>pcre JIT compiling result: 1</code></p>
+</li>
+</ol>
+<p>即使运行在不支持 JIT 的 OpenResty 上，加上 <code>j</code> 选项也不会带来坏的影响。在 OpenResty 官方的 Lua 库中，正则匹配至少都会带上 <code>jo</code> 这两个选项。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Location /test {</span></span>
+<span data-line><span>    Content_by_lua_block {</span></span>
+<span data-line><span>        local regex = [[\d+]]</span></span>
+<span data-line> </span>
+<span data-line><span>        -- 参数 &quot;j&quot; 启用 JIT 编译，参数 &quot;o&quot; 是开启缓存必须的</span></span>
+<span data-line><span>        Local m = ngx.Re.Match (&quot;hello, 1234&quot;, regex, &quot;jo&quot;)</span></span>
+<span data-line><span>        If m then</span></span>
+<span data-line><span>            Ngx.Say (m[0])</span></span>
+<span data-line><span>        Else</span></span>
+<span data-line><span>            Ngx.Say (&quot;not matched!&quot;)</span></span>
+<span data-line><span>        End</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h4 id="lua-正则简单汇总"><strong>Lua 正则简单汇总</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lua-正则简单汇总" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><em>Lua</em> 中正则表达式语法上最大的区别，<em>Lua</em> 使用 <em>’%’</em> 来进行转义，而其他语言的正则表达式使用 <em>”</em> 符号来进行转义。其次，<em>Lua</em> 中并不使用 <em>’?’</em> 来表示非贪婪匹配，而是定义了不同的字符来表示是否是贪婪匹配。定义如下：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>符号</th><th>匹配次数</th><th>匹配模式</th></tr></thead><tbody><tr><td>+</td><td>匹配前一字符 1 次或多次</td><td>非贪婪</td></tr><tr><td><code>*</code></td><td>匹配前一字符 0 次或多次</td><td>贪婪</td></tr><tr><td>-</td><td>匹配前一字符 0 次或多次</td><td>非贪婪</td></tr><tr><td>?</td><td>匹配前一字符 0 次或 1 次</td><td>仅用于此，不用于标识是否贪婪</td></tr></tbody></table></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>符号</th><th>匹配模式</th></tr></thead><tbody><tr><td>.</td><td>任意字符</td></tr><tr><td>%a</td><td>字母</td></tr><tr><td>%c</td><td>控制字符</td></tr><tr><td>%d</td><td>数字</td></tr><tr><td>%l</td><td>小写字母</td></tr><tr><td>%p</td><td>标点字符</td></tr><tr><td>%s</td><td>空白符</td></tr><tr><td>%u</td><td>大写字母</td></tr><tr><td>%w</td><td>字母和数字</td></tr><tr><td>%x</td><td>十六进制数字</td></tr><tr><td>%z</td><td>代表 0 的字符</td></tr></tbody></table></div>
+<h1 id="虚变量">虚变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#虚变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>当一个方法返回多个值时，有些返回值有时候用不到，要是声明很多变量来一一接收，显然不太合适（不是不能）。<strong>Lua 提供了一个虚变量 (dummy variable)的概念，按照</strong>**<a href="https://www.lua.org/pil/1.3.html" class="external">惯例<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>**<strong>以一个下划线（“_”）来命名，用它来表示丢弃不需要的数值，仅仅起到占位的作用。</strong></p>
+<h2 id="返回值">返回值<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#返回值" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>-- string. Find (s, p) 从 string 变量 s 的开头向后匹配 string</span></span>
+<span data-line><span>-- p，若匹配不成功，返回 nil，若匹配成功，返回第一次匹配成功</span></span>
+<span data-line><span>-- 的起止下标。</span></span>
+<span data-line> </span>
+<span data-line><span>Local start, finish = string.Find (&quot;hello&quot;, &quot;he&quot;) --start 值为起始下标，finish</span></span>
+<span data-line><span>--值为结束下标</span></span>
+<span data-line><span>Print ( start, finish )                          --输出 1   2</span></span>
+<span data-line> </span>
+<span data-line><span>Local start = string.Find (&quot;hello&quot;, &quot;he&quot;)      -- start 值为起始下标</span></span>
+<span data-line><span>Print ( start )                               -- 输出 1</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span>Local _, finish = string.Find (&quot;hello&quot;, &quot;he&quot;)   --采用虚变量（即下划线），接收起</span></span>
+<span data-line><span>--始下标值，然后丢弃，finish 接收</span></span>
+<span data-line><span>--结束下标值</span></span>
+<span data-line><span>Print ( finish )                              --输出 2</span></span>
+<span data-line><span>Print ( _ )    </span></span></code></pre></figure>
+<h2 id="迭代">迭代<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#迭代" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>-- test. Lua 文件</span></span>
+<span data-line><span>Local t = {1, 3, 5}</span></span>
+<span data-line> </span>
+<span data-line><span>Print (&quot;all  data: &quot;)</span></span>
+<span data-line><span>For i, v in ipairs (t) do</span></span>
+<span data-line><span>    Print (i, v)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>Print (&quot;&quot;)</span></span>
+<span data-line><span>Print (&quot;part data: &quot;)</span></span>
+<span data-line><span>For _, v in ipairs (t) do</span></span>
+<span data-line><span>    Print (v)</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<p>输出</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># Luajit test. Lua</span></span>
+<span data-line><span>All  data:</span></span>
+<span data-line><span>1   1</span></span>
+<span data-line><span>2   3</span></span>
+<span data-line><span>3   5</span></span>
+<span data-line> </span>
+<span data-line><span>Part data:</span></span>
+<span data-line><span>1</span></span>
+<span data-line><span>3</span></span>
+<span data-line><span>5</span></span></code></pre></figure>
+<h1 id="抵制使用-module--定义模块"><strong>抵制使用 module () 定义模块</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#抵制使用-module--定义模块" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>旧式的模块定义方式是通过 <code>module (&quot;filename&quot;[, package. Seeall])*</code> 来显式声明一个包，现在官方不推荐再使用这种方式</p>
+<p>这种方式将会返回一个由 <code>filename</code> 模块函数组成的 <code>table</code>，并且还会定义一个包含该 <code>table</code> 的全局变量。</p>
+<ol>
+<li>
+<p><code>package. Seeall</code> 这种方式破坏了模块的高内聚，原本引入 “filename” 模块只想调用它的 <em>foobar ()</em> 函数，但是它却可以读写全局属性，例如 <code>&quot;filename. Os&quot;</code>。</p>
+</li>
+<li>
+<p><code>module</code> 函数压栈操作引发的副作用，污染了全局环境变量。例如 <code>module (&quot;filename&quot;)</code> 会创建一个 <code>filename</code> 的 <code>table</code>，并将这个 <code>table</code> 注入全局环境变量中，这样使得没有引用它的文件也能调用 <code>filename</code> 模块的方法。</p>
+</li>
+</ol>
+<p>推荐的模块定义</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>-- square. Lua 长方形模块</span></span>
+<span data-line><span>Local _M = {}           -- 局部的变量</span></span>
+<span data-line><span>_M._VERSION = '1.0'     -- 模块版本</span></span>
+<span data-line> </span>
+<span data-line><span>Local mt = { __index = _M }</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.new (self, width, height)</span></span>
+<span data-line><span>    Return setmetatable ({ width=width, height=height }, mt)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.get_square (self)</span></span>
+<span data-line><span>    Return self. Width * self. Height</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.get_circumference (self)</span></span>
+<span data-line><span>    Return (self. Width + self. Height) * 2</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>Return _M</span></span></code></pre></figure>
+<p>使用</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Local square = require &quot;square&quot;</span></span>
+<span data-line><span>Local s 1 = square: new (1, 2)</span></span>
+<span data-line><span>Print (s 1: get_square ())          --output: 2</span></span>
+<span data-line><span>Print (s 1: get_circumference ())   --output: 6</span></span></code></pre></figure>
+<p>另一个跟 Lua 的 module 模块相关需要注意的点是，当 lua_code_cache on 开启时，require 加载的模块是会被缓存下来的，这样我们的模块就会以最高效的方式运行，直到被显式地调用如下语句（这里有点像模块卸载）：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Package. Loaded[&quot;square&quot;] = nil</span></span></code></pre></figure>
+<h2 id="调用函数前先定义函数">调用函数前先定义函数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#调用函数前先定义函数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Lua 里面的函数必须放在调用的代码之前，下面的代码是一个常见的错误：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>-- test. Lua 文件 local i = 100</span></span>
+<span data-line><span>I = add_one (i)</span></span>
+<span data-line> </span>
+<span data-line><span>Function add_one (i)</span></span>
+<span data-line><span>    Return i + 1</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<p>因此在函数定义之前使用函数相当于在变量赋值之前使用变量，Lua 世界对于没有赋值的变量，默认都是 nil，所以这里也就产生了一个 nil 的错误。</p>
+<h1 id="点号操作符和冒号操作符的区别">点号操作符和冒号操作符的区别<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#点号操作符和冒号操作符的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Local str = &quot;abcde&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>Print (&quot;case 1: &quot;, str: sub (1, 2))</span></span>
+<span data-line><span>Print (&quot;case 2: &quot;, str.Sub (str, 1, 2))</span></span></code></pre></figure>
+<p>输出</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Lua" data-theme="github-light github-dark"><code data-language="Lua" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Case 1: ab</span></span>
+<span data-line><span>Case 2: ab</span></span></code></pre></figure>
+<ul>
+<li>
+<p><strong>冒号操作会带入一个</strong> <strong><code>self</code></strong> <strong>参数，用来代表</strong> <strong><code>自己</code>****。</strong></p>
+</li>
+<li>
+<p>而点号操作，只是 <code>内容</code> 的展开。</p>
+</li>
+</ul>
+<p>在函数定义时，使用冒号将默认接收一个 <code>self</code> 参数，而使用点号则需要显式传入 <code>self</code> 参数</p>
+<p>示例代码：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Obj = { x = 20 }</span></span>
+<span data-line> </span>
+<span data-line><span>Function obj: fun 1 ()</span></span>
+<span data-line><span>    Print (self. X)</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<p>等价于</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Obj = { x = 20 }</span></span>
+<span data-line> </span>
+<span data-line><span>Function obj. Fun 1 (self)</span></span>
+<span data-line><span>    Print (self. X)</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<h1 id="module-的缺点">Module 的缺点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#module-的缺点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>由于 <code>lua_code_cache off</code> 情况下，缓存的代码会伴随请求完结而释放。Module 的最大好处缓存这时候是无法发挥的，所以本章的内容都是基于 <code>lua_code_cache on</code> 的情况下。</p>
+<p>先看看下面代码：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Local ngx_socket_tcp = ngx. Socket. Tcp           -- ①</span></span>
+<span data-line> </span>
+<span data-line><span>Local _M = { _VERSION = '0.06' }                -- ②</span></span>
+<span data-line><span>Local mt = { __index = _M }                     -- ③</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.new (self)</span></span>
+<span data-line><span>    Local sock, err = ngx_socket_tcp ()          -- ④</span></span>
+<span data-line><span>    If not sock then</span></span>
+<span data-line><span>        Return nil, err</span></span>
+<span data-line><span>    End</span></span>
+<span data-line><span>    Return setmetatable ({ sock = sock }, mt)    -- ⑤</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.set_timeout (self, timeout)</span></span>
+<span data-line><span>    Local sock = self. Sock</span></span>
+<span data-line><span>    If not sock then</span></span>
+<span data-line><span>        Return nil, &quot;not initialized&quot;</span></span>
+<span data-line><span>    End</span></span>
+<span data-line> </span>
+<span data-line><span>    Return sock: settimeout (timeout)</span></span>
+<span data-line><span>End</span></span>
+<span data-line> </span>
+<span data-line><span>-- ... 其他功能代码，这里简略</span></span>
+<span data-line> </span>
+<span data-line><span>Return _M</span></span></code></pre></figure>
+<ol>
+<li>
+<p>对于比较底层的模块，内部使用到的非本地函数，都需要 local 本地化，这样做的好处：</p>
+<ol>
+<li>
+<p>避免命名冲突：防止外部是 <code>require (...)</code> 的方法调用造成全局变量污染</p>
+</li>
+<li>
+<p>访问局部变量的速度比全局变量更快、更快、更快（重要事情说三遍）</p>
+</li>
+</ol>
+</li>
+<li>
+<p>每个基础模块最好有自己 <code>_VERSION</code> 标识，方便后期利用 <code>_VERSION</code> 完成热代码部署等高级特性，也便于使用者对版本有整体意识。</p>
+</li>
+<li>
+<p>其实 <code>_M</code> 和 <code>mt</code> 对于不同的请求实例（require 方法得到的对象）是相同的，因为 module 会被缓存到全局环境中。所以在这个位置千万不要放单请求内个性信息，例如 ngx. Ctx 等变量。</p>
+</li>
+<li>
+<p><strong>这里需要实现的是给每个实例绑定不同的 tcp 对象</strong>，后<strong>面 setmetatable 确保了每个实例拥有自己的 socket 对象，所以必须放在 new 函数中</strong>。如果放在 ③ 的下面，那么这时候所有的不同实例内部将绑定了同一个 socket 对象。</p>
+</li>
+</ol>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Local mt = { __index = _M }                     -- ③</span></span>
+<span data-line><span>Local sock = ngx_socket_tcp ()                   -- ④ 错误的</span></span>
+<span data-line> </span>
+<span data-line><span>function _M.new (self)</span></span>
+<span data-line><span>    Return setmetatable ({ sock = sock }, mt)    -- ⑤</span></span>
+<span data-line><span>End</span></span></code></pre></figure>
+<ol start="5">
+<li>
+<p>Lua 的 module 有两种类型：</p>
+<ol>
+<li>
+<p>支持面向对象痕迹可以保留私有属性；静态方法提供者，没有任何私有属性。</p>
+</li>
+<li>
+<p>真正起到区别作用的就是 setmetatable 函数，是否有自己的个性元表，最终导致两种不同的形态。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="ffi">FFI<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ffi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="https://moonbingbing.gitbooks.io/openresty-best-practices/content/lua/FFI.html" class="external">https://moonbingbing.gitbooks.io/openresty-best-practices/content/lua/FFI.html<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>FFI 库，是 LuaJIT 中最重要的一个扩展库。它允许从纯 Lua 代码调用外部 C 函数，使用 C 数据结构。</p>
+<p>FFI 库最大限度的省去了使用 C 手工编写繁重的 <code>Lua/C</code> 绑定的需要。不需要学习一门独立/额外的绑定语言——它解析普通 C 声明。这样可以从 C 头文件或参考手册中，直接剪切，粘贴。它的任务就是绑定很大的库，但不需要捣鼓脆弱的绑定生成器。</p>
+<p>FFI 紧紧的整合进了 LuaJIT（几乎不可能作为一个独立的模块）。<code>JIT</code> 编译器在 C 数据结构上所产生的代码，等同于一个 C 编译器应该生产的代码。在 <code>JIT</code> 编译过的代码中，调用 C 函数，可以被内连处理，不同于基于 <code>Lua/C API</code> 函数调用。</p>
+<h2 id="ffi-库词汇"><strong>ffi 库词汇</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ffi-库词汇" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>noun</td><td>Explanation</td></tr><tr><td>cdecl</td><td>A definition of an abstract C type (actually, is a lua string)</td></tr><tr><td>ctype</td><td>C type object</td></tr><tr><td>cdata</td><td>C data object</td></tr><tr><td>ct</td><td>C type format, is a template object, may be cdecl, cdata, ctype</td></tr><tr><td>cb</td><td>callback object</td></tr><tr><td>VLA</td><td>An array of variable length</td></tr><tr><td>VLS</td><td>A structure of variable length</td></tr></tbody></table></div>
+<h2 id="ffi-api"><em><em>ffi.</em> API</em>*<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ffi-api" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>功能：</strong> <em>Lua ffi 库的 API，与 LuaJIT 不可分割。</em></p>
+<p>毫无疑问，在 <code>lua</code> 文件中使用 <code>ffi</code> 库的时候，必须要有下面的一行。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Local ffi = require &quot;ffi&quot;</span></span></code></pre></figure>
+<h1 id="jit">JIT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#jit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>看一下 LuaJIT 官方的解释：LuaJIT is a Just-In-Time Compilerfor the Lua programming language。</p>
+<p><strong>LuaJIT 的运行时环境包括一个用手写汇编实现的 Lua 解释器和一个可以直接生成机器代码的 JIT 编译器</strong></p>
+<ul>
+<li>
+<p>一开始的时候，Lua 字节码总是被 LuaJIT 的解释器解释执行。LuaJIT 的解释器会在执行字节码时同时记录一些运行时的统计信息，比如每个 Lua 函数调用入口的实际运行次数，还有每个 Lua 循环的实际执行次数。</p>
+</li>
+<li>
+<p>当这些次数超过某个预设的阈值时，便认为对应的 Lua 函数入口或者对应的 Lua 循环足够的“热”，这时便会触发 JIT 编译器开始工作。</p>
+</li>
+<li>
+<p>JIT 编译器会从热函数的入口或者热循环的某个位置开始尝试编译对应的 Lua 代码路径。编译的过程是把 LuaJIT 字节码先转换成 LuaJIT 自己定义的中间码（IR），然后再生成针对目标体系结构的机器码（比如 x 86_64 指令组成的机器码）</p>
+</li>
+<li>
+<p>如果当前 Lua 代码路径上的所有的操作都可以被 JIT 编译器顺利编译，则这条编译过的代码路径便被称为一个“trace”，在物理上对应一个 <code>trace</code> 类型的 GC 对象（即参与 Lua GC 的对象）。</p>
+</li>
+</ul>
+<p>JIT 编译器不支持的原语被称为 <strong>NYI（Not Yet Implemented）原语</strong>。比较完整的 NYI 列表在这篇文档里面：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plaintext" data-theme="github-light github-dark"><code data-language="Plaintext" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>http://wiki.luajit.org/NYI</span></span></code></pre></figure>
+<p>所谓“让更多的 Lua 代码被 JIT 编译”，其实就是帮助更多的 Lua 代码路径能为 JIT 编译器所接受。这一般通过两种途径来实现：</p>
+<ol>
+<li>
+<p>调整对应的 Lua 代码，<strong>避免使用 NYI 原语</strong>。</p>
+</li>
+<li>
+<p>增强 JIT 编译器，让越来越多的 NYI 原语能够被编译。</p>
+</li>
+</ol>
+<h2 id="可以被-jit-编译的元操作"><strong>可以被 JIT 编译的元操作</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#可以被-jit-编译的元操作" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>下面给大家列一下截止到目前已经可以被 JIT 编译的元操作。其他还有 IO、Bit、FFI、Coroutine、OS、Package、Debug、JIT 等分类，使用频率相对较低，这里就不罗列了，可以参考官网：<a href="http://wiki.luajit.org/NYI" class="external">http://wiki.luajit.org/NYI<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>。</p>
+<h3 id="基础库的支持情况"><strong>基础库的支持情况</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#基础库的支持情况" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>函数</td><td>编译?</td><td>备注</td></tr><tr><td>assert</td><td>yes</td><td></td></tr><tr><td>collectgarbage</td><td>no</td><td></td></tr><tr><td>dofile</td><td>never</td><td></td></tr><tr><td>error</td><td>never</td><td></td></tr><tr><td>getfenv</td><td>2.1 partial</td><td>只有 getfenv (0) 能编译</td></tr><tr><td>getmetatable</td><td>yes</td><td></td></tr><tr><td>ipairs</td><td>yes</td><td></td></tr><tr><td>load</td><td>never</td><td></td></tr><tr><td>loadfile</td><td>never</td><td></td></tr><tr><td>loadstring</td><td>never</td><td></td></tr><tr><td>next</td><td>no</td><td></td></tr><tr><td>pairs</td><td>no</td><td></td></tr><tr><td>pcall</td><td>yes</td><td></td></tr><tr><td>print</td><td>no</td><td></td></tr><tr><td>rawequal</td><td>yes</td><td></td></tr><tr><td>rawget</td><td>yes</td><td></td></tr><tr><td>rawlen (5.2)</td><td>yes</td><td></td></tr><tr><td>rawset</td><td>yes</td><td></td></tr><tr><td>select</td><td>partial</td><td>第一个参数是静态变量的时候可以编译</td></tr><tr><td>setfenv</td><td>no</td><td></td></tr><tr><td>setmetatable</td><td>yes</td><td></td></tr><tr><td>tonumber</td><td>partial</td><td>不能编译非 10 进制，非预期的异常输入</td></tr><tr><td>tostring</td><td>partial</td><td>只能编译：字符串、数字、布尔、nil 以及支持 __tostring 元方法的类型</td></tr><tr><td>type</td><td>yes</td><td></td></tr><tr><td>unpack</td><td>no</td><td></td></tr><tr><td>xpcall</td><td>yes</td><td></td></tr></tbody></table></div>
+<h3 id="字符串库"><strong>字符串库</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#字符串库" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>函数</td><td>编译?</td><td>备注</td></tr><tr><td>string. Byte</td><td>yes</td><td></td></tr><tr><td>string. Char</td><td>2.1</td><td></td></tr><tr><td>string. Dump</td><td>never</td><td></td></tr><tr><td>string. Find</td><td>2.1 partial</td><td>只有字符串样式查找（没有样式）</td></tr><tr><td>string. Format</td><td>2.1 partial</td><td>不支持 %p 或非字符串参数的 %s</td></tr><tr><td>string. Gmatch</td><td>no</td><td></td></tr><tr><td>string. Gsub</td><td>no</td><td></td></tr><tr><td>string. Len</td><td>yes</td><td></td></tr><tr><td>string. Lower</td><td>2.1</td><td></td></tr><tr><td>string. Match</td><td>no</td><td></td></tr><tr><td>string. Rep</td><td>2.1</td><td></td></tr><tr><td>string. Reverse</td><td>2.1</td><td></td></tr><tr><td>string. Sub</td><td>yes</td><td></td></tr><tr><td>string. Upper</td><td>2.1</td><td></td></tr></tbody></table></div>
+<h3 id="表"><strong>表</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>函数</td><td>编译?</td><td>备注</td></tr><tr><td>table. Concat</td><td>2.1</td><td></td></tr><tr><td>table. Foreach</td><td>no</td><td>2.1: 内部编译，但还没有外放</td></tr><tr><td>table. Foreachi</td><td>2.1</td><td></td></tr><tr><td>table. Getn</td><td>yes</td><td></td></tr><tr><td>table. Insert</td><td>partial</td><td>只有 push 操作</td></tr><tr><td>table. Maxn</td><td>no</td><td></td></tr><tr><td>table. Pack (5.2)</td><td>no</td><td></td></tr><tr><td>table. Remove</td><td>2.1</td><td>部分，只有 pop 操作</td></tr><tr><td>table. Sort</td><td>no</td><td></td></tr><tr><td>table. Unpack (5.2)</td><td>no</td><td></td></tr></tbody></table></div>
+<h3 id="math-库"><strong>math 库</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#math-库" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>函数</td><td>编译?</td><td>备注</td></tr><tr><td>math. Abs</td><td>yes</td><td></td></tr><tr><td>math. Acos</td><td>yes</td><td></td></tr><tr><td>math. Asin</td><td>yes</td><td></td></tr><tr><td>math. Atan</td><td>yes</td><td></td></tr><tr><td>math. Atan 2</td><td>yes</td><td></td></tr><tr><td>math. Ceil</td><td>yes</td><td></td></tr><tr><td>math. Cos</td><td>yes</td><td></td></tr><tr><td>math. Cosh</td><td>yes</td><td></td></tr><tr><td>math. Deg</td><td>yes</td><td></td></tr><tr><td>math. Exp</td><td>yes</td><td></td></tr><tr><td>math. Floor</td><td>yes</td><td></td></tr><tr><td>math. Fmod</td><td>no</td><td></td></tr><tr><td>math. Frexp</td><td>no</td><td></td></tr><tr><td>math. Ldexp</td><td>yes</td><td></td></tr><tr><td>math. Log</td><td>yes</td><td></td></tr><tr><td>math. Log 10</td><td>yes</td><td></td></tr><tr><td>math. Max</td><td>yes</td><td></td></tr><tr><td>math. Min</td><td>yes</td><td></td></tr><tr><td>math. Modf</td><td>yes</td><td></td></tr><tr><td>math. Pow</td><td>yes</td><td></td></tr><tr><td>math. Rad</td><td>yes</td><td></td></tr><tr><td>math. Random</td><td>yes</td><td></td></tr><tr><td>math. Randomseed</td><td>no</td><td></td></tr><tr><td>math. Sin</td><td>yes</td><td></td></tr><tr><td>math. Sinh</td><td>yes</td><td></td></tr><tr><td>math. Sqrt</td><td>yes</td><td></td></tr><tr><td>math. Tan</td><td>yes</td><td></td></tr><tr><td>math. Tanh</td><td>yes</td><td></td></tr></tbody></table></div></article></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" id="toc" class><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#lua-简介" data-for="lua-简介">Lua 简介</a></li><li class="depth-0"><a href="#lua-环境搭建" data-for="lua-环境搭建">Lua 环境搭建</a></li><li class="depth-1"><a href="#helloworld" data-for="helloworld">Helloworld</a></li><li class="depth-0"><a href="#基本数据类型" data-for="基本数据类型">基本数据类型</a></li><li class="depth-1"><a href="#nil" data-for="nil">Nil</a></li><li class="depth-1"><a href="#boolean-布尔" data-for="boolean-布尔">Boolean (布尔)</a></li><li class="depth-1"><a href="#number数字" data-for="number数字">number（数字）</a></li><li class="depth-1"><a href="#string字符串" data-for="string字符串">String（字符串）</a></li><li class="depth-1"><a href="#table-表" data-for="table-表">Table (表)</a></li><li class="depth-1"><a href="#function-函数" data-for="function-函数">Function (函数)</a></li><li class="depth-0"><a href="#表达式" data-for="表达式">表达式</a></li><li class="depth-1"><a href="#算术运算符" data-for="算术运算符">算术运算符</a></li><li class="depth-1"><a href="#关系运算符" data-for="关系运算符">关系运算符</a></li><li class="depth-1"><a href="#逻辑运算符" data-for="逻辑运算符">逻辑运算符</a></li><li class="depth-1"><a href="#字符串连接" data-for="字符串连接">字符串连接</a></li><li class="depth-1"><a href="#优先级" data-for="优先级">优先级</a></li><li class="depth-0"><a href="#控制结构" data-for="控制结构">控制结构</a></li><li class="depth-1"><a href="#if-else" data-for="if-else">If-else</a></li><li class="depth-2"><a href="#单个-if-分支型" data-for="单个-if-分支型">单个 if 分支型</a></li><li class="depth-2"><a href="#两个分支-if-else-型" data-for="两个分支-if-else-型">两个分支 if-else 型</a></li><li class="depth-2"><a href="#多个分支的-if-elseif-else" data-for="多个分支的-if-elseif-else">多个分支的 if-elseif-else</a></li><li class="depth-1"><a href="#while" data-for="while">While</a></li><li class="depth-1"><a href="#repeat" data-for="repeat">Repeat</a></li><li class="depth-1"><a href="#for" data-for="for">For</a></li><li class="depth-2"><a href="#for-数字型" data-for="for-数字型">for 数字型</a></li><li class="depth-1"><a href="#for-泛型" data-for="for-泛型">For 泛型</a></li><li class="depth-1"><a href="#break" data-for="break">Break</a></li><li class="depth-1"><a href="#return" data-for="return">Return</a></li><li class="depth-1"><a href="#goto" data-for="goto">Goto</a></li><li class="depth-0"><a href="#函数" data-for="函数">函数</a></li><li class="depth-1"><a href="#定义" data-for="定义">定义</a></li><li class="depth-1"><a href="#参数" data-for="参数">参数</a></li><li class="depth-2"><a href="#按值传递" data-for="按值传递">按值传递</a></li><li class="depth-2"><a href="#变长参数" data-for="变长参数">变长参数</a></li><li class="depth-2"><a href="#具名参数" data-for="具名参数">具名参数</a></li><li class="depth-2"><a href="#按引用传递" data-for="按引用传递">按引用传递</a></li><li class="depth-1"><a href="#函数返回值" data-for="函数返回值">函数返回值</a></li><li class="depth-0"><a href="#全动态函数调用" data-for="全动态函数调用">全动态函数调用</a></li><li class="depth-0"><a href="#模块" data-for="模块">模块</a></li><li class="depth-0"><a href="#string" data-for="string">String</a></li><li class="depth-1"><a href="#stringbyte-s--i--j-" data-for="stringbyte-s--i--j-">string.Byte (s [, i [, j ]])</a></li><li class="depth-1"><a href="#string-char-" data-for="string-char-">string. Char (…)</a></li><li class="depth-1"><a href="#stringupper-s" data-for="stringupper-s">string.Upper (s)</a></li><li class="depth-1"><a href="#stringlower-s" data-for="stringlower-s">string.Lower (s)</a></li><li class="depth-1"><a href="#stringlen-s" data-for="stringlen-s">string.Len (s)</a></li><li class="depth-1"><a href="#stringfind-s-p--init--plain" data-for="stringfind-s-p--init--plain">string.Find (s, p [, init [, plain]])</a></li><li class="depth-1"><a href="#stringformat-formatstring-" data-for="stringformat-formatstring-">string.Format (formatstring, …)</a></li><li class="depth-1"><a href="#stringmatch-s-p--init" data-for="stringmatch-s-p--init">string.Match (s, p [, init])</a></li><li class="depth-1"><a href="#stringgmatch-s-p" data-for="stringgmatch-s-p">string.Gmatch (s, p)</a></li><li class="depth-1"><a href="#stringrep-s-n" data-for="stringrep-s-n">string.Rep (s, n)</a></li><li class="depth-1"><a href="#stringsub-s-i--j" data-for="stringsub-s-i--j">string.Sub (s, i [, j])</a></li><li class="depth-1"><a href="#stringgsub-s-p-r--n" data-for="stringgsub-s-p-r--n">string.Gsub (s, p, r [, n])</a></li><li class="depth-1"><a href="#string-reverse-s" data-for="string-reverse-s">string. Reverse (s)</a></li><li class="depth-0"><a href="#table" data-for="table">Table</a></li><li class="depth-1"><a href="#下标从-1-开始" data-for="下标从-1-开始">下标从 1 开始</a></li><li class="depth-1"><a href="#table-getn-获取长度" data-for="table-getn-获取长度">table. Getn 获取长度</a></li><li class="depth-1"><a href="#table-concat-table--sep--i--j---" data-for="table-concat-table--sep--i--j---">table. Concat (table [, sep [, i [, j ] ] ])</a></li><li class="depth-1"><a href="#table-insert-table-pos--value" data-for="table-insert-table-pos--value">table. Insert (table, [pos ,] value)</a></li><li class="depth-1"><a href="#table-maxn-table" data-for="table-maxn-table">table. Maxn (table)</a></li><li class="depth-1"><a href="#table-remove-table--pos" data-for="table-remove-table--pos">table. Remove (table [, pos])</a></li><li class="depth-1"><a href="#table-sort-table--comp" data-for="table-sort-table--comp">table. Sort (table [, comp])</a></li><li class="depth-1"><a href="#其他" data-for="其他">其他</a></li><li class="depth-0"><a href="#日期时间" data-for="日期时间">日期时间</a></li><li class="depth-1"><a href="#os-time-table" data-for="os-time-table">os. Time ([table])</a></li><li class="depth-1"><a href="#os-difftime-t-2-t-1" data-for="os-difftime-t-2-t-1">os. Difftime (t 2, t 1)</a></li><li class="depth-1"><a href="#os-date-format--time" data-for="os-date-format--time">os. Date ([format [, time]])</a></li><li class="depth-0"><a href="#数学库" data-for="数学库">数学库</a></li><li class="depth-0"><a href="#文件" data-for="文件">文件</a></li><li class="depth-1"><a href="#隐式文件描述" data-for="隐式文件描述">隐式文件描述</a></li><li class="depth-1"><a href="#显式文件描述" data-for="显式文件描述">显式文件描述</a></li><li class="depth-1"><a href="#文件操作函数" data-for="文件操作函数">文件操作函数</a></li><li class="depth-0"><a href="#元表" data-for="元表">元表</a></li><li class="depth-1"><a href="#修改表的操作符行为" data-for="修改表的操作符行为">修改表的操作符行为</a></li><li class="depth-1"><a href="#__index-元方法" data-for="__index-元方法">__index 元方法</a></li><li class="depth-1"><a href="#__tostring-元方法" data-for="__tostring-元方法">__tostring 元方法</a></li><li class="depth-1"><a href="#__call-元方法" data-for="__call-元方法">__call 元方法</a></li><li class="depth-1"><a href="#__metatable-元方法" data-for="__metatable-元方法">__metatable 元方法</a></li><li class="depth-0"><a href="#面向对象" data-for="面向对象">面向对象</a></li><li class="depth-1"><a href="#类" data-for="类">类</a></li><li class="depth-1"><a href="#继承" data-for="继承">继承</a></li><li class="depth-1"><a href="#成员私有性" data-for="成员私有性">成员私有性</a></li><li class="depth-0"><a href="#局部变量" data-for="局部变量">局部变量</a></li><li class="depth-1"><a href="#定义-1" data-for="定义-1">定义</a></li><li class="depth-1"><a href="#作用域" data-for="作用域">作用域</a></li><li class="depth-1"><a href="#使用局部变量的好处" data-for="使用局部变量的好处">使用局部变量的好处</a></li><li class="depth-1"><a href="#检测模块的函数使用局部变量" data-for="检测模块的函数使用局部变量">检测模块的函数使用局部变量</a></li><li class="depth-0"><a href="#判断数组的大小" data-for="判断数组的大小">判断数组的大小</a></li><li class="depth-0"><a href="#非空判断" data-for="非空判断">非空判断</a></li><li class="depth-0"><a href="#正则表达式" data-for="正则表达式">正则表达式</a></li><li class="depth-0"><a href="#虚变量" data-for="虚变量">虚变量</a></li><li class="depth-1"><a href="#返回值" data-for="返回值">返回值</a></li><li class="depth-1"><a href="#迭代" data-for="迭代">迭代</a></li><li class="depth-0"><a href="#抵制使用-module--定义模块" data-for="抵制使用-module--定义模块">抵制使用 module () 定义模块</a></li><li class="depth-1"><a href="#调用函数前先定义函数" data-for="调用函数前先定义函数">调用函数前先定义函数</a></li><li class="depth-0"><a href="#点号操作符和冒号操作符的区别" data-for="点号操作符和冒号操作符的区别">点号操作符和冒号操作符的区别</a></li><li class="depth-0"><a href="#module-的缺点" data-for="module-的缺点">Module 的缺点</a></li><li class="depth-0"><a href="#ffi" data-for="ffi">FFI</a></li><li class="depth-1"><a href="#ffi-库词汇" data-for="ffi-库词汇">ffi 库词汇</a></li><li class="depth-1"><a href="#ffi-api" data-for="ffi-api">ffi. API*</a></li><li class="depth-0"><a href="#jit" data-for="jit">JIT</a></li><li class="depth-1"><a href="#可以被-jit-编译的元操作" data-for="可以被-jit-编译的元操作">可以被 JIT 编译的元操作</a></li><li class="depth-2"><a href="#基础库的支持情况" data-for="基础库的支持情况">基础库的支持情况</a></li><li class="depth-2"><a href="#字符串库" data-for="字符串库">字符串库</a></li><li class="depth-2"><a href="#表" data-for="表">表</a></li><li class="depth-2"><a href="#math-库" data-for="math-库">math 库</a></li></ul></div></div><div class="backlinks"><h3>反向链接</h3><ul class="overflow"><li><a href="../" class="internal">index</a></li></ul></div><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
 	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
 	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
 	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
