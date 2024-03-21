@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
     concurrency:
@@ -28,22 +28,23 @@ jobs:
         # if: ${{ github.event_name == 'repository_dispatch' }} 
         run:  git submodule update --remote
 
-      - name: Build Link Index
-        uses: jackyzha0/hugo-obsidian@v2.20
-        with:
-          index: true
-          input: content
-          output: assets/indices
-          root: .
+      # - name: Build Link Index
+      #   uses: jackyzha0/hugo-obsidian@v2.20
+      #   with:
+      #     index: true
+      #     input: content
+      #     output: assets/indices
+      #     root: .
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+      - uses: actions/setup-node@v3
         with:
-          hugo-version: '0.96.0'
-          extended: true
+          node-version: 18.14
 
-      - name: Build
-        run: hugo --minify
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Quartz
+        run: npx quartz build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
