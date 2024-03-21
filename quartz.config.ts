@@ -14,7 +14,7 @@ const config: QuartzConfig = {
     analytics: {
       provider: "plausible",
     },
-    locale: "en-US",
+    locale: "zh-CN",
     baseUrl: "googoo-s.github.io",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "created",
