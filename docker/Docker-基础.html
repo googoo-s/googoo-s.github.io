@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh"><head><title>Docker 初学者命令</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="Docker 初学者命令"/><meta property="og:description" content="docs.docker.com/reference/ 一、基础命令 帮助命令 docker --version # 显示docker的版本信息 docker info # 显示docker的系统信息 docker 命令 --help # 显示帮助命令 搜索镜像 # 搜索镜像 docker search mysql # 条件过滤搜索结果 docker ..."/><meta property="og:image" content="https://googoo-s.github.io/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="docs.docker.com/reference/ 一、基础命令 帮助命令 docker --version # 显示docker的版本信息 docker info # 显示docker的系统信息 docker 命令 --help # 显示帮助命令 搜索镜像 # 搜索镜像 docker search mysql # 条件过滤搜索结果 docker ..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="docker/Docker-基础"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="..">googoo-s</a></h1><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>搜索</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;docker&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;ElasticSearch&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Kubernetes&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;linux&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;MySQL&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Python&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Redis&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;shell&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/maven&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;微服务&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列/Kafka&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;编译原理&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;高可用&quot;,&quot;collapsed&quot;:true}]"><h1>探索</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="docker"><button class="folder-button"><span class="folder-title">docker</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="docker"><li><a href="../docker/docker" data-for="docker/docker">docker</a></li><li><a href="../docker/Docker-基础" data-for="docker/Docker-基础">Docker 初学者命令</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="ElasticSearch"><button class="folder-button"><span class="folder-title">ElasticSearch</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="ElasticSearch"><li><a href="../ElasticSearch/KQL" data-for="ElasticSearch/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li><li><a href="../GO/GO" data-for="GO/GO">GO</a></li></ul></div></li><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java"><button class="folder-button"><span class="folder-title">Java</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java"><li><a href="../Java/Java" data-for="Java/Java">☆Java</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Kubernetes"><button class="folder-button"><span class="folder-title">Kubernetes</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Kubernetes"><li><a href="../Kubernetes/Kubernetes" data-for="Kubernetes/Kubernetes">Kubernetes</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="linux"><button class="folder-button"><span class="folder-title">linux</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="linux"><li><a href="../linux/Linux-基础知识总结" data-for="linux/Linux-基础知识总结">Linux 基础知识总结</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><a href="../lua/lua" data-for="lua/lua">lua基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="MySQL"><button class="folder-button"><span class="folder-title">MySQL</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="MySQL"><li><a href="../MySQL/MySQL" data-for="MySQL/MySQL">MySQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Python"><button class="folder-button"><span class="folder-title">Python</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Python"><li><a href="../Python/python" data-for="Python/python">python</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Redis"><button class="folder-button"><span class="folder-title">Redis</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Redis"><li><a href="../Redis/Redis" data-for="Redis/Redis">★Redis</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="shell"><button class="folder-button"><span class="folder-title">shell</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="shell"><li><a href="../shell/shell" data-for="shell/shell">shell overview</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具"><button class="folder-button"><span class="folder-title">工具</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/emacs"><li><a href="../工具/emacs/安装" data-for="工具/emacs/安装">安装</a></li><li><a href="../工具/emacs/快捷键" data-for="工具/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/git"><li><a href="../工具/git/git" data-for="工具/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/maven"><button class="folder-button"><span class="folder-title">maven</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/maven"><li><a href="../工具/maven/maven基础" data-for="工具/maven/maven基础">maven基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/msys2"><li><a href="../工具/msys2/pacman" data-for="工具/msys2/pacman">pacman</a></li><li><a href="../工具/msys2/再-msys-中使用fish" data-for="工具/msys2/再-msys-中使用fish">再 msys 中使用fish</a></li></ul></div></li><li><a href="../工具/工具" data-for="工具/工具">工具</a></li><li><a href="../工具/环境搭建" data-for="工具/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="微服务"><button class="folder-button"><span class="folder-title">微服务</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="微服务"><li><a href="../微服务/微服务" data-for="微服务/微服务">微服务</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列"><button class="folder-button"><span class="folder-title">消息队列</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列/Kafka"><button class="folder-button"><span class="folder-title">Kafka</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列/Kafka"><li><a href="../消息队列/Kafka/Kafka-Broker" data-for="消息队列/Kafka/Kafka-Broker">Kafka Broker</a></li><li><a href="../消息队列/Kafka/Kafka-快速入门" data-for="消息队列/Kafka/Kafka-快速入门">Kafka 快速入门</a></li><li><a href="../消息队列/Kafka/Kafka-消费者" data-for="消息队列/Kafka/Kafka-消费者">Kafka 消费者</a></li><li><a href="../消息队列/Kafka/Kafka-生产者" data-for="消息队列/Kafka/Kafka-生产者">Kafka 生产者</a></li><li><a href="../消息队列/Kafka/Spring-整合-Kafka" data-for="消息队列/Kafka/Spring-整合-Kafka">Spring 整合 Kafka</a></li></ul></div></li><li><a href="../消息队列/消息队列" data-for="消息队列/消息队列">消息队列</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="编译原理"><button class="folder-button"><span class="folder-title">编译原理</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="编译原理"><li><a href="../编译原理/编译原理" data-for="编译原理/编译原理">编译原理</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="高可用"><button class="folder-button"><span class="folder-title">高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="高可用"><li><a href="../高可用/高可用" data-for="高可用/高可用">高可用</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../docker/">docker</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Docker 初学者命令</a></div></nav><h1 class="article-title">Docker 初学者命令</h1><p show-comma="true" class="content-meta"><span>2023年7月31日</span><span>18分钟阅读</span></p><ul class="tags"><li><a href="../tags/docker" class="internal tag-link">docker</a></li></ul></div></div><article class="popover-hint"><p><a href="https://docs.docker.com/reference/" class="external">https://docs.docker.com/reference/<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="一基础命令"><strong>一、基础命令</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一基础命令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="帮助命令"><strong>帮助命令</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#帮助命令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker --version  # 显示docker的版本信息</span></span>
+<span data-line><span>docker info    # 显示docker的系统信息</span></span>
+<span data-line><span>docker 命令 --help    # 显示帮助命令</span></span></code></pre></figure>
+<h3 id="搜索镜像">搜索镜像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#搜索镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 搜索镜像</span></span>
+<span data-line><span>docker search mysql</span></span>
+<span data-line><span># 条件过滤搜索结果</span></span>
+<span data-line><span>docker search --filter=STARS=5000</span></span></code></pre></figure>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-569.png" alt/></p>
+<p>「列表解释」</p>
+<ul>
+<li>
+<p>「NAME: 镜像名称」</p>
+</li>
+<li>
+<p>「DESCRIPTION: 镜像介绍」</p>
+</li>
+<li>
+<p>「STARS: 镜像的stars」</p>
+</li>
+<li>
+<p>「OFFICIAL: 是否是官方提供的」</p>
+</li>
+<li>
+<p>「AUTOMATED: 是不是自动化的」</p>
+</li>
+</ul>
+<h3 id="拉取镜像">拉取镜像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#拉取镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 默认拉取最新的镜像</span></span>
+<span data-line><span>docker pull mysql</span></span>
+<span data-line><span># 指定版本下载</span></span>
+<span data-line><span>docker pull mysql:5.7</span></span></code></pre></figure>
+<h3 id="查看所有镜像">查看所有镜像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看所有镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 查看所有镜像信息</span></span>
+<span data-line><span>docker images -a</span></span>
+<span data-line><span># 查看所有的镜像id</span></span>
+<span data-line><span>docker images -aq</span></span></code></pre></figure>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-566.png" alt/></p>
+<p>「列表解释」</p>
+<ul>
+<li>
+<p>「REPOSITORY: 镜像的仓库源」</p>
+</li>
+<li>
+<p>「TAG: 镜像的标签」</p>
+</li>
+<li>
+<p>「IMAGE ID: 镜像的id」</p>
+</li>
+<li>
+<p>「CREATE: 镜像的创建时间」</p>
+</li>
+<li>
+<p>「SIZE: 镜像的大小」</p>
+</li>
+</ul>
+<h3 id="删除镜像">删除镜像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#删除镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#删除指定id的镜像</span></span>
+<span data-line><span>docker rmi 镜像id</span></span>
+<span data-line><span>docker rmi 镜像id 镜像id 镜像id 镜像id</span></span>
+<span data-line><span>#删除指定名称的镜像</span></span>
+<span data-line><span>docker rmi mysql:5.7</span></span>
+<span data-line><span>#迭代删除所有的镜像</span></span>
+<span data-line><span>docker rmi -f $(docker images  -aq)</span></span></code></pre></figure>
+<h3 id="运行镜像">运行镜像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#运行镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker run [可选参数] image</span></span>
+<span data-line><span># 运行实例</span></span>
+<span data-line><span>docker run --name=mycat -d -p 8080:8080 tomcat</span></span>
+<span data-line><span># 用完即删</span></span>
+<span data-line><span>docker run -it --rm tomcat</span></span>
+<span data-line><span># 指定环境变量（实例）</span></span>
+<span data-line><span>docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e &quot;discovery.type=single-node&quot; -e ES_JAVA_OPTS=&quot;-Xms64m -Xmx512m&quot;  elasticsearch:7.6.2</span></span></code></pre></figure>
+<p>「参数说明」</p>
+<ul>
+<li>
+<p>「—name=“Name”：容器名字 tomacat01、tomacat02区分容器」</p>
+</li>
+<li>
+<p>-「e」: 「指定环境变量」</p>
+</li>
+<li>
+<p>「-d：后台守护进程运行」</p>
+</li>
+<li>
+<p>「-it：使用交互方式运行，进入容器查看内容」</p>
+</li>
+<li>
+<p>「-p：指定容器的端口 -p 8080:8080」</p>
+<ul>
+<li>
+<p>「-p ：主机端口：容器端口」</p>
+</li>
+<li>
+<p>「-p ：容器端口」</p>
+</li>
+</ul>
+</li>
+<li>
+<p>「-P：随机指定端口」</p>
+</li>
+<li>
+<p>「-v: 指定数据卷」</p>
+<ul>
+<li>「-v 容器文件位置:<a href="https://cloud.tencent.com/product/cdh?from=10680" class="external">宿主机<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>文件位置」</li>
+</ul>
+</li>
+<li>
+<p>「—volumes-from: 指定容器的数据卷共享（指定谁，就同步谁的数据！继承！）」</p>
+<ul>
+<li>「—volumes-from:继承自那个容器」（父容器删除不影响已存在数据）</li>
+</ul>
+</li>
+<li>
+<p>「—net: 缺省 bridge」</p>
+</li>
+</ul>
+<h3 id="进入容器">进入容器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进入容器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 运行一个centos并进入到容器里面</span></span>
+<span data-line><span>docker run -it centos /bin/bash</span></span>
+<span data-line><span># 退出容器</span></span>
+<span data-line><span>exit</span></span></code></pre></figure>
+<h3 id="查看容器">查看容器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看容器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 查看正在运行中的容器</span></span>
+<span data-line><span>docker ps</span></span>
+<span data-line><span># 查看所有容器</span></span>
+<span data-line><span>docker ps -a</span></span></code></pre></figure>
+<h3 id="退出容器">退出容器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#退出容器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>exit   # 直接容器停止并退出</span></span>
+<span data-line><span>Ctrl + P + Q  # 容器退出不停止</span></span></code></pre></figure>
+<h3 id="删除容器">删除容器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#删除容器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 删除指定容器</span></span>
+<span data-line><span>docker rm bde00bc086cf</span></span>
+<span data-line><span># 强制删除运行中的容器</span></span>
+<span data-line><span>docker rm -f bde00bc086cf</span></span>
+<span data-line><span># 迭代删除全部的容器</span></span>
+<span data-line><span>docker rm -f $(docker ps -aq)</span></span></code></pre></figure>
+<h3 id="容器的启动与停止">容器的启动与停止<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#容器的启动与停止" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 启动容器</span></span>
+<span data-line><span>docker start 容器id</span></span>
+<span data-line><span># 重启容器</span></span>
+<span data-line><span>docker restart 容器id</span></span>
+<span data-line><span># 停止容器</span></span>
+<span data-line><span>docker stop 容器id</span></span>
+<span data-line><span># 强制杀死容器</span></span>
+<span data-line><span>docker kill 容器id</span></span></code></pre></figure>
+<h3 id="进入当前在正在运行中的命令">进入当前在正在运行中的命令<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进入当前在正在运行中的命令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 进入到指定容器内部进行修改  开启一个新的终端</span></span>
+<span data-line><span>docker exec -it 0cd4d9d94de2 /bin/bash</span></span>
+<span data-line><span># 进入到正在执行中的终端</span></span>
+<span data-line><span>docker attach 容器id</span></span></code></pre></figure>
+<h3 id="将文件从容器拷贝到宿主机">将文件从容器拷贝到宿主机<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#将文件从容器拷贝到宿主机" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker cp 容器id:容器内文件的路径 宿主机路径</span></span>
+<span data-line><span>#实例</span></span>
+<span data-line><span>docker cp 0cd4d9d94de2:/Test.java /Test.java</span></span></code></pre></figure>
+<h3 id="其他常用命令">其他常用命令<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#其他常用命令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>「查看日志命令」</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 查看容器运行产生的日志</span></span>
+<span data-line><span>docker logs -ft --tail 10 容器id</span></span></code></pre></figure>
+<p>复制</p>
+<p>「参数解析：」</p>
+<ul>
+<li>
+<p>「f: 格式化日志」</p>
+</li>
+<li>
+<p>「t: 携带日志时间戳」</p>
+</li>
+</ul>
+<h3 id="查看进程">查看进程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看进程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 查看cpu等信息</span></span>
+<span data-line><span>docker top 0cd4d9d94de2</span></span>
+<span data-line><span># 查看容器元信息</span></span>
+<span data-line><span>docker inspect 容器id</span></span></code></pre></figure>
+<h1 id="二可视化面板"><strong>二、可视化面板</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二可视化面板" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="安装">安装<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#安装" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 安装可视化面板 portainer （数据卷路径不可改变）</span></span>
+<span data-line><span>docker run -d -p 8088:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock --privileged=true portainer/portainer</span></span></code></pre></figure>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-568.png" alt/></p>
+<p>image-20200906161505532</p>
+<h1 id="三提交容器为一个镜像"><strong>三、提交容器为一个镜像</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三提交容器为一个镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ol>
+<li>
+<h2 id="提交容器"><strong>提交容器</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#提交容器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+</li>
+</ol>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 提交一个容器为一个镜像（将容器打包）</span></span>
+<span data-line><span>docker commit [可选参数] 服务id 自定义镜像名称[:版本标签]</span></span>
+<span data-line><span># 示例代码提交</span></span>
+<span data-line><span>docker commit  -a=&quot;huangfu&quot; -m=&quot;增加了主页&quot; 19329ae6df90  diytomcat:1.0</span></span></code></pre></figure>
+<p>「参数解释：」</p>
+<ul>
+<li>
+<p>「-a: 作者」</p>
+</li>
+<li>
+<p>「-m: 备注」</p>
+</li>
+<li>
+<p>「-c: 将Dockerfile指令应用于创建的映像」</p>
+</li>
+<li>
+<p>「-p: 提交期间暂停容器（默认为true）」</p>
+</li>
+</ul>
+<h1 id="四docker数据卷使用"><strong>四、Docker数据卷使用</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#四docker数据卷使用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="数据卷的基本使用"><strong>数据卷的基本使用</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数据卷的基本使用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 关联数据卷</span></span>
+<span data-line><span>docker run [可选参数] -v /主机路径/:/容器路径/ 镜像名称</span></span>
+<span data-line><span># 关联数据卷的实例命令</span></span>
+<span data-line><span>docker run -d -p 8080:8080 --name mytomcat -v /home/tomcat/webapps/:/usr/local/tomcat/webapps tomcat</span></span></code></pre></figure>
+<h3 id="mysql安装实战"><strong>mysql安装实战</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mysql安装实战" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker run -d -p 3366:3306 -v /home/mysql/conf:/etc/mysql/conf.d -v /home/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql01 mysql:5.7</span></span></code></pre></figure>
+<p>「命令解析：」</p>
+<ul>
+<li>
+<p>「-d: 守护进程运行」</p>
+</li>
+<li>
+<p>「-v: 添加数据卷（宿主机位置和容器位置映射）」</p>
+</li>
+<li>
+<p>「-p: 堆对外映射端口」</p>
+</li>
+<li>
+<p>「-e: 指定环境变量」</p>
+</li>
+<li>
+<p>「—name: 容器名称」</p>
+</li>
+</ul>
+<h1 id="五dockerfile"><strong>五、Dockerfile</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#五dockerfile" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="构建镜像文件"><strong>构建镜像文件</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#构建镜像文件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 创建一个Dockerfile</span></span>
+<span data-line><span>vim Dockerfile</span></span>
+<span data-line> </span>
+<span data-line><span>FROM centos</span></span>
+<span data-line> </span>
+<span data-line><span>VOLUME [&quot;volume01&quot;,&quot;volume02&quot;]CMD echo &quot;-----end---&quot;CMD /bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>:x</span></span>
+<span data-line> </span>
+<span data-line><span># 构建docker镜像</span></span>
+<span data-line><span># -f dockerfile的路径   </span></span>
+<span data-line><span># -t 生成的镜像名称</span></span>
+<span data-line><span># . 以当前路径为上下文打包</span></span>
+<span data-line><span>docker build -f /home/docker-volom/Dockerfile -t huangfu/centos:1.0 .</span></span>
+<span data-line> </span>
+<span data-line><span># 构建基本命令</span></span>
+<span data-line><span>docker build [OPTIONS] PATH | URL | -</span></span></code></pre></figure>
+<h3 id="dockerfile概念"><strong>Dockerfile概念</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dockerfile概念" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>每个保留关键字（指令）都必须是大写字母</p>
+</li>
+<li>
+<p>执行顺序从上到下</p>
+</li>
+<li>
+<p><code>#</code> 表示注释</p>
+</li>
+<li>
+<p>每一个指令都会创建提交一个新的镜像层并提交！</p>
+</li>
+</ul>
+<h3 id="dockerfile语法浅析"><strong>Dockerfile语法浅析</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dockerfile语法浅析" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-570.png" alt/></p>
+<ul>
+<li>
+<p>「FROM: 基础镜像，一切都从这里开始构建」</p>
+</li>
+<li>
+<p>「MAINTAINER: 镜像是谁写的，姓名+邮箱」</p>
+</li>
+<li>
+<p>「RUN: 镜像构建需要运行的命令」</p>
+</li>
+<li>
+<p>「ADD: 添加一个内容，比如需要添加一个tomcat，则需要传递一个压缩包，便于在容器内构建！」</p>
+</li>
+<li>
+<p>「WORKDIR: 镜像的工作目录」</p>
+</li>
+<li>
+<p>「VOLUME: 挂在的目录」</p>
+</li>
+<li>
+<p>「EXPOSE: 暴露端口」</p>
+</li>
+<li>
+<p>「CMD: 一个指令，指定这个容器启动的时候要运行的命令」</p>
+</li>
+<li>
+<p>「ENTRYPOINT: 指定这个容器启动的时候要运行的命令！可以追加命令！」</p>
+</li>
+<li>
+<p>「ONBUILD: 当构建一个被继承的Dockerfile 这个时候就会运行指令，触发命令！」</p>
+</li>
+<li>
+<p>「COPY: 类似与ADD，将文件拷贝到镜像中」</p>
+</li>
+<li>
+<p>「ENV：构建的时候设置环境变量」</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 构建一个具有复杂命令行的centos</span></span>
+<span data-line><span>vim Dockerfile</span></span>
+<span data-line> </span>
+<span data-line><span># 镜像继承自centos</span></span>
+<span data-line><span>FROM centos</span></span>
+<span data-line><span># 作者信息</span></span>
+<span data-line><span>MAINTAINER huangfu&lt;huangfusuper@163.com></span></span>
+<span data-line><span># 设置环境变量</span></span>
+<span data-line><span>ENV MYPATH /usr/local</span></span>
+<span data-line><span># 设置工作目录</span></span>
+<span data-line><span>WORKDIR $MYPATH</span></span>
+<span data-line><span># 执行命令安装指令</span></span>
+<span data-line><span>RUN yum -y install vim</span></span>
+<span data-line><span>RUN yum -y install net-tools</span></span>
+<span data-line><span># 暴露端口</span></span>
+<span data-line><span>EXPOSE 80</span></span>
+<span data-line><span># 执行一些指令</span></span>
+<span data-line><span>CMD echo &quot;-------end------&quot;CMD echo $MYPATHCMD /bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>:x</span></span>
+<span data-line> </span>
+<span data-line><span># 构建镜像</span></span>
+<span data-line><span>docker build -f /home/docker-volom/Dockerfile -t huangfu/diycentos:1.0 .</span></span></code></pre></figure>
+<h1 id="六自定义网络"><strong>六、自定义网络</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#六自定义网络" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="网络模式详解"><strong>网络模式详解</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#网络模式详解" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>「bridge: 桥接网络（默认）」</p>
+</li>
+<li>
+<p>「host：和宿主机共享」</p>
+</li>
+<li>
+<p>「none：不配置网络」</p>
+</li>
+<li>
+<p>「container：容器网络联通」</p>
+</li>
+</ul>
+<h3 id="查看所有的网络模式"><strong>查看所有的网络模式</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看所有的网络模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 查看所有的网络模式</span></span>
+<span data-line><span>docker network ls</span></span></code></pre></figure>
+<h3 id="创建自定义的网络"><strong>创建自定义的网络</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#创建自定义的网络" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 创建一个网络</span></span>
+<span data-line><span>docker network create [OPTIONS] NETWORK</span></span>
+<span data-line> </span>
+<span data-line><span># 创建一个mynet</span></span>
+<span data-line><span># create 创建</span></span>
+<span data-line><span># driver 使用的网络模式</span></span>
+<span data-line><span># subnet 子网掩码</span></span>
+<span data-line><span># gateway 网关</span></span>
+<span data-line><span># mynety 自定义的名称</span></span>
+<span data-line><span>docker netywork create --driver bridge --subnet 192.168.0.0/16 --gateway 192.168.0.1 mynety</span></span></code></pre></figure>
+<h3 id="使用自定义网络"><strong>使用自定义网络</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#使用自定义网络" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker run -d --net mynety --name tom01  tomcat</span></span>
+<span data-line><span>docker run -d --net mynety --name tom02  tomcat</span></span>
+<span data-line> </span>
+<span data-line><span># 进入到tom02</span></span>
+<span data-line><span>docker exec -it 7d75a637a90b865fe70259bd4e0b3f5c95133dc65693b05abaf078d31a362529 /bin/bash</span></span>
+<span data-line><span># 结果是互通的</span></span>
+<span data-line><span>ping tom01</span></span></code></pre></figure>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-567.png" alt/></p>
+<h3 id="容器网络互通"><strong>容器网络互通</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#容器网络互通" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code># 把自定义网络和容器打通    容器一个容器两个ip
+# 把不在该网络的容器加入当前网络
+docker network connect 自定义网络 容器
+</code></pre>
+<h1 id="七打包springboot-jar项目"><strong>七、打包SpringBoot jar项目</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#七打包springboot-jar项目" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="dockerfile编写"><strong>Dockerfile编写</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dockerfile编写" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>FROM java:8COPY *.jar /app.jar</span></span>
+<span data-line> </span>
+<span data-line><span>CMD [&quot;--server.port=8080&quot;]EXPOSE 8080ENTRYPOINT [&quot;java&quot;,&quot;-jar&quot;,&quot;/app.jar&quot;]</span></span></code></pre></figure>
+<h3 id="构建镜像"><strong>构建镜像</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#构建镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="JavaScript" data-theme="github-light github-dark"><code data-language="JavaScript" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>mkdir idea</span></span>
+<span data-line> </span>
+<span data-line><span>cd idea</span></span>
+<span data-line> </span>
+<span data-line><span># 将 Dockerfile与jar包发送到idea目录</span></span>
+<span data-line><span># 构建镜像</span></span>
+<span data-line><span>docker build -t huangfutest:1.0 .</span></span>
+<span data-line><span># 后面运行不说了</span></span></code></pre></figure>
+<h1 id="八如何容器化应用">八、如何容器化应用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#八如何容器化应用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>镜像是容器的静态形式，它打包了应用程序的所有运行依赖项，方便保存和传输。使用容器技术运行镜像，就形成了动态的容器，由于镜像只读不可修改，所以应用程序的运行环境总是一致的。</p>
+<p>容器化的应用就是指以镜像的形式打包应用程序，然后在容器环境里从镜像启动容器。</p>
+<p>我这里就对今天的镜像操作和容器操作做个小结：</p>
+<ul>
+<li>
+<p>常用的镜像操作有 docker pull、docker images、docker rmi，分别是拉取镜像、查看镜像和删除镜像。</p>
+</li>
+<li>
+<p>用来启动容器的 docker run 是最常用的命令，它有很多参数用来调整容器的运行状态，对于后台服务来说应该使用 -d。</p>
+</li>
+<li>
+<p>Docker exec 命令可以在容器内部执行任意程序，对于调试排错特别有用。</p>
+</li>
+<li>
+<p>其他常用的容器操作还有 docker ps、docker stop、docker rm，用来查看容器、停止容器和删除容器。</p>
+</li>
+</ul>
+<h1 id="九-与外界资源共享">九、 与外界资源共享<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#九-与外界资源共享" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="如何拷贝容器内的数据">如何拷贝容器内的数据<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#如何拷贝容器内的数据" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Cp 命令，它可以在宿主机和容器之间拷贝文件，是最基本的一种数据交换功能。</p>
+<p>Docker cp 的用法很简单，很类似 Linux 的“cp”“scp”，指定源路径（src path）和目标路径（dest path）就可以了。如果源路径是宿主机那么就是把文件拷贝进容器，如果源路径是容器那么就是把文件拷贝出容器，<strong>注意需要用容器名或者容器 ID 来指明是哪个容器的路径</strong>。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span>docker cp a.txt 062:/tmp</span></span></code></pre></figure>
+<h3 id="如何共享主机上的文件">如何共享主机上的文件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#如何共享主机上的文件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>只需要在 docker run 命令启动容器的时候使用 <strong>-v 参数就行，具体的格式是“宿主机路径: 容器内路径”。</strong></p>
+<p>我还是以 Redis 为例，启动容器，使用 -v 参数把本机的“/tmp”目录挂载到容器里的“/tmp”目录，也就是说让容器共享宿主机的“/tmp”目录</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span>docker run -d --rm -v /tmp:/tmp redis</span></span></code></pre></figure>
+<h3 id="如何实现网络互通">如何实现网络互通<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#如何实现网络互通" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Docker 提供了三种网络模式，分别是 null、host 和 bridge。</p>
+<ul>
+<li>
+<p>Null 是最简单的模式，也就是没有网络，但允许其他的网络插件来自定义网络连接，这里就不多做介绍了。</p>
+</li>
+<li>
+<p>Host 的意思是直接使用宿主机网络，相当于去掉了容器的网络隔离（其他隔离依然保留），<strong>所有的容器会共享宿主机的 IP 地址和网卡</strong>。这种模式没有中间层，自然通信效率高，<strong>但缺少了隔离</strong>，运行太多的容器也容易导致端口冲突。Host 模式需要在 docker run 时使用 —net=host 参数，下面我就用这个参数启动 Nginx：</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span>docker run -d --rm --net=host nginx:alpine</span></span></code></pre></figure>
+<ul>
+<li>第三种 bridge，也就是桥接模式，它有点类似现实世界里的交换机、路由器，只不过是由软件虚拟出来的，容器和宿主机再通过虚拟网卡接入这个网桥（图中的 docker 0），那么它们之间也就可以正常的收发网络数据包了</li>
+</ul>
+<h3 id="如何分配服务端口号">如何分配服务端口号<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#如何分配服务端口号" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>使用 host 模式或者 bridge 模式，我们的容器就有了 IP 地址，建立了与外部世界的网络连接，接下来要解决的就是网络服务的端口号问题。</p>
+<p>一台主机上的端口号数量是有限的，<strong>而且多个服务之间还不能够冲突，但我们打包镜像应用的时候通常都使用的是默认端口</strong>，容器实际运行起来就很容易因为<strong>端口号被占用而无法启动</strong>。</p>
+<p>解决这个问题的方法就是加入一个“中间层”，由容器环境例如 Docker 来统一管理分配端口号，在本机端口和容器端口之间做一个“映射”操作</p>
+<p><strong>端口号映射需要使用 bridge 模式</strong>，并且在 docker run 启动容器时使用 -p 参数，形式和共享目录的 -v 参数很类似，用 : 分隔本机端口和容器端口</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span>docker run -d -p 80:80 --rm nginx:alpine</span></span>
+<span data-line><span>docker run -d -p 8080:80 --rm nginx:alpine</span></span>
+<span data-line> </span>
+<span data-line><span># 这样就把本机的 80 和 8080 端口分别“映射”到了两个容器里的 80 端口</span></span></code></pre></figure>
+<h1 id="十镜像仓库">十、镜像仓库<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十镜像仓库" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h3 id="什么是镜像仓库registry">什么是镜像仓库（Registry）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#什么是镜像仓库registry" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-565.png" alt/></p>
+<p>右边的区域就是镜像仓库，术语叫 Registry，直译就是“注册中心”，意思是所有镜像的 Repository 都在这里登记保管，就像是一个巨大的档案馆。</p>
+<p>然后我们再来看左边的“docker pull”，虚线显示了它的工作流程，先到“Docker daemon”，再到 Registry，只有当 Registry 里存有镜像才能真正把它下载到本地。</p>
+<h3 id="什么是-docker-hub">什么是 Docker Hub<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#什么是-docker-hub" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>什么是 Docker Hub</p>
+<p>“Docker Hub”（ <a href="https://hub.docker.com/" class="external">https://hub.docker.com/<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> ）。</p>
+<h3 id="如何在-docker-hub-上挑选镜像">如何在 Docker Hub 上挑选镜像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#如何在-docker-hub-上挑选镜像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Docker Hub 上有<strong>官方镜像、认证镜像和非官方镜像</strong>的区别。</p>
+<ul>
+<li>
+<p>官方镜像（Official image）：是指 Docker 公司官方提供的高质量镜像（ <a href="https://github.com/docker-library/official-images" class="external">https://github.com/docker-library/official-images<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> ），都经过了严格的漏洞扫描和安全检测，支持 x 86_64、arm 64 等多种硬件架构，还具有清晰易读的文档，一般来说是我们构建镜像的首选，也是我们编写 Dockerfile 的最佳范例。</p>
+</li>
+<li>
+<p>认证镜像（Verified publisher）：也就是认证发行商，比如 Bitnami、Rancher、Ubuntu 等。它们都是颇具规模的大公司，具有不逊于 Docker 公司的实力，所以就在 Docker Hub 上开了个认证账号</p>
+</li>
+<li>
+<p>非官方镜像</p>
+<ul>
+<li>
+<p>“半官方”镜像。因为成为“Verified publisher”是要给 <strong>Docker 公司交钱的</strong>，而很多公司不想花这笔“冤枉钱”，所以只在 Docker Hub 上开了公司账号（比如 OpenResty ）</p>
+</li>
+<li>
+<p>第二类就是纯粹的“民间”镜像了，通常是个人上传到 Docker Hub 的，因为条件所限，测试不完全甚至没有测试，质量上难以得到保证，下载的时候需要小心谨慎。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="docker-hub-上镜像命名的规则是什么"><strong>Docker Hub 上镜像命名的规则是什么</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#docker-hub-上镜像命名的规则是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>Docker Hub 也使用了同样的规则，就是“用户名 / 应用名”的形式，比如 bitnami/nginx、ubuntu/nginx、rancher/nginx 等等。</p>
+</li>
+<li>
+<p>因为镜像还会有许多不同的版本，也就是“标签”（tag）。</p>
+<ul>
+<li>
+<p>直接使用默认的“latest”虽然简单方便</p>
+</li>
+<li>
+<p>通常来说，镜像标签的格式是应用的版本号加上操作系统。</p>
+</li>
+</ul>
+<p><img src="https://googoo-s.oss-cn-chengdu.aliyuncs.com/statisticasynccode-564.png" alt/></p>
+<ul>
+<li>另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。</li>
+</ul>
+</li>
+</ul>
+<h3 id="离线环境该怎么办">离线环境该怎么办<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#离线环境该怎么办" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>在内网环境里仿造 Docker Hub，创建一个自己的私有 Registry 服务，比如 Docker Registry，还有 CNCF Harbor，</p>
+</li>
+<li>
+<p>Docker 提供了 save 和 load 这两个镜像归档命令，可以把镜像导出成压缩包，或者从压缩包导入 Docker，而压缩包是非常容易保管和传输的，可以联机拷贝，FTP 共享，甚至存在 U 盘上随身携带。</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span>docker save ngx-app:latest -o ngx.tar</span></span>
+<span data-line><span>docker load -i ngx.tar</span></span></code></pre></figure></article></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" id="toc" class><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#一基础命令" data-for="一基础命令">一、基础命令</a></li><li class="depth-2"><a href="#帮助命令" data-for="帮助命令">帮助命令</a></li><li class="depth-2"><a href="#搜索镜像" data-for="搜索镜像">搜索镜像</a></li><li class="depth-2"><a href="#拉取镜像" data-for="拉取镜像">拉取镜像</a></li><li class="depth-2"><a href="#查看所有镜像" data-for="查看所有镜像">查看所有镜像</a></li><li class="depth-2"><a href="#删除镜像" data-for="删除镜像">删除镜像</a></li><li class="depth-2"><a href="#运行镜像" data-for="运行镜像">运行镜像</a></li><li class="depth-2"><a href="#进入容器" data-for="进入容器">进入容器</a></li><li class="depth-2"><a href="#查看容器" data-for="查看容器">查看容器</a></li><li class="depth-2"><a href="#退出容器" data-for="退出容器">退出容器</a></li><li class="depth-2"><a href="#删除容器" data-for="删除容器">删除容器</a></li><li class="depth-2"><a href="#容器的启动与停止" data-for="容器的启动与停止">容器的启动与停止</a></li><li class="depth-2"><a href="#进入当前在正在运行中的命令" data-for="进入当前在正在运行中的命令">进入当前在正在运行中的命令</a></li><li class="depth-2"><a href="#将文件从容器拷贝到宿主机" data-for="将文件从容器拷贝到宿主机">将文件从容器拷贝到宿主机</a></li><li class="depth-2"><a href="#其他常用命令" data-for="其他常用命令">其他常用命令</a></li><li class="depth-2"><a href="#查看进程" data-for="查看进程">查看进程</a></li><li class="depth-0"><a href="#二可视化面板" data-for="二可视化面板">二、可视化面板</a></li><li class="depth-2"><a href="#安装" data-for="安装">安装</a></li><li class="depth-0"><a href="#三提交容器为一个镜像" data-for="三提交容器为一个镜像">三、提交容器为一个镜像</a></li><li class="depth-1"><a href="#提交容器" data-for="提交容器">提交容器</a></li><li class="depth-0"><a href="#四docker数据卷使用" data-for="四docker数据卷使用">四、Docker数据卷使用</a></li><li class="depth-2"><a href="#数据卷的基本使用" data-for="数据卷的基本使用">数据卷的基本使用</a></li><li class="depth-2"><a href="#mysql安装实战" data-for="mysql安装实战">mysql安装实战</a></li><li class="depth-0"><a href="#五dockerfile" data-for="五dockerfile">五、Dockerfile</a></li><li class="depth-2"><a href="#构建镜像文件" data-for="构建镜像文件">构建镜像文件</a></li><li class="depth-2"><a href="#dockerfile概念" data-for="dockerfile概念">Dockerfile概念</a></li><li class="depth-2"><a href="#dockerfile语法浅析" data-for="dockerfile语法浅析">Dockerfile语法浅析</a></li><li class="depth-0"><a href="#六自定义网络" data-for="六自定义网络">六、自定义网络</a></li><li class="depth-2"><a href="#网络模式详解" data-for="网络模式详解">网络模式详解</a></li><li class="depth-2"><a href="#查看所有的网络模式" data-for="查看所有的网络模式">查看所有的网络模式</a></li><li class="depth-2"><a href="#创建自定义的网络" data-for="创建自定义的网络">创建自定义的网络</a></li><li class="depth-2"><a href="#使用自定义网络" data-for="使用自定义网络">使用自定义网络</a></li><li class="depth-2"><a href="#容器网络互通" data-for="容器网络互通">容器网络互通</a></li><li class="depth-0"><a href="#七打包springboot-jar项目" data-for="七打包springboot-jar项目">七、打包SpringBoot jar项目</a></li><li class="depth-2"><a href="#dockerfile编写" data-for="dockerfile编写">Dockerfile编写</a></li><li class="depth-2"><a href="#构建镜像" data-for="构建镜像">构建镜像</a></li><li class="depth-0"><a href="#八如何容器化应用" data-for="八如何容器化应用">八、如何容器化应用</a></li><li class="depth-0"><a href="#九-与外界资源共享" data-for="九-与外界资源共享">九、 与外界资源共享</a></li><li class="depth-2"><a href="#如何拷贝容器内的数据" data-for="如何拷贝容器内的数据">如何拷贝容器内的数据</a></li><li class="depth-2"><a href="#如何共享主机上的文件" data-for="如何共享主机上的文件">如何共享主机上的文件</a></li><li class="depth-2"><a href="#如何实现网络互通" data-for="如何实现网络互通">如何实现网络互通</a></li><li class="depth-2"><a href="#如何分配服务端口号" data-for="如何分配服务端口号">如何分配服务端口号</a></li><li class="depth-0"><a href="#十镜像仓库" data-for="十镜像仓库">十、镜像仓库</a></li><li class="depth-2"><a href="#什么是镜像仓库registry" data-for="什么是镜像仓库registry">什么是镜像仓库（Registry）</a></li><li class="depth-2"><a href="#什么是-docker-hub" data-for="什么是-docker-hub">什么是 Docker Hub</a></li><li class="depth-2"><a href="#如何在-docker-hub-上挑选镜像" data-for="如何在-docker-hub-上挑选镜像">如何在 Docker Hub 上挑选镜像</a></li><li class="depth-2"><a href="#docker-hub-上镜像命名的规则是什么" data-for="docker-hub-上镜像命名的规则是什么">Docker Hub 上镜像命名的规则是什么</a></li><li class="depth-2"><a href="#离线环境该怎么办" data-for="离线环境该怎么办">离线环境该怎么办</a></li></ul></div></div><div class="backlinks"><h3>反向链接</h3><ul class="overflow"><li>无法找到反向链接</li></ul></div><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+	c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+	v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+	s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+	C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+	S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+	s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+	s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></div><div id="global-graph-outer"><div id="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true}"></div></div></div></div></div><footer class><hr/><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.2.3</a> © 2024</p><ul><li><a href="https://github.com/googoo-s">GitHub</a></li></ul></footer></div></body><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">function c(){let t=this.parentElement;t.classList.toggle("is-collapsed");let l=t.classList.contains("is-collapsed")?this.scrollHeight:t.scrollHeight;t.style.maxHeight=l+"px";let o=t,e=t.parentElement;for(;e;){if(!e.classList.contains("callout"))return;let n=e.classList.contains("is-collapsed")?e.scrollHeight:e.scrollHeight+o.scrollHeight;e.style.maxHeight=n+"px",o=e,e=e.parentElement}}function i(){let t=document.getElementsByClassName("callout is-collapsible");for(let s of t){let l=s.firstElementChild;if(l){l.addEventListener("click",c),window.addCleanup(()=>l.removeEventListener("click",c));let e=s.classList.contains("is-collapsed")?l.scrollHeight:s.scrollHeight;s.style.maxHeight=e+"px"}}}document.addEventListener("nav",i);window.addEventListener("resize",i);
+</script><script type="module">
+          let mermaidImport = undefined
+          document.addEventListener('nav', async () => {
+            if (document.querySelector("code.mermaid")) {
+              mermaidImport ||= await import('https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs')
+              const mermaid = mermaidImport.default
+              const darkMode = document.documentElement.getAttribute('saved-theme') === 'dark'
+              mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: darkMode ? 'dark' : 'default'
+              })
+
+              await mermaid.run({
+                querySelector: '.mermaid'
+              })
+            }
+          });
+          </script><script src="../postscript.js" type="module"></script></html>

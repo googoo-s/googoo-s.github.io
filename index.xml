@@ -10,61 +10,61 @@
     <link>https://googoo-s.github.io/%E8%B5%84%E6%BA%90/%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB</link>
     <guid>https://googoo-s.github.io/%E8%B5%84%E6%BA%90/%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
+    <pubDate>Fri, 22 Mar 2024 14:50:47 GMT</pubDate>
   </item><item>
     <title>高可用</title>
     <link>https://googoo-s.github.io/%E9%AB%98%E5%8F%AF%E7%94%A8/%E9%AB%98%E5%8F%AF%E7%94%A8</link>
     <guid>https://googoo-s.github.io/%E9%AB%98%E5%8F%AF%E7%94%A8/%E9%AB%98%E5%8F%AF%E7%94%A8</guid>
-    <description></description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
+    <description> 冗余设计详解 性能测试入门 服务限流详解 超时&amp;重试详解 高可用系统设计指南 高可用：如何设计一个高可用系统？ 高可用：如何避免微服务中的雪崩问题？ 高可用：灰度发布和回滚有什么用？ 高可用：降级和熔断有什么区别？ .</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:47 GMT</pubDate>
+  </item><item>
+    <title>Kafka 快速入门</title>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8</guid>
+    <description>安装部署 集群规划 2.1.2 集群部署 0）官方下载地址：kafka.apache.org/downloads.html 1）解压安装包 [atguigu@hadoop102 software]$ tar -zxvf kafka_2.12-3.0.0.tgz -C /opt/module/ 2)修改解压后的文件名称 [atguigu@hadoop102 ...</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
+  </item><item>
+    <title>Kafka 消费者</title>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-%E6%B6%88%E8%B4%B9%E8%80%85</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-%E6%B6%88%E8%B4%B9%E8%80%85</guid>
+    <description>消费模式 常见的消费模式有两种： poll(拉)：消费者主动向服务端拉取消息。 push(推)：服务端主动推送消息给消费者。 由于推模式很难考虑到每个客户端不同的消费速率,导致消费者无法消费消息而宕机，因此kafka采用的是poll的模式，该模式有个缺点，如果服务端没有消息，消费端就会一直空轮询。为了避免过多不必要的空轮询，kafka做了改进，如果没消息服务端就会暂时保持该请求，在一段时间内有消息再回应给客户端。 ...</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
+  </item><item>
+    <title>Kafka 生产者</title>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-%E7%94%9F%E4%BA%A7%E8%80%85</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-%E7%94%9F%E4%BA%A7%E8%80%85</guid>
+    <description>生产者消息发送流程 发送原理 ​ 在消息发送的过程中，涉及到两个线程，main线程和sender线程，其中main线程是消息的生产线程，而sender线程是jvm单例的线程，专门用于消息的发送。 ​ 在jvm的内存中开辟了一块缓存空间叫RecordAccumulator（消息累加器），用于将多条消息合并成一个批次，然后由sender线程发送给kafka集群。 ...</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
+  </item><item>
+    <title>Spring 整合 Kafka</title>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Spring-%E6%95%B4%E5%90%88-Kafka</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Spring-%E6%95%B4%E5%90%88-Kafka</guid>
+    <description>...</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
+  </item><item>
+    <title>编译原理</title>
+    <link>https://googoo-s.github.io/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86</link>
+    <guid>https://googoo-s.github.io/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86</guid>
+    <description>编译原理 编译原理_ppt.</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
+  </item><item>
+    <title>Kafka Broker</title>
+    <link>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-Broker</link>
+    <guid>https://googoo-s.github.io/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/Kafka/Kafka-Broker</guid>
+    <description>第 4 章 Kafka Broker Broker设计 ​ 我们都知道kafka能堆积非常大的数据，一台服务器，肯定是放不下的。由此出现的集群的概念，集群不仅可以让消息负载均衡，还能提高消息存取的吞吐量。kafka集群中，会有多台broker，每台broker分别在不同的机器上。 ​ 为了提高吞吐量，每个topic也会都多个分区，同时为了保持可靠性，每个分区还会有多个副本。这些分区副本被均匀的散落在每个broker上，其中每个分区副本中有一个副本为leader，其他的为follower。 ...</description>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
   </item><item>
     <title>git</title>
     <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7/git/git</link>
     <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7/git/git</guid>
     <description>版本控制 什么是版本控制 版本控制是一种记录一个或若干文件内容变化，以便将来查阅特定版本修订情况的系统。除了项目源代码，你可以对任何类型的文件进行版本控制。 为什么要版本控制 有了它你就可以将某个文件回溯到之前的状态，甚至将整个项目都回退到过去某个时间点的状态，你可以比较文件的变化细节，查出最后是谁修改了哪个地方，从而找出导致怪异问题出现的原因，又是谁在何时报告了某个功能缺陷等等。 ...</description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
   </item><item>
     <title>工具</title>
     <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7/%E5%B7%A5%E5%85%B7</link>
     <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7/%E5%B7%A5%E5%85%B7</guid>
     <description></description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
-  </item><item>
-    <title>环境搭建</title>
-    <link>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA</link>
-    <guid>https://googoo-s.github.io/%E5%B7%A5%E5%85%B7/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA</guid>
-    <description></description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
-  </item><item>
-    <title>index</title>
-    <link>https://googoo-s.github.io/</link>
-    <guid>https://googoo-s.github.io/</guid>
-    <description>😀😁😲🌞🙀 这是我的 Obsidian 的 vault ,我使用了 quartz 搭建了这个页面。同时可以算是我的博客，用于记录我的心得体会。 关于如何搭建可以看这篇文章 使用quartz发布obsidian vault 编程语言 Java GO python lua shell 数据库和缓存 MySQL MongoDB Redis ...</description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
-  </item><item>
-    <title>使用quartz发布obsidian  vault</title>
-    <link>https://googoo-s.github.io/Obsidian/%E4%BD%BF%E7%94%A8quartz%E5%8F%91%E5%B8%83obsidian--vault</link>
-    <guid>https://googoo-s.github.io/Obsidian/%E4%BD%BF%E7%94%A8quartz%E5%8F%91%E5%B8%83obsidian--vault</guid>
-    <description></description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
-  </item><item>
-    <title>Context</title>
-    <link>https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/Context</link>
-    <guid>https://googoo-s.github.io/GO/%E5%85%AB%E8%82%A1%E6%96%87/Context</guid>
-    <description>参考 Golang context 实现原理 go 之 Context 基本使用 前言 context 是 golang 中的经典工具 主要在异步场景中用于实现并发协调以及对 goroutine 的生命周期控制. 除此之外，context 还兼有一定的数据存储能力. 本着知其然知其所以然的精神，本文和大家一起深入 context 源码一探究竟，较为细节地对其实现原理进行梳理.</description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
-  </item><item>
-    <title>KQL</title>
-    <link>https://googoo-s.github.io/ElasticSearch/KQL</link>
-    <guid>https://googoo-s.github.io/ElasticSearch/KQL</guid>
-    <description>Kibana Query Language juejin.cn/post/7003201901382598686 www.elastic.co/guide/en/kibana/7.14/kuery-query.html#kuery-query.</description>
-    <pubDate>Thu, 21 Mar 2024 13:41:05 GMT</pubDate>
-  </item><item>
-    <title>docker</title>
-    <link>https://googoo-s.github.io/docker/docker</link>
-    <guid>https://googoo-s.github.io/docker/docker</guid>
-    <description></description>
-    <pubDate>Thu, 21 Mar 2024 00:00:00 GMT</pubDate>
+    <pubDate>Fri, 22 Mar 2024 14:50:46 GMT</pubDate>
   </item>
     </channel>
   </rss>

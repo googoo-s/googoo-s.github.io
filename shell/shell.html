@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="zh"><head><title>shell overview</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM Plex Mono&amp;family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta property="og:title" content="shell overview"/><meta property="og:description" content="Shell 综述 所谓的Shell，就是运行在终端中的文本互动程序。Shell分析你的文本输入，然后把文本转换成相应的计算机动作。 在后面的内容中，我将用$来表示Linux系统Shell的命令提示符。比如说输入date命令： $date date用于日期时间的相关功能。敲击回车键Enter后，Shell会显示出系统当前的时间。 ..."/><meta property="og:image" content="https://googoo-s.github.io/static/og-image.png"/><meta property="og:width" content="1200"/><meta property="og:height" content="675"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Shell 综述 所谓的Shell，就是运行在终端中的文本互动程序。Shell分析你的文本输入，然后把文本转换成相应的计算机动作。 在后面的内容中，我将用$来表示Linux系统Shell的命令提示符。比如说输入date命令： $date date用于日期时间的相关功能。敲击回车键Enter后，Shell会显示出系统当前的时间。 ..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" spa-preserve/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="shell/shell"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h1 class="page-title"><a href="..">googoo-s</a></h1><div class="darkmode"><input class="toggle" id="darkmode-toggle" type="checkbox" tabindex="-1"/><label id="toggle-label-light" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg></label><label id="toggle-label-dark" for="darkmode-toggle" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></label></div><div class="spacer mobile-only"></div><div class="search"><div id="search-icon"><p>搜索</p><div></div><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search</title><desc id="desc">Search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></div><div id="search-container"><div id="search-space"><input autocomplete="off" id="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div id="search-layout" data-preview="true"></div></div></div></div><div class="explorer desktop-only"><button type="button" id="explorer" data-behavior="collapse" data-collapsed="collapsed" data-savestate="true" data-tree="[{&quot;path&quot;:&quot;docker&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;ElasticSearch&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;GO/八股文&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Java&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Kubernetes&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;linux&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;lua&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;MySQL&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Obsidian&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Python&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;Redis&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;shell&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/emacs&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/git&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/maven&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;工具/msys2&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;微服务&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;消息队列/Kafka&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;编译原理&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;资源&quot;,&quot;collapsed&quot;:true},{&quot;path&quot;:&quot;高可用&quot;,&quot;collapsed&quot;:true}]"><h1>探索</h1><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-content"><ul class="overflow" id="explorer-ul"><li><div class="folder-outer open"><ul style="padding-left:0;" class="content" data-folderul><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="docker"><button class="folder-button"><span class="folder-title">docker</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="docker"><li><a href="../docker/docker" data-for="docker/docker">docker</a></li><li><a href="../docker/Docker-基础" data-for="docker/Docker-基础">Docker 初学者命令</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="ElasticSearch"><button class="folder-button"><span class="folder-title">ElasticSearch</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="ElasticSearch"><li><a href="../ElasticSearch/KQL" data-for="ElasticSearch/KQL">KQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO"><button class="folder-button"><span class="folder-title">GO</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="GO/八股文"><button class="folder-button"><span class="folder-title">八股文</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="GO/八股文"><li><a href="../GO/八股文/Context" data-for="GO/八股文/Context">Context</a></li><li><a href="../GO/八股文/Golang基础" data-for="GO/八股文/Golang基础">Golang基础</a></li><li><a href="../GO/八股文/Map-和Sync.map" data-for="GO/八股文/Map-和Sync.map">Map</a></li><li><a href="../GO/八股文/Slice" data-for="GO/八股文/Slice">Slice</a></li><li><a href="../GO/八股文/内存管理和GC" data-for="GO/八股文/内存管理和GC">内存管理</a></li><li><a href="../GO/八股文/并发" data-for="GO/八股文/并发">并发</a></li></ul></div></li><li><a href="../GO/GO" data-for="GO/GO">GO</a></li></ul></div></li><li><div class="folder-outer "><ul style="padding-left:0;" class="content" data-folderul></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Java"><button class="folder-button"><span class="folder-title">Java</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Java"><li><a href="../Java/Java" data-for="Java/Java">☆Java</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Kubernetes"><button class="folder-button"><span class="folder-title">Kubernetes</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Kubernetes"><li><a href="../Kubernetes/Kubernetes" data-for="Kubernetes/Kubernetes">Kubernetes</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="linux"><button class="folder-button"><span class="folder-title">linux</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="linux"><li><a href="../linux/Linux-基础知识总结" data-for="linux/Linux-基础知识总结">Linux 基础知识总结</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="lua"><button class="folder-button"><span class="folder-title">lua</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="lua"><li><a href="../lua/lua" data-for="lua/lua">lua基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="MySQL"><button class="folder-button"><span class="folder-title">MySQL</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="MySQL"><li><a href="../MySQL/MySQL" data-for="MySQL/MySQL">MySQL</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Obsidian"><button class="folder-button"><span class="folder-title">Obsidian</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Obsidian"><li><a href="../Obsidian/dataview" data-for="Obsidian/dataview">dataview</a></li><li><a href="../Obsidian/excalidraw" data-for="Obsidian/excalidraw">excalidraw</a></li><li><a href="../Obsidian/Front-Matter" data-for="Obsidian/Front-Matter">Front Matter</a></li><li><a href="../Obsidian/obsidian-overview" data-for="Obsidian/obsidian-overview">obsidian overview</a></li><li><a href="../Obsidian/Obsidian-plugin" data-for="Obsidian/Obsidian-plugin">Obsidian-plugin</a></li><li><a href="../Obsidian/publish" data-for="Obsidian/publish">publish</a></li><li><a href="../Obsidian/template" data-for="Obsidian/template">template</a></li><li><a href="../Obsidian/使用quartz发布obsidian--vault" data-for="Obsidian/使用quartz发布obsidian--vault">使用quartz发布obsidian  vault</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Python"><button class="folder-button"><span class="folder-title">Python</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Python"><li><a href="../Python/python" data-for="Python/python">python</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="Redis"><button class="folder-button"><span class="folder-title">Redis</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="Redis"><li><a href="../Redis/Redis" data-for="Redis/Redis">★Redis</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="shell"><button class="folder-button"><span class="folder-title">shell</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="shell"><li><a href="../shell/shell" data-for="shell/shell">shell overview</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具"><button class="folder-button"><span class="folder-title">工具</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/emacs"><button class="folder-button"><span class="folder-title">emacs</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/emacs"><li><a href="../工具/emacs/安装" data-for="工具/emacs/安装">安装</a></li><li><a href="../工具/emacs/快捷键" data-for="工具/emacs/快捷键">快捷键</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/git"><button class="folder-button"><span class="folder-title">git</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/git"><li><a href="../工具/git/git" data-for="工具/git/git">git</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/maven"><button class="folder-button"><span class="folder-title">maven</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/maven"><li><a href="../工具/maven/maven基础" data-for="工具/maven/maven基础">maven基础</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="工具/msys2"><button class="folder-button"><span class="folder-title">msys2</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="工具/msys2"><li><a href="../工具/msys2/pacman" data-for="工具/msys2/pacman">pacman</a></li><li><a href="../工具/msys2/再-msys-中使用fish" data-for="工具/msys2/再-msys-中使用fish">再 msys 中使用fish</a></li></ul></div></li><li><a href="../工具/工具" data-for="工具/工具">工具</a></li><li><a href="../工具/环境搭建" data-for="工具/环境搭建">环境搭建</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="微服务"><button class="folder-button"><span class="folder-title">微服务</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="微服务"><li><a href="../微服务/微服务" data-for="微服务/微服务">微服务</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列"><button class="folder-button"><span class="folder-title">消息队列</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="消息队列/Kafka"><button class="folder-button"><span class="folder-title">Kafka</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="消息队列/Kafka"><li><a href="../消息队列/Kafka/Kafka-Broker" data-for="消息队列/Kafka/Kafka-Broker">Kafka Broker</a></li><li><a href="../消息队列/Kafka/Kafka-快速入门" data-for="消息队列/Kafka/Kafka-快速入门">Kafka 快速入门</a></li><li><a href="../消息队列/Kafka/Kafka-消费者" data-for="消息队列/Kafka/Kafka-消费者">Kafka 消费者</a></li><li><a href="../消息队列/Kafka/Kafka-生产者" data-for="消息队列/Kafka/Kafka-生产者">Kafka 生产者</a></li><li><a href="../消息队列/Kafka/Spring-整合-Kafka" data-for="消息队列/Kafka/Spring-整合-Kafka">Spring 整合 Kafka</a></li></ul></div></li><li><a href="../消息队列/消息队列" data-for="消息队列/消息队列">消息队列</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="编译原理"><button class="folder-button"><span class="folder-title">编译原理</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="编译原理"><li><a href="../编译原理/编译原理" data-for="编译原理/编译原理">编译原理</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="资源"><button class="folder-button"><span class="folder-title">资源</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="资源"><li><a href="../资源/资源汇总" data-for="资源/资源汇总">资源汇总</a></li></ul></div></li><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div data-folderpath="高可用"><button class="folder-button"><span class="folder-title">高可用</span></button></div></div><div class="folder-outer "><ul style="padding-left:1.4rem;" class="content" data-folderul="高可用"><li><a href="../高可用/高可用" data-for="高可用/高可用">高可用</a></li></ul></div></li></ul></div></li><li id="explorer-end"></li></ul></div></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../shell/">shell</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>shell overview</a></div></nav><h1 class="article-title">shell overview</h1><p show-comma="true" class="content-meta"><span>2023年7月31日</span><span>46分钟阅读</span></p><ul class="tags"><li><a href="../tags/shell" class="internal tag-link">shell</a></li></ul></div></div><article class="popover-hint"><h1 id="shell-综述">Shell 综述<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#shell-综述" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>所谓的Shell，就是运行在终端中的文本互动程序。Shell分析你的文本输入，然后把文本转换成相应的计算机动作。</p>
+<p>在后面的内容中，我将用$来表示Linux系统Shell的命令提示符。比如说输入date命令：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$date</span></span></code></pre></figure>
+<p>date用于日期时间的相关功能。敲击回车键Enter后，Shell会显示出系统当前的时间。</p>
+<p>shell是Unix体系下的文本交互界面。你只需要用键盘来输入文本，就可以和操作系统交互。但这还是不够具体。说到底，Shell其实是一个运行着的程序。这个程序接收到你按下回车键之间的输入，就会对输入的文本进行分析。比如下面这个命令：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$free -h</span></span></code></pre></figure>
+<p>包括空格在内总共7个字符。Shell程序会通过空格，区分出命令的不同部分</p>
+<ul>
+<li>
+<p>第一个部分是命令名。</p>
+</li>
+<li>
+<p>剩下的部分是选项和参数。</p>
+</li>
+</ul>
+<p>在这个例子中，Shell会进一步分析第二个部分，发现这一部分的开头是”-“字符，从而知道它是一个选项。</p>
+<p>有了命令名，Shell下一步就要执行该命令名对应的动作。这听起来就像是在戏剧舞台上，演员按照脚本演戏。Shell命令可以分为如下三类：</p>
+<ul>
+<li>
+<p>Shell内建函数（built-in function）</p>
+<ul>
+<li>Shell的内建函数是Shell自带的功能，</li>
+</ul>
+</li>
+<li>
+<p>可执行文件（executable file）</p>
+<ul>
+<li>
+<p>可执行文件是保存在Shell之外的脚本，提供了额外的功能</p>
+</li>
+<li>
+<p>Shell必须在系统中找到对应命令名的可执行文件，才能正确执行。</p>
+<ul>
+<li>
+<p>我们可以用绝对路径来告诉Shell可执行文件所在的位置。</p>
+</li>
+<li>
+<p>如果用户只是给出了命令名，而没有给出准确的位置，那么Shell必须自行搜索一些特殊的位置，也就是所谓的默认路径。</p>
+<ul>
+<li>
+<p>Shell会执行第一个名字和命令名相同的可执行文件。这就相当于，Shell帮我们自动补齐了可执行文件的位置信息。</p>
+</li>
+<li>
+<p>我们可以通过which命令，来确定命令名对应的是哪个可执行文件：</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$which date</span></span></code></pre></figure>
+<ul>
+<li>
+<p>别名（alias）</p>
+<ul>
+<li>别名是给某个命令一个简称，以后在Shell中就可以通过这个简称来调用对应的命令。在Shell中，我们可以用alias来定义别名：</li>
+</ul>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$alias freak=&quot;free -h&quot;</span></span></code></pre></figure>
+<p>我们可以通过type命令来了解命令的类型</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$type date</span></span>
+<span data-line><span>$type pwd</span></span></code></pre></figure>
+<h1 id="shell的选择">Shell的选择<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#shell的选择" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Shell是文本解释器程序的统称，所以包括了不止一种Shell。常见的Shell有sh、bash、ksh、rsh、csh等</p>
+<blockquote>
+<p>sh的全名是Bourne Shell。名字中的玻恩就是这个Shell的作者。</p>
+<p>bash的全名是Bourne Again Shell</p>
+</blockquote>
+<p>可以使用下面的命令查看sh 的版本</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$echo $SHELL</span></span></code></pre></figure>
+<ul>
+<li>
+<p>echo用于在终端打印出文本。</p>
+</li>
+<li>
+<p>而$是一个新的Shell特殊符号。它提示Shell，后面跟随的不是一般的文本，而是用于存储数据的变量。</p>
+</li>
+</ul>
+<p>可以使用下面的命令更换shell</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># chsh -s /bin/csh //改变当前设置为 /bin/csh</span></span>
+<span data-line><span>Changing shell for root.</span></span>
+<span data-line><span>Shell not changed.</span></span></code></pre></figure>
+<h1 id="命令的选项和参数">命令的选项和参数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#命令的选项和参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>一行命令里还可以包含着选项和参数。总的来说，</p>
+<ul>
+<li>
+<p>选项用于控制命令的行为，</p>
+</li>
+<li>
+<p>而参数说明了命令的作用对象。</p>
+</li>
+</ul>
+<p>比如说：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$uname -m</span></span></code></pre></figure>
+<p>选项-m影响了命令uname的行为，导致uname输出了树莓派的CPU型号。如果不是该选项的影响，uname输出的将是”Linux”。</p>
+<ul>
+<li>由一个”-“引领一个英文字母，这成为短选项。多个短选项的字母可以合在一起，跟在同一个”-“后面。比如，下面的两个命令就等价：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$uname -m -r</span></span>
+<span data-line><span>$uname -mr</span></span></code></pre></figure>
+<ul>
+<li>此外还有一种长选项，是用”—“引领一整个英文单词</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$date --version</span></span></code></pre></figure>
+<p>有的时候，选项也会携带变量</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Bash" data-theme="github-light github-dark"><code data-language="Bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$sudo date --set=&quot;1999-01-01 08:00:00&quot;</span></span></code></pre></figure>
+<p>值得注意的是，Shell对空格敏感。<strong>当一整个参数信息中包含了空格时，我们需要用引号把参数包裹起来</strong>，以便Shell能识别出这是一个整体。</p>
+<h1 id="变量">变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>我们可以通过变量名来引用变量中保持的数据。借助变量，程序员可以复用出现过的数据。<strong>Bash中也有变量，但Bash的变量只能存储文本。</strong></p>
+<h2 id="定义变量">定义变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#定义变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>定义变量时，变量名不加美元符号</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>your_name=&quot;a.com&quot;</span></span></code></pre></figure>
+<p>变量的命名规则</p>
+<ul>
+<li>
+<p>命名只能使用英文字母，数字和下划线，首个字符不能以数字开头。</p>
+</li>
+<li>
+<p>中间不能有空格，可以使用下划线 <strong>_</strong>。</p>
+</li>
+<li>
+<p>不能使用标点符号。</p>
+</li>
+<li>
+<p>不能使用bash里的关键字（可用help命令查看保留关键字）</p>
+</li>
+</ul>
+<h2 id="变量赋值">变量赋值<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#变量赋值" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>用“=”来表示赋值</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>var=World</span></span></code></pre></figure>
+<p>就是把文本World存入名为var的变量，即赋值。根据Bash的语法，<strong>赋值符号“=”的前后不留空格</strong>。赋值号右边的文本内容会存入赋值号左边的变量。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>your_name=&quot;tom&quot;</span></span>
+<span data-line><span>echo $your_name</span></span>
+<span data-line><span>your_name=&quot;alibaba&quot;</span></span>
+<span data-line><span>echo $your_name</span></span>
+<span data-line><span>但注意，第二次赋值的时候不能写$your_name=&quot;alibaba&quot;，使用变量的时候才加美元符（$）。</span></span></code></pre></figure>
+<ul>
+<li>如果文本中包含空格，那么你可以用单引号或双引号来包裹文本</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>var='abc bcd'</span></span>
+<span data-line> </span>
+<span data-line><span>或者</span></span>
+<span data-line> </span>
+<span data-line><span>var=&quot;abc bcd&quot;</span></span></code></pre></figure>
+<ul>
+<li>可以把一个命令输出的文本直接赋予给一个变量，借助“符号，date命令的输出存入了变量now</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>now=`date`</span></span></code></pre></figure>
+<ul>
+<li>我们还可以把一个变量中的数据赋值给另一个变量：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>another=$var</span></span></code></pre></figure>
+<h2 id="引用变量">引用变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#引用变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在Bash中，<strong>所谓的引用变量就是把变量翻译成变量中存储的文本，使用变量时，需要加美元符</strong></p>
+<ul>
+<li>我们可以用$var的方式来引用变量。</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>var=World</span></span>
+<span data-line><span>$echo $var</span></span></code></pre></figure>
+<ul>
+<li>在Bash中，你还可以在一段文本中嵌入变量。Bash也会把变量替换成变量中保存的文本</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$echo Hello$var</span></span></code></pre></figure>
+<ul>
+<li>为了避免变量名和尾随的普通文本混淆，我们也可以换用${}的方式来标识变量</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$echo $varIsGood</span></span>
+<span data-line> </span>
+<span data-line><span>由于Bash中并没有varIsGood这个变量，所以Bash将打印空白行。但如果将命令改为：</span></span>
+<span data-line><span>$echo ${var}IsGood</span></span>
+<span data-line> </span>
+<span data-line><span>Bash通过${}识别出变量var，并把它替换成数据。最终echo命令打印出WorldIsGood。</span></span></code></pre></figure>
+<ul>
+<li>
+<p>在Bash中，为了把一段包含空格的文本当做单一参数，就需要用到单引号或双引号。</p>
+<ul>
+<li>
+<p><strong>你可以在双引号中使用变量</strong>。</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$echo &quot;Hello $var&quot;</span></span></code></pre></figure>
+<ul>
+<li>
+<p>Bash会忽视单引号中的变量引用，所以单引号中的变量名只会被当做普通文本</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$echo 'Hello $var'</span></span>
+<span data-line> </span>
+<span data-line><span>将打印Hello $var。</span></span></code></pre></figure>
+</li>
+</ul>
+<h2 id="删除变量">删除变量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#删除变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>使用 unset 命令可以删除变量。语法：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>unset variable_name</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span>myUrl=&quot;https://www.runoob.com&quot;</span></span>
+<span data-line><span>unset myUrl</span></span>
+<span data-line><span>echo $myUrl</span></span></code></pre></figure>
+<h2 id="变量类型">变量类型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#变量类型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>
+<p><strong>1) 局部变量</strong> 局部变量在脚本或命令中定义，仅在当前shell实例中有效，其他shell启动的程序不能访问局部变量。</p>
+</li>
+<li>
+<p><strong>2) 环境变量</strong> 所有的程序，包括shell启动的程序，都能访问环境变量，有些程序需要环境变量来保证其正常运行。必要的时候shell脚本也可以定义环境变量。</p>
+</li>
+<li>
+<p><strong>3) shell变量</strong> shell变量是由shell程序设置的特殊变量。shell变量中有一部分是环境变量，有一部分是局部变量，这些变量保证了shell的正常运行</p>
+</li>
+</ul>
+<h1 id="字符串">字符串<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#字符串" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>字符串是shell编程中最常用最有用的数据类型（除了数字和字符串，也没啥其它类型好用了），</p>
+<ul>
+<li>
+<p>字符串可以用单引号，</p>
+</li>
+<li>
+<p>也可以用双引号，</p>
+</li>
+<li>
+<p>也可以不用引号。</p>
+</li>
+</ul>
+<h2 id="单引号">单引号<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#单引号" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>str='this is a string'</span></span></code></pre></figure>
+<p>单引号字符串的限制：</p>
+<ul>
+<li>
+<p>单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；</p>
+</li>
+<li>
+<p>单引号字串中不能出现单独一个的单引号（对单引号使用转义符后也不行），但可成对出现，作为字符串拼接使用。</p>
+</li>
+</ul>
+<h2 id="双引号">双引号<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#双引号" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>your_name=&quot;runoob&quot;</span></span>
+<span data-line><span>str=&quot;Hello, I know you are \&quot;$your_name\&quot;! \n&quot;</span></span>
+<span data-line><span>echo -e $str</span></span></code></pre></figure>
+<p>双引号的优点：</p>
+<ol>
+<li>
+<p>双引号里可以有变量</p>
+</li>
+<li>
+<p>双引号里可以出现转义字符</p>
+</li>
+</ol>
+<ul>
+<li><strong>拼接字符串</strong></li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>your_name=&quot;runoob&quot;</span></span>
+<span data-line><span># 使用双引号拼接</span></span>
+<span data-line><span>greeting=&quot;hello, &quot;$your_name&quot; !&quot;</span></span>
+<span data-line><span>greeting_1=&quot;hello, ${your_name} !&quot;</span></span>
+<span data-line><span>echo $greeting  $greeting_1</span></span>
+<span data-line> </span>
+<span data-line><span># 使用单引号拼接</span></span>
+<span data-line><span>greeting_2='hello, '$your_name' !'</span></span>
+<span data-line><span>greeting_3='hello, ${your_name} !'</span></span>
+<span data-line><span>echo $greeting_2  $greeting_3</span></span></code></pre></figure>
+<p>输出</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>hello, runoob ! hello, runoob !</span></span>
+<span data-line><span>hello, runoob ! hello, ${your_name} !</span></span></code></pre></figure>
+<ul>
+<li>获取字符串长度</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>string=&quot;abcd&quot;</span></span>
+<span data-line><span>echo ${#string}   # 输出 4</span></span></code></pre></figure>
+<ul>
+<li>提取子字符串</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>string=&quot;runoob is a great site&quot;</span></span>
+<span data-line><span>echo ${string:1:4} # 输出 unoo</span></span></code></pre></figure>
+<ul>
+<li>查找字符串</li>
+</ul>
+<p>查找字符 <strong>i</strong> 或 <strong>o</strong> 的位置(哪个字母先出现就计算哪个)：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>string=&quot;runoob is a great site&quot;</span></span>
+<span data-line><span>echo `expr index &quot;$string&quot; io`  # 输出 4</span></span></code></pre></figure>
+<h1 id="数组">数组<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数组" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><strong>bash支持一维数组（不支持多维数组），并且没有限定数组的大小。</strong></p>
+<p><strong>数组元素的下标由 0 开始编号</strong>。获取数组中的元素要利用下标，<strong>下标可以是整数或算术表达式</strong>，其值应大于或等于 0</p>
+<h2 id="定义数组">定义数组<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#定义数组" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>数组名=(值1 值2 ... 值n)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>array_name=(value0 value1 value2 value3)</span></span></code></pre></figure>
+<p>或者</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>array_name=(</span></span>
+<span data-line><span>value0</span></span>
+<span data-line><span>value1</span></span>
+<span data-line><span>value2</span></span>
+<span data-line><span>value3</span></span>
+<span data-line><span>)</span></span></code></pre></figure>
+<p>或者</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>array_name[0]=value0</span></span>
+<span data-line><span>array_name[1]=value1</span></span>
+<span data-line><span>array_name[n]=valuen</span></span></code></pre></figure>
+<h2 id="读取数组">读取数组<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#读取数组" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>${数组名[下标]}</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>valuen=${array_name[n]}</span></span></code></pre></figure>
+<p>使用 <strong>@</strong> 符号可以获取数组中的所有元素</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo ${array_name[@]}</span></span></code></pre></figure>
+<h2 id="获取数组长度">获取数组长度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#获取数组长度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 取得数组元素的个数</span></span>
+<span data-line><span>length=${#array_name[@]}</span></span>
+<span data-line><span># 或者</span></span>
+<span data-line><span>length=${#array_name[*]}</span></span>
+<span data-line><span># 取得数组单个元素的长度</span></span>
+<span data-line><span>lengthn=${#array_name[n]}</span></span></code></pre></figure>
+<h2 id="关联数组">关联数组<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#关联数组" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Bash 支持关联数组，可以使用任意的字符串、或者整数作为下标来访问数组元素。<strong>-A</strong> 选项就是用于声明一个关联数组。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>declare -A array_name</span></span></code></pre></figure>
+<p><strong>关联数组的键是唯一的。</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>declare -A site=([&quot;google&quot;]=&quot;www.google.com&quot; [&quot;runoob&quot;]=&quot;www.runoob.com&quot; [&quot;taobao&quot;]=&quot;www.taobao.com&quot;)</span></span></code></pre></figure>
+<p>或者</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>declare -A site</span></span>
+<span data-line><span>site[&quot;google&quot;]=&quot;www.google.com&quot;</span></span>
+<span data-line><span>site[&quot;runoob&quot;]=&quot;www.runoob.com&quot;</span></span>
+<span data-line><span>site[&quot;taobao&quot;]=&quot;www.taobao.com&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>echo &quot;数组的键为: ${!site[*]}&quot;</span></span>
+<span data-line><span>echo &quot;数组的键为: ${!site[@]}&quot;</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span>输出</span></span>
+<span data-line> </span>
+<span data-line><span>数组的键为: google runoob taobao</span></span>
+<span data-line><span>数组的键为: google runoob taobao</span></span></code></pre></figure>
+<h1 id="注释">注释<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#注释" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="单行注释">单行注释<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#单行注释" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#--------------------------------------------</span></span>
+<span data-line><span># 这是一个注释</span></span>
+<span data-line><span># author：菜鸟教程</span></span>
+<span data-line><span># site：www.runoob.com</span></span>
+<span data-line><span># slogan：学的不仅是技术，更是梦想！</span></span>
+<span data-line><span>#--------------------------------------------</span></span>
+<span data-line><span>##### 用户配置区 开始 #####</span></span>
+<span data-line><span>#</span></span>
+<span data-line><span>#</span></span>
+<span data-line><span># 这里可以添加脚本描述信息</span></span>
+<span data-line><span>#</span></span>
+<span data-line><span>#</span></span>
+<span data-line><span>##### 用户配置区 结束  #####</span></span></code></pre></figure>
+<p>多行注释</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>:&lt;&lt;EOF</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>EOF</span></span></code></pre></figure>
+<p>或者</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>:&lt;&lt;'</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>'</span></span>
+<span data-line> </span>
+<span data-line><span>:&lt;&lt;!</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>注释内容...</span></span>
+<span data-line><span>!</span></span></code></pre></figure>
+<h1 id="echo">Echo<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#echo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Shell 的 echo 指令与 PHP 的 echo 指令类似，都是用于字符串的输出。命令格式：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo string</span></span></code></pre></figure>
+<p>您可以使用echo实现更复杂的输出格式控制。</p>
+<h3 id="显示普通字符串"><strong>显示普通字符串:</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示普通字符串" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo &quot;It is a test&quot;</span></span></code></pre></figure>
+<p>这里的双引号完全可以省略，以下命令与上面实例效果一致：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo It is a test</span></span></code></pre></figure>
+<h3 id="显示转义字符"><strong>显示转义字符</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示转义字符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo &quot;\&quot;It is a test\&quot;&quot;</span></span></code></pre></figure>
+<p>结果将是:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>&quot;It is a test&quot;</span></span></code></pre></figure>
+<p>同样，双引号也可以省略</p>
+<h3 id="显示变量"><strong>显示变量</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示变量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>read 命令从标准输入中读取一行,并把输入行的每个字段的值指定给 shell 变量</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/sh</span></span>
+<span data-line><span>read name </span></span>
+<span data-line><span>echo &quot;$name It is a test&quot;</span></span></code></pre></figure>
+<p>以上代码保存为 test.sh，name 接收标准输入的变量，结果将是:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>[root@www ~]# sh test.sh</span></span>
+<span data-line><span>OK                     #标准输入</span></span>
+<span data-line><span>OK It is a test        #输出</span></span></code></pre></figure>
+<h3 id="显示换行"><strong>显示换行</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示换行" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span>echo -e &quot;OK! \n&quot; # -e 开启转义</span></span>
+<span data-line><span>echo &quot;It is a test&quot;</span></span></code></pre></figure>
+<p>输出结果：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OK!</span></span>
+<span data-line> </span>
+<span data-line><span>It is a test</span></span></code></pre></figure>
+<h3 id="显示不换行"><strong>显示不换行</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示不换行" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/sh</span></span>
+<span data-line><span>echo -e &quot;OK! \c&quot; # -e 开启转义 \c 不换行</span></span>
+<span data-line><span>echo &quot;It is a test&quot;</span></span></code></pre></figure>
+<p>输出结果：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OK! It is a test</span></span></code></pre></figure>
+<h3 id="显示结果定向至文件"><strong>显示结果定向至文件</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示结果定向至文件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo &quot;It is a test&quot; > myfile</span></span></code></pre></figure>
+<h3 id="原样输出字符串不进行转义或取变量用单引号"><strong>原样输出字符串，不进行转义或取变量(用单引号)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#原样输出字符串不进行转义或取变量用单引号" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo '$name\&quot;'</span></span></code></pre></figure>
+<p>输出结果：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$name\&quot;</span></span></code></pre></figure>
+<h3 id="显示命令执行结果"><strong>显示命令执行结果</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#显示命令执行结果" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>echo `date`</span></span></code></pre></figure>
+<p><strong>注意：</strong> 这里使用的是反引号 <strong>`</strong>, 而不是单引号 <strong>‘</strong>。</p>
+<p>结果将显示当前日期</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Wed Apr 5 00:52:17 CST 2023</span></span></code></pre></figure>
+<h1 id="数学运算">数学运算<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数学运算" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<ul>
+<li>在Bash中，数字和运算符都被当做普通文本。<strong>所以你无法像C语言一样便捷地进行数学运算</strong>。比如执行下面的命令</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$result=1+2</span></span>
+<span data-line><span>$echo $result</span></span>
+<span data-line> </span>
+<span data-line><span>Bash并不会进行任何运算。它只会打印文本“1+2”。</span></span></code></pre></figure>
+<ul>
+<li>在Bash中，<strong>你还可以通过$(())语法来进行数值运算</strong>。在双括号中你可以放入整数的加减乘除表达式。Bash会对其中的内容进行数值运算。比如</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$echo $((2 + (5*2)))</span></span></code></pre></figure>
+<ul>
+<li>在$(())中，你也可以使用变量</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$var=1</span></span>
+<span data-line><span>$echo $(($var + (5*2)))</span></span>
+<span data-line> </span>
+<span data-line><span>将打印运算结果11。</span></span></code></pre></figure>
+<ul>
+<li>可以把数学运算的结果存入变量</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$result=$(( 1 + 2 ))</span></span></code></pre></figure>
+<h1 id="运算符-expr和表达式">运算符-expr和**$((表达式))**<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#运算符-expr和表达式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>**原生bash不支持简单的数学运算，**但是可以通过其他命令来实现，例如 awk 和 expr，expr 最常用。</p>
+<ul>
+<li>
+<p>expr 是一款表达式计算工具，使用它能完成表达式的求值操作。</p>
+</li>
+<li>
+<p>在 MAC 中 shell 的 expr 语法是：<strong>$((表达式))</strong></p>
+</li>
+<li>
+<p>注意点</p>
+<ul>
+<li>
+<p>表<strong>达式和运算符之间要有空</strong>格，例如 2+2 是不对的，必须写成 2 + 2，这与我们熟悉的大多数编程语言不一样。</p>
+</li>
+<li>
+<p><strong>完整的表达式要被 “ 包含</strong>，注意这个字符不是常用的单引号，在 Esc 键下边。</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>val=`expr 2 + 2`</span></span>
+<span data-line><span>echo &quot;两数之和为 : $val&quot;</span></span></code></pre></figure>
+</li>
+</ul>
+<h2 id="算数运算符">算数运算符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#算数运算符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>运算符</td><td>说明</td><td>举例</td></tr><tr><td>+</td><td>加法</td><td><code>expr $a + $b</code> 结果为 30。</td></tr><tr><td>-</td><td>减法</td><td><code>expr $a - $b</code> 结果为 -10。</td></tr><tr><td>*</td><td>乘法</td><td><code>expr $a \* $b</code> 结果为 200。</td></tr><tr><td>/</td><td>除法</td><td><code>expr $b / $a</code> 结果为 2。</td></tr><tr><td>%</td><td>取余</td><td><code>expr $b % $a</code> 结果为 0。</td></tr><tr><td>=</td><td>赋值</td><td>a=$b 把变量 b 的值赋给 a。</td></tr><tr><td>==</td><td>相等。用于比较两个数字，相同则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">==</span></span></span></span>b ] 返回 false。</td></tr><tr><td>!=</td><td>不相等。用于比较两个数字，不相同则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">a</span><span class="mclose">!</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span></span></span></span>b ] 返回 true。</td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span># author:菜鸟教程</span></span>
+<span data-line><span># url:www.runoob.com</span></span>
+<span data-line> </span>
+<span data-line><span>a=10</span></span>
+<span data-line><span>b=20</span></span>
+<span data-line> </span>
+<span data-line><span>val=`expr $a + $b`</span></span>
+<span data-line><span>echo &quot;a + b : $val&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>val=`expr $a - $b`</span></span>
+<span data-line><span>echo &quot;a - b : $val&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>val=`expr $a \* $b`</span></span>
+<span data-line><span>echo &quot;a * b : $val&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>val=`expr $b / $a`</span></span>
+<span data-line><span>echo &quot;b / a : $val&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>val=`expr $b % $a`</span></span>
+<span data-line><span>echo &quot;b % a : $val&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>if [ $a == $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;a 等于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a != $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;a 不等于 b&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<p>注意</p>
+<ul>
+<li>
+<p>乘号(*)前边必须加反斜杠()才能实现乘法运算；</p>
+</li>
+<li>
+<p>在 MAC 中 shell 的 expr 语法是：<strong>$((表达式))</strong>，此处表达式中的 ”*” 不需要转义符号 &quot;&quot; 。</p>
+</li>
+</ul>
+<h2 id="关系运算符">关系运算符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#关系运算符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>运算符</td><td>说明</td><td>举例</td></tr><tr><td>-eq</td><td>检测两个数是否相等，相等返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span>b ] 返回 false。</td></tr><tr><td>-ne</td><td>检测两个数是否不相等，不相等返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mord mathnormal">e</span></span></span></span>b ] 返回 true。</td></tr><tr><td>-gt</td><td>检测左边的数是否大于右边的，如果是，则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">t</span></span></span></span>b ] 返回 false。</td></tr><tr><td>-lt</td><td>检测左边的数是否小于右边的，如果是，则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">lt</span></span></span></span>b ] 返回 true。</td></tr><tr><td>-ge</td><td>检测左边的数是否大于等于右边的，如果是，则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">e</span></span></span></span>b ] 返回 false。</td></tr><tr><td>-le</td><td>检测左边的数是否小于等于右边的，如果是，则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span></span></span></span>b ] 返回 true。</td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span># author:菜鸟教程</span></span>
+<span data-line><span># url:www.runoob.com</span></span>
+<span data-line> </span>
+<span data-line><span>a=10</span></span>
+<span data-line><span>b=20</span></span>
+<span data-line> </span>
+<span data-line><span>if [ $a -eq $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a -eq $b : a 等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a -eq $b: a 不等于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -ne $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a -ne $b: a 不等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a -ne $b : a 等于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -gt $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a -gt $b: a 大于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a -gt $b: a 不大于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -lt $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a -lt $b: a 小于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a -lt $b: a 不小于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -ge $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a -ge $b: a 大于或等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a -ge $b: a 小于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -le $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a -le $b: a 小于或等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a -le $b: a 大于 b&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<h2 id="布尔运算符">布尔运算符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#布尔运算符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>运算符</td><td>说明</td><td>举例</td></tr><tr><td>!</td><td>非运算，表达式为 true 则返回 false，否则返回 true。</td><td>[ ! false ] 返回 true。</td></tr><tr><td>-o</td><td>或运算，有一个表达式为 true 则返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">lt</span><span class="mord">20</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">o</span></span></span></span>b -gt 100 ] 返回 true。</td></tr><tr><td>-a</td><td>与运算，两个表达式都为 true 才返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">lt</span><span class="mord">20</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span>b -gt 100 ] 返回 false。</td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span># author:菜鸟教程</span></span>
+<span data-line><span># url:www.runoob.com</span></span>
+<span data-line> </span>
+<span data-line><span>a=10</span></span>
+<span data-line><span>b=20</span></span>
+<span data-line> </span>
+<span data-line><span>if [ $a != $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a != $b : a 不等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a == $b: a 等于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -lt 100 -a $b -gt 15 ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a 小于 100 且 $b 大于 15 : 返回 true&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a 小于 100 且 $b 大于 15 : 返回 false&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -lt 100 -o $b -gt 100 ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a 小于 100 或 $b 大于 100 : 返回 true&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a 小于 100 或 $b 大于 100 : 返回 false&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a -lt 5 -o $b -gt 100 ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a 小于 5 或 $b 大于 100 : 返回 true&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a 小于 5 或 $b 大于 100 : 返回 false&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<h2 id="逻辑运算符">逻辑运算符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#逻辑运算符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>运算符</td><td>说明</td><td>举例</td></tr><tr><td>&amp;&amp;</td><td>逻辑的 AND</td><td>[[ <span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '&amp;' at position 11: a -lt 100 &amp;̲&amp; " style="color:#cc0000;">a -lt 100 &amp;&amp; </span>b -gt 100 ]] 返回 false</td></tr><tr><td>|</td><td>逻辑的 OR</td><td>[[ $a -lt 100 \</td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span># author:菜鸟教程</span></span>
+<span data-line><span># url:www.runoob.com</span></span>
+<span data-line> </span>
+<span data-line><span>a=10</span></span>
+<span data-line><span>b=20</span></span>
+<span data-line> </span>
+<span data-line><span>if [[ $a -lt 100 &amp;&amp; $b -gt 100 ]]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;返回 true&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;返回 false&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line> </span>
+<span data-line><span>if [[ $a -lt 100 || $b -gt 100 ]]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;返回 true&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;返回 false&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<h2 id="字符串运算符">字符串运算符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#字符串运算符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>运算符</td><td>说明</td><td>举例</td></tr><tr><td>=</td><td>检测两个字符串是否相等，相等返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span></span></span></span>b ] 返回 false。</td></tr><tr><td>!=</td><td>检测两个字符串是否不相等，不相等返回 true。</td><td>[ <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">a</span><span class="mclose">!</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span></span></span></span>b ] 返回 true。</td></tr><tr><td>-z</td><td>检测字符串长度是否为0，为0返回 true。</td><td>[ -z $a ] 返回 false。</td></tr><tr><td>-n</td><td>检测字符串长度是否不为 0，不为 0 返回 true。</td><td>[ -n “$a” ] 返回 true。</td></tr><tr><td>$</td><td>检测字符串是否不为空，不为空返回 true。</td><td>[ $a ] 返回 true。</td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span># author:菜鸟教程</span></span>
+<span data-line><span># url:www.runoob.com</span></span>
+<span data-line> </span>
+<span data-line><span>a=&quot;abc&quot;</span></span>
+<span data-line><span>b=&quot;efg&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>if [ $a = $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a = $b : a 等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a = $b: a 不等于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a != $b ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a != $b : a 不等于 b&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a != $b: a 等于 b&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -z $a ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;-z $a : 字符串长度为 0&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;-z $a : 字符串长度不为 0&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -n &quot;$a&quot; ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;-n $a : 字符串长度不为 0&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;-n $a : 字符串长度为 0&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ $a ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;$a : 字符串不为空&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;$a : 字符串为空&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<h2 id="文件测试运算符">文件测试运算符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文件测试运算符" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody><tr><td>b file</td><td>检测文件是否是块设备文件，如果是，则返回 true。</td><td>[ -b $file ] 返回 false。</td></tr><tr><td>-c file</td><td>检测文件是否是字符设备文件，如果是，则返回 true。</td><td>[ -c $file ] 返回 false。</td></tr><tr><td>-d file</td><td>检测文件是否是目录，如果是，则返回 true。</td><td>[ -d $file ] 返回 false。</td></tr><tr><td>-f file</td><td>检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回 true。</td><td>[ -f $file ] 返回 true。</td></tr><tr><td>-g file</td><td>检测文件是否设置了 SGID 位，如果是，则返回 true。</td><td>[ -g $file ] 返回 false。</td></tr><tr><td>-k file</td><td>检测文件是否设置了粘着位(Sticky Bit)，如果是，则返回 true。</td><td>[ -k $file ] 返回 false。</td></tr><tr><td>-p file</td><td>检测文件是否是有名管道，如果是，则返回 true。</td><td>[ -p $file ] 返回 false。</td></tr><tr><td>-u file</td><td>检测文件是否设置了 SUID 位，如果是，则返回 true。</td><td>[ -u $file ] 返回 false。</td></tr><tr><td>-r file</td><td>检测文件是否可读，如果是，则返回 true。</td><td>[ -r $file ] 返回 true。</td></tr><tr><td>-w file</td><td>检测文件是否可写，如果是，则返回 true。</td><td>[ -w $file ] 返回 true。</td></tr><tr><td>-x file</td><td>检测文件是否可执行，如果是，则返回 true。</td><td>[ -x $file ] 返回 true。</td></tr><tr><td>-s file</td><td>检测文件是否为空（文件大小是否大于0），不为空返回 true。</td><td>[ -s $file ] 返回 true。</td></tr><tr><td>-e file</td><td>检测文件（包括目录）是否存在，如果是，则返回 true。</td><td>[ -e $file ] 返回 true。</td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span># author:菜鸟教程</span></span>
+<span data-line><span># url:www.runoob.com</span></span>
+<span data-line> </span>
+<span data-line><span>file=&quot;/var/www/runoob/test.sh&quot;</span></span>
+<span data-line><span>if [ -r $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件可读&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件不可读&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -w $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件可写&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件不可写&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -x $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件可执行&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件不可执行&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -f $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件为普通文件&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件为特殊文件&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -d $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件是个目录&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件不是个目录&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -s $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件不为空&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件为空&quot;</span></span>
+<span data-line><span>fi</span></span>
+<span data-line><span>if [ -e $file ]</span></span>
+<span data-line><span>then</span></span>
+<span data-line><span>   echo &quot;文件存在&quot;</span></span>
+<span data-line><span>else</span></span>
+<span data-line><span>   echo &quot;文件不存在&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<h1 id="返回代码">返回代码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#返回代码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Linux中，每个可执行程序会有一个整数的返回代码。按照Linux惯例，当程序正常运行完毕并返回时，将返回整数0。</p>
+<p>比如foo.c</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>int main(void) {</span></span>
+<span data-line><span>    int a;</span></span>
+<span data-line><span>    int b;</span></span>
+<span data-line><span>    int c;</span></span>
+<span data-line><span>    a = 6;</span></span>
+<span data-line><span>    b = 2;</span></span>
+<span data-line><span>    c = 6/2;</span></span>
+<span data-line><span>    return 0;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>这段程序可以正常运行。因此，它将在最后一句执行return语句，程序的返回代码是0</p>
+<ul>
+<li>在Shell中，我们运行了程序后，<strong>可以通过$?变量来获知返回码</strong></li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$gcc foo.c</span></span>
+<span data-line><span>$./a.out</span></span>
+<span data-line><span>$echo $?</span></span></code></pre></figure>
+<ul>
+<li>如果一个程序运行异常，那么这个程序将返回非0的返回代码。比如删除一个不存在的文件：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$rm none_exist.file</span></span>
+<span data-line><span>$echo $?</span></span></code></pre></figure>
+<ul>
+<li>
+<p>在Linux中，可以在一个行命令中执行多个程序</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$touch demo.file; ls;</span></span></code></pre></figure>
+<ul>
+<li>
+<p><strong>我们可以让后一个程序的运行参考前一个程序的返回代码。比如说，只有前一个程序返回成功代码0，才让后一个程序运行：可以改写为</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$rm demo.file &amp;&amp; echo &quot;rm succeed&quot;</span></span></code></pre></figure>
+</li>
+<li>
+<p>还有一种情况，<strong>是等到前一个程序失败了，才运行后一个程序</strong></p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$rm demo.file || echo &quot;rm fail&quot;</span></span></code></pre></figure>
+</li>
+</ul>
+<h1 id="bash-脚本">Bash 脚本<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bash-脚本" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>你还可以把多行的Bash命令写入一个文件，成为所谓的Bash脚本，当Bash脚本执行时，Shell将逐行执行脚本中的命令。</p>
+<h2 id="一个脚本例子">一个脚本例子<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一个脚本例子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>echo Hello</span></span>
+<span data-line><span>echo World</span></span></code></pre></figure>
+<ul>
+<li>
+<p>脚本的第一行说明了该脚本使用的Shell，即/bin/bash路径的Bash程序</p>
+</li>
+<li>
+<p>脚本正文是两行echo命令，两行命令将按照由上至下的顺序依次执行</p>
+</li>
+</ul>
+<p>运行脚本的方式和运行可执行程序的方式类似，都是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$./hello_world.bash</span></span></code></pre></figure>
+<blockquote>
+<p>如果用户不具有执行Bash脚本文件的权限，那么他将无法执行Bash脚本。此时，用户必须更换文件权限，或者以其他身份登录，才能执行脚本。</p>
+</blockquote>
+<p>Bash脚本是一种复用代码的方式。我们看一个简单的Bash脚本<strong>hw_info.bash</strong>，它将计算机的信息存入到名为log的文件中：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>echo &quot;Information of Vamei's computer:&quot; > log</span></span>
+<span data-line><span>lscpu >> log</span></span>
+<span data-line><span>uname –a >> log</span></span>
+<span data-line><span>free –h >> log</span></span></code></pre></figure>
+<h2 id="脚本参数">脚本参数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#脚本参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>和可执行程序类似，Bash脚本运行时，也可以携带参数。这些<strong>参数可以在Bash脚本中以变量的形式使用</strong>。</p>
+<p>在Bash中，<strong>你可以用<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">0</span><span class="mord cjk_fallback">、</span></span></span></span>1、$2……的方式，来获得Bash脚本运行时的参数</strong></p>
+<p>比如</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>echo $0 </span></span>
+<span data-line><span>echo $1 </span></span>
+<span data-line><span>echo $2</span></span></code></pre></figure>
+<p>我们用下面的方式运行Bash脚本：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$./test_arg.bash hello world</span></span></code></pre></figure>
+<p><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0</span><span class="mord cjk_fallback">是命令的第一部分，也就是</span><span class="mord">./</span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord">.</span><span class="mord mathnormal">ba</span><span class="mord mathnormal">s</span><span class="mord mathnormal">h</span><span class="mord cjk_fallback">。</span></span></span></span>1代表了参数hello，而$2代表了参数world。因此，上面程序将打印：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>./test_arg.bash</span></span>
+<span data-line><span>hello</span></span>
+<span data-line><span>world</span></span></code></pre></figure>
+<p>如果变更参数，同一段脚本将有不同的行为。这大大提高了Bash脚本的灵活性。上面的hw_info.bash脚本中，我们把输出文件名写死成log</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>echo &quot;Information of Vamei's computer:&quot; > $1</span></span>
+<span data-line><span>lscpu >> $1 </span></span>
+<span data-line><span>uname –a >> $1 </span></span>
+<span data-line><span>free –h >> $1</span></span></code></pre></figure>
+<p>可以这样执行代码</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$./hw_info.bash output.file</span></span></code></pre></figure>
+<ul>
+<li>
+<p>脚本内获取参数的格式为：<strong>$n</strong>。<strong>n</strong> 代表一个数字，1 为执行脚本的第一个参数，2 为执行脚本的第二个参数，以此类推……</p>
+</li>
+<li>
+<p>另外，还有几个特殊字符用来处理参数：</p>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>参数处理</td><td>说明</td></tr><tr><td>$#</td><td>传递到脚本的参数个数</td></tr><tr><td>$*</td><td>以一个单字符串显示所有向脚本传递的参数。  <br/>如”<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">∗</span><span class="mord">&quot;</span><span class="mord cjk_fallback">用「</span><span class="mord">&quot;</span><span class="mord cjk_fallback">」括起来的情况、以</span><span class="mord">&quot;</span></span></span></span>1 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span></span></span></span>n”的形式输出所有参数。</td></tr><tr><td>$$</td><td>脚本运行的当前进程ID号</td></tr><tr><td>$!</td><td>后台运行的最后一个进程的ID号</td></tr><tr><td>$@</td><td>与<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord">∗</span><span class="mord cjk_fallback">相同，但是使用时加引号，并在引号中返回每个参数。</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">b</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord cjk_fallback">如</span><span class="mord">&quot;</span></span></span></span>@“用「“」括起来的情况、以”<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">1&quot;&quot;</span></span></span></span>2” … “$n” 的形式输出所有参数。</td></tr><tr><td>$-</td><td>显示Shell使用的当前选项，与<a href="https://www.runoob.com/linux/linux-comm-set.html" class="external">set命令<svg class="external-icon" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>功能相同。</td></tr><tr><td>$?</td><td>显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误。</td></tr></tbody></table></div>
+<p><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">∗</span><span class="mord cjk_fallback">与</span></span></span></span>@ 区别：</p>
+<ul>
+<li>
+<p>相同点：都是引用所有参数。</p>
+</li>
+<li>
+<p>不同点：只有在双引号中体现出来。假设在脚本运行时写了三个参数 1、2、3，，则 ” * ” 等价于 “1 2 3”（传递了一个参数），而 ”@” 等价于 “1” “2” “3”（传递了三个参数）。</p>
+</li>
+</ul>
+<h2 id="脚本的返回代码">脚本的返回代码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#脚本的返回代码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>和可执行程序类似，脚本也可以有返回代码。还是按照惯例，脚本正常退出时返回代码0在脚本的末尾，<strong>我们可以用exit命令来设置脚本的返回代码</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>echo Hello</span></span>
+<span data-line><span>echo World</span></span>
+<span data-line><span>exit 0</span></span></code></pre></figure>
+<p>其实在脚本的末尾加一句exit 0并不必要。一个脚本如果正常运行完最后一句，会自动的返回代码0。</p>
+<p>在脚本运行后，我们可以通过$?变量查询脚本的返回代码</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$./hello_world.bash</span></span>
+<span data-line><span>$echo $?</span></span></code></pre></figure>
+<p>如果在脚本中部出现exit命令，脚本会直接在这一行停止，并返回该exit命令给出的返回代码</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>echo hello</span></span>
+<span data-line><span>exit 1 echo world</span></span>
+<span data-line> </span>
+<span data-line><span>不会打印 world</span></span></code></pre></figure>
+<h2 id="运行shell-脚本">运行Shell 脚本<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#运行shell-脚本" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>1、作为可执行程序</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>chmod +x ./test.sh  #使脚本具有执行权限</span></span>
+<span data-line><span>./test.sh  #执行脚本</span></span></code></pre></figure>
+<p><strong>2、作为解释器参数</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>/bin/sh test.sh</span></span>
+<span data-line><span>/bin/php test.php</span></span></code></pre></figure>
+<h1 id="函数">函数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#函数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>在Bash中，脚本和函数有很多相似的地方。</p>
+<ul>
+<li>
+<p>脚本实现了一整个脚本文件的程序复用，</p>
+</li>
+<li>
+<p>而函数复用了脚本内部的部分程序。</p>
+</li>
+</ul>
+<p>在定义函数时，我们需要花括号来标识函数包括的部分：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>function my_info (){</span></span>
+<span data-line><span>  lscpu >> log</span></span>
+<span data-line><span>  uname –a >> log</span></span>
+<span data-line><span>  free –h >> log</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>my_info</span></span></code></pre></figure>
+<p>需要强调的是，<strong>函数定义只是食谱，并没有转化成具体的动作</strong>。脚本的最后一行是在调用函数。只有通过函数调用，函数内包含的命令才能真正执行</p>
+<h2 id="函数参数">函数参数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#函数参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>像脚本一样，函数调用时还可以携带参数。在函数内部，我<strong>们同样可以用<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">1</span><span class="mord cjk_fallback">、</span></span></span></span>2这种形式的变量来使用参数</strong>：</p>
+<p>当n>=10时，需要使用${n}来获取参数。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>function my_info (){</span></span>
+<span data-line><span>  lscpu >> $1 </span></span>
+<span data-line><span>  uname –a >> $1 </span></span>
+<span data-line><span>  free –h >> $1</span></span>
+<span data-line><span> }</span></span>
+<span data-line> </span>
+<span data-line><span>my_info output.file</span></span>
+<span data-line><span>my_info another_output.file</span></span></code></pre></figure>
+<p>还有几个特殊字符用来处理参数：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>$#</td><td>传递到脚本或函数的参数个数</td></tr><tr><td>$*</td><td>以一个单字符串显示所有向脚本传递的参数</td></tr><tr><td>$$</td><td>脚本运行的当前进程ID号</td></tr><tr><td>$!</td><td>后台运行的最后一个进程的ID号</td></tr><tr><td>$@</td><td>与$*相同，但是使用时加引号，并在引号中返回每个参数。</td></tr><tr><td>$-</td><td>显示Shell使用的当前选项，与set命令功能相同。</td></tr><tr><td>$?</td><td>显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误。</td></tr></tbody></table></div>
+<h1 id="跨脚本调用">跨脚本调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#跨脚本调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>在Bash中<strong>使用source命令，可以实现函数的跨脚本调用</strong>。<strong>命令source的作用是在同一个进程中执行另一个文件中的Bash脚本</strong></p>
+<p>比如说，有两个脚本，my_info.bash和app.bash。脚本my_info.sh中的内容是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>function my_info (){</span></span>
+<span data-line><span>  lscpu >> $1 </span></span>
+<span data-line><span>  uname –a >> $1 </span></span>
+<span data-line><span>  free –h >> $1</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>脚本app.bash中的内容是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>source my_info.bash</span></span>
+<span data-line><span>my_info output.file</span></span></code></pre></figure>
+<h1 id="逻辑判断">逻辑判断<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#逻辑判断" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Bash除了可以进行数值运算，还可以进行逻辑判断。逻辑判断是决定某个说法的真假。逻辑判断就是对一个说法判断真假。<strong>在Bash中，我们可以用test命令来进行逻辑判断</strong>：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$test 3 -gt 2; echo $?</span></span></code></pre></figure>
+<p>命令test后面跟有一个判断表达式，其中的-gt表示大于，即greater than。</p>
+<h2 id="数值判断">数值判断<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数值判断" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>数值大小和相等关系的判断，是最常见的逻辑判断。除了上面的大于和小于判断，我们还可以进行以下的数值判断：</p>
+<ul>
+<li>
+<p>等于： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mord">3</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>不等于： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">n</span><span class="mord mathnormal">e</span><span class="mord">1</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>大于等于： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">5</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">e</span><span class="mord">2</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>小于等于： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">1</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>大于：<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">t</span><span class="mord">2</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>小于：<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">lt</span><span class="mord">2</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span></p>
+</li>
+</ul>
+<h3 id="文本判断">文本判断<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文本判断" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Bash中最常见的数据形式是文本，因此也提供了很多关于文本的判断：</p>
+<ul>
+<li>
+<p>文本相同: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord mathnormal">ab</span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">ab</span><span class="mord mathnormal">x</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>文本不同： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord mathnormal">ab</span><span class="mord mathnormal">c</span><span class="mclose">!</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">ab</span><span class="mord mathnormal">x</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>按照词典顺序，一个文本在另一个文本之前： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">ppl</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>按照词典顺序，一个文本在另一个文本之后： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">ppl</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+</ul>
+<h2 id="文件状态判断">文件状态判断<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文件状态判断" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>
+<p>检查一个文件是否存在： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mord">.</span><span class="mord mathnormal">o</span><span class="mord mathnormal">u</span><span class="mord mathnormal">t</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>检查一个文件是否存在，而且是普通文件： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">.</span><span class="mord mathnormal">t</span><span class="mord mathnormal">x</span><span class="mord mathnormal">t</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>检查一个文件是否存在，而且是目录文件： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal">d</span><span class="mord mathnormal">m</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">es</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>检查一个文件是否存在，而且是软连接： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal">L</span><span class="mord mathnormal">a</span><span class="mord">.</span><span class="mord mathnormal">o</span><span class="mord mathnormal">u</span><span class="mord mathnormal">t</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>检查一个文件是否可读： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">.</span><span class="mord mathnormal">t</span><span class="mord mathnormal">x</span><span class="mord mathnormal">t</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>检查一个文件是否可写： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">.</span><span class="mord mathnormal">t</span><span class="mord mathnormal">x</span><span class="mord mathnormal">t</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+<li>
+<p>检查一个文件是否可执行： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">es</span><span class="mord mathnormal">t</span><span class="mord">–</span><span class="mord mathnormal">x</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord">.</span><span class="mord mathnormal">t</span><span class="mord mathnormal">x</span><span class="mord mathnormal">t</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ec</span><span class="mord mathnormal">h</span><span class="mord mathnormal">o</span></span></span></span>?</p>
+</li>
+</ul>
+<h2 id="与或非">与或非<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#与或非" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>非，与expression的真假相反：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>! expression</span></span></code></pre></figure>
+<ul>
+<li>与，必须expression1和expression2都为真时，结果才为真：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>expression1 –a expression2</span></span></code></pre></figure>
+<ul>
+<li>或，只要expression1和expression2的一个为真时，结果就为真：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>expression1 –o expression2</span></span></code></pre></figure>
+<h1 id="选择结构">选择结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#选择结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>选择结构是一种语法结构，可以让程序根据条件决定执行哪一部分的指令，我们可以根据条件来决定是否执行某一部分程序，比如下面的demo_if.bash脚本</p>
+<h2 id="if-fi">if-fi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#if-fi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>var=`whoami`</span></span>
+<span data-line> </span>
+<span data-line><span>if [ $var = &quot;root&quot; ]then   </span></span>
+<span data-line><span>  echo &quot;You are root&quot;   </span></span>
+<span data-line><span>  echo &quot;You are my God.&quot;</span></span>
+<span data-line><span>fi</span></span></code></pre></figure>
+<h2 id="if---else-fi">if - else-fi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#if---else-fi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>filename=$1 </span></span>
+<span data-line> </span>
+<span data-line><span>if [ -e $filename ]then   </span></span>
+<span data-line><span>  echo &quot;$filename exists&quot; </span></span>
+<span data-line><span>else   </span></span>
+<span data-line><span>  echo &quot;$filename NOT exists&quot; </span></span>
+<span data-line><span>fi </span></span>
+<span data-line> </span>
+<span data-line><span>echo &quot;The End&quot;</span></span></code></pre></figure>
+<h2 id="case">case<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#case" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在Bash下，我们还可以用case语法来实现多程序块的选择执行。比如下面的脚本demo_case.bash：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>var=`whoami`</span></span>
+<span data-line><span>echo &quot;You are $var&quot; </span></span>
+<span data-line><span>case $var in</span></span>
+<span data-line><span>root)</span></span>
+<span data-line><span>    echo &quot;You are God.&quot;</span></span>
+<span data-line><span>;;</span></span>
+<span data-line><span>vamei)</span></span>
+<span data-line><span>    echo &quot;You are a happy user.&quot;</span></span>
+<span data-line><span>;;</span></span>
+<span data-line><span>*)</span></span>
+<span data-line><span>    echo &quot;You are the Others.&quot;</span></span>
+<span data-line><span>;;</span></span>
+<span data-line><span>esac</span></span></code></pre></figure>
+<p>关键字case后面不再是逻辑表达式，<strong>而是一个作为条件的文本</strong>。后面的代码块分为三个部分，<strong>都以文本标签)的形式开始，以;;结束</strong>。在case结构运行时，会逐个检查文本标签。当条件文本和文本标签可以对应上时，Bash就会执行隶属于该文本标签的代码块。</p>
+<p>如果是用户vamei执行该Bash脚本，那么条件文本和vamei标签对应上，脚本就会打印：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>You are a happy user.</span></span></code></pre></figure>
+<h2 id="文本标签">文本标签<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文本标签" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>注意）</p>
+<p>文本标签除了是一串具体的文本，还可以包含文本通配符。结构case中常用的通配符包括：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th><th></th><th></th></tr></thead><tbody><tr><td>通配符</td><td>含义</td><td>文本标签例子</td><td>符合条件的文本</td></tr><tr><td>*</td><td>任意文本</td><td>*)</td><td>Xyz, 12a3, …</td></tr><tr><td>?</td><td>任意一个字符</td><td>a?c)</td><td>abc, axc, …</td></tr><tr><td>[]</td><td>范围内一个字符</td><td>[1-5][b-d])</td><td>2b, 3d, …</td></tr></tbody></table></div>
+<h1 id="循环结构">循环结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#循环结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="while">while<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#while" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>在while语法中，Bash会循环执行隶属于while的代码块，直到逻辑表达式不成立。比如下面的demo_while.bash</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>now=`date +'%Y%m%d%H%M'`</span></span>
+<span data-line><span>deadline=`date --date='1 hour' +'%Y%m%d%H%M'`</span></span>
+<span data-line><span>while [ $now -lt $deadline ]do</span></span>
+<span data-line><span>   date</span></span>
+<span data-line><span>   echo &quot;not yet&quot;</span></span>
+<span data-line><span>   sleep 10</span></span>
+<span data-line><span>   now=`date +'%Y%m%d%H%M'`</span></span>
+<span data-line><span>done </span></span></code></pre></figure>
+<ul>
+<li>如果while的条件始终是真，那么循环会一直进行下去。下面的程序就是以无限循环的形式</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>while true</span></span>
+<span data-line><span>do</span></span>
+<span data-line><span>  date</span></span>
+<span data-line><span>  sleep 1 </span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<p>语法while的终止条件是一个逻辑判断。<strong>如果在循环过程中改变逻辑判断的内容，那么我们很难在程序执行之前预判循环进行的次数</strong>。</p>
+<h2 id="for">for<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#for" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>与while语法对应的是for循环。这种语法会在程序进行前确定好循环进行的次数，比如demo_for.bash：</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Bash" data-theme="github-light github-dark"><code data-language="Bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>for var in `ls log*`</span></span>
+<span data-line><span>do </span></span>
+<span data-line><span>  rm $var</span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<p>在这个例子中，命<strong>令ls log*将返回所有以log开头的文件名。这些文件名之间由空格分隔。循环进行时，Bash会依次取出一个文件名，赋值给变量var，并执行do和done之间隶属于for结构的程序块。</strong></p>
+<p>由于ls命令返回的内容在是确定的，因此for循环进行的次数也会在一开始确定下来。</p>
+<ul>
+<li>在for语法中，<strong>我们也可以使用自己构建一个由空格分隔的文本。由空格区分出来的每个子文本会在循环中赋值给变量</strong></li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line><span>for user in vamei anna yutian</span></span>
+<span data-line><span>do</span></span>
+<span data-line><span>    echo $user</span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<ul>
+<li>for循环还可以和seq命令配合使用。</li>
+</ul>
+<p>命令seq用于生成一个等差的整数序列，命令后面可以跟3个参数，第</p>
+<ul>
+<li>
+<p>一个参数表示整数序列的开始数字，</p>
+</li>
+<li>
+<p>第二个参数表示每次增加多少，</p>
+</li>
+<li>
+<p>最后一个参数表示序列的终点</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Bash" data-theme="github-light github-dark"><code data-language="Bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$seq 1 2 10</span></span></code></pre></figure>
+<p>输出效果为</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1 3 5 7 9</span></span></code></pre></figure>
+<p>结合for循环和seq命令，我们可以解一些有趣的数学问题。比如高斯求和，是要计算从1到100的所有整数的和</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>total=0 </span></span>
+<span data-line><span>for number in `seq 1 1 100`</span></span>
+<span data-line><span>do </span></span>
+<span data-line><span>    total=$(( $total + $number ))</span></span>
+<span data-line><span>done </span></span>
+<span data-line> </span>
+<span data-line><span>echo $total</span></span></code></pre></figure>
+<h2 id="无限循环"><strong>无限循环</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#无限循环" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>无限循环语法格式：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>while :</span></span>
+<span data-line><span>do</span></span>
+<span data-line><span>    command</span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<p>或者</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>while true</span></span>
+<span data-line><span>do</span></span>
+<span data-line><span>    command</span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<p>或者</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>for (( ; ; ))</span></span></code></pre></figure>
+<h2 id="until-循环">until 循环<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#until-循环" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>until 循环执行一系列命令直至条件为 true 时停止。</p>
+<p>until 循环与 while 循环在处理方式上刚好相反。</p>
+<p>一般 while 循环优于 until 循环，但在某些时候—也只是极少数情况下，until 循环更加有用。</p>
+<p>until 语法格式:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>until condition</span></span>
+<span data-line><span>do</span></span>
+<span data-line><span>    command</span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>a=0</span></span>
+<span data-line> </span>
+<span data-line><span>until [ ! $a -lt 10 ]</span></span>
+<span data-line><span>do</span></span>
+<span data-line><span>   echo $a</span></span>
+<span data-line><span>   a=`expr $a + 1`</span></span>
+<span data-line><span>done</span></span></code></pre></figure>
+<h2 id="break">break<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#break" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>total=0</span></span>
+<span data-line><span>number=1 </span></span>
+<span data-line> </span>
+<span data-line><span>while :</span></span>
+<span data-line><span>do </span></span>
+<span data-line><span>  if [ $number -gt 100 ]</span></span>
+<span data-line><span>  then</span></span>
+<span data-line><span>      break</span></span>
+<span data-line><span>  fi</span></span>
+<span data-line><span>  total=$(( $total + $number ))</span></span>
+<span data-line><span>  number=$(($number + 1))</span></span>
+<span data-line><span>done </span></span>
+<span data-line> </span>
+<span data-line><span>echo $total</span></span></code></pre></figure>
+<p>这里break语句的作用是在满足条件时跳出循环。</p>
+<h2 id="continue">continue<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#continue" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Go" data-theme="github-light github-dark"><code data-language="Go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#!/bin/bash</span></span>
+<span data-line> </span>
+<span data-line><span>total=0 </span></span>
+<span data-line> </span>
+<span data-line><span>for number in `seq 1 1 100`do </span></span>
+<span data-line><span>  if (( $number % 3 == 0 )) </span></span>
+<span data-line><span>  then</span></span>
+<span data-line><span>      continue</span></span>
+<span data-line><span>  fi</span></span>
+<span data-line><span>  total=$(( $total + $number ))</span></span>
+<span data-line><span>done </span></span>
+<span data-line> </span>
+<span data-line><span>echo $total</span></span></code></pre></figure>
+<h1 id="输入输出重定向">输入输出重定向<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#输入输出重定向" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>大多数 UNIX 系统命令从你的终端接受输入并将所产生的输出发送回到您的终端。一个命令通常从一个叫标准输入的地方读取输入，默认情况下，这恰好是你的终端</p>
+<p>重定向命令列表如下：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>命令</td><td>说明</td></tr><tr><td>command > file</td><td>将输出重定向到 file。</td></tr><tr><td>command &lt; file</td><td>将输入重定向到 file。</td></tr><tr><td>command >> file</td><td>将输出以追加的方式重定向到 file。</td></tr><tr><td>n > file</td><td>将文件描述符为 n 的文件重定向到 file。</td></tr><tr><td>n >> file</td><td>将文件描述符为 n 的文件以追加的方式重定向到 file。</td></tr><tr><td>n >&amp; m</td><td>将输出文件 m 和 n 合并。</td></tr><tr><td>n &lt;&amp; m</td><td>将输入文件 m 和 n 合并。</td></tr><tr><td>&lt;&lt; tag</td><td>将开始标记 tag 和结束标记 tag 之间的内容作为输入。</td></tr></tbody></table></div>
+<p>一般情况下，每个 Unix/Linux 命令运行时都会打开三个文件：</p>
+<ul>
+<li>
+<p>标准输入文件(stdin)：stdin的文件描述符为0，Unix程序默认从stdin读取数据。</p>
+</li>
+<li>
+<p>标准输出文件(stdout)：stdout 的文件描述符为1，Unix程序默认向stdout输出数据。</p>
+</li>
+<li>
+<p>标准错误文件(stderr)：stderr的文件描述符为2，Unix程序会向stderr流中写入错误信息。</p>
+</li>
+</ul>
+<p>默认情况下，command > file 将 stdout 重定向到 file，command &lt; file 将stdin 重定向到 file。</p>
+<h1 id="bash-和c语言">Bash 和C语言<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bash-和c语言" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Bash语言和C语言都是Linux下的常用语言。它们都能通过特定的语法来编写程序，而程序运行后都能实现某些功能。尽管在语法细节上存在差异，但两种语言都有以下语法：</p>
+<ul>
+<li>
+<p>变量：在内存中储存数据</p>
+</li>
+<li>
+<p>循环结构：重复执行代码块</p>
+</li>
+<li>
+<p>选择结构：根据条件执行代码块</p>
+</li>
+<li>
+<p>函数：复用代码块</p>
+</li>
+</ul>
+<p>Bash和C的相似性，也来自于它们共同遵守的编程范式——面向过程编程。支持面向过程编程的语言，一<strong>般都会提供类似于函数的代码封装方式</strong></p>
+<p>我们还应该注意到Bash和C程序的区别</p>
+<ul>
+<li>
+<p>Bash的变量只能是文本类型，C的变量却可以有整数、浮点数、字符等类型。</p>
+</li>
+<li>
+<p>Bash的很多功能，如加减乘除运算，都是调用其他程序实现的。而C直接就可以进行加减乘除运算。</p>
+</li>
+</ul>
+<p>**另一方面，Bash是一个Shell。它本质上是一个命令解释器程序，而不是编程语言。**用户可以通过命令行的方式，来调用该程序的某些功能。所谓的Bash编程，只是命令解释器程序提供的一种互动方法。Bash脚本只能和Bash进程互动。它不能像C语言一样，直接调用CPU的功能。因此，Bash能实现的功能会受限，运行速度上也比不上可执行文件。</p>
+<p>但另一反面，Bash脚本也有它的好处。 C语言能接触到很底层的东西，但使用起来也很复杂。有时候，即使你已经知道如何用C实现一个功能，写代码依然是一个很繁琐的过程。Bash正相反。<strong>由于Bash可以便捷地调用已有的程序，因此很多工作可以用数行的脚本解决</strong>。此外，Bash脚本不需要编辑，就可以由Bash进程理解并执行。因此，开发Bash脚本比写C程序要快很多。Linux的系统运维工作，如定期备份、文件系统管理等，就经常使用到Bash脚本。总之，Bash编程知识是晋级为资深Linux用户的必要条件。</p></article></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" id="toc" class><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="toc-content"><ul class="overflow"><li class="depth-0"><a href="#shell-综述" data-for="shell-综述">Shell 综述</a></li><li class="depth-0"><a href="#shell的选择" data-for="shell的选择">Shell的选择</a></li><li class="depth-0"><a href="#命令的选项和参数" data-for="命令的选项和参数">命令的选项和参数</a></li><li class="depth-0"><a href="#变量" data-for="变量">变量</a></li><li class="depth-1"><a href="#定义变量" data-for="定义变量">定义变量</a></li><li class="depth-1"><a href="#变量赋值" data-for="变量赋值">变量赋值</a></li><li class="depth-1"><a href="#引用变量" data-for="引用变量">引用变量</a></li><li class="depth-1"><a href="#删除变量" data-for="删除变量">删除变量</a></li><li class="depth-1"><a href="#变量类型" data-for="变量类型">变量类型</a></li><li class="depth-0"><a href="#字符串" data-for="字符串">字符串</a></li><li class="depth-1"><a href="#单引号" data-for="单引号">单引号</a></li><li class="depth-1"><a href="#双引号" data-for="双引号">双引号</a></li><li class="depth-0"><a href="#数组" data-for="数组">数组</a></li><li class="depth-1"><a href="#定义数组" data-for="定义数组">定义数组</a></li><li class="depth-1"><a href="#读取数组" data-for="读取数组">读取数组</a></li><li class="depth-1"><a href="#获取数组长度" data-for="获取数组长度">获取数组长度</a></li><li class="depth-1"><a href="#关联数组" data-for="关联数组">关联数组</a></li><li class="depth-0"><a href="#注释" data-for="注释">注释</a></li><li class="depth-1"><a href="#单行注释" data-for="单行注释">单行注释</a></li><li class="depth-0"><a href="#echo" data-for="echo">Echo</a></li><li class="depth-2"><a href="#显示普通字符串" data-for="显示普通字符串">显示普通字符串:</a></li><li class="depth-2"><a href="#显示转义字符" data-for="显示转义字符">显示转义字符</a></li><li class="depth-2"><a href="#显示变量" data-for="显示变量">显示变量</a></li><li class="depth-2"><a href="#显示换行" data-for="显示换行">显示换行</a></li><li class="depth-2"><a href="#显示不换行" data-for="显示不换行">显示不换行</a></li><li class="depth-2"><a href="#显示结果定向至文件" data-for="显示结果定向至文件">显示结果定向至文件</a></li><li class="depth-2"><a href="#原样输出字符串不进行转义或取变量用单引号" data-for="原样输出字符串不进行转义或取变量用单引号">原样输出字符串，不进行转义或取变量(用单引号)</a></li><li class="depth-2"><a href="#显示命令执行结果" data-for="显示命令执行结果">显示命令执行结果</a></li><li class="depth-0"><a href="#数学运算" data-for="数学运算">数学运算</a></li><li class="depth-0"><a href="#运算符-expr和表达式" data-for="运算符-expr和表达式">运算符-expr和**$((表达式))**</a></li><li class="depth-1"><a href="#算数运算符" data-for="算数运算符">算数运算符</a></li><li class="depth-1"><a href="#关系运算符" data-for="关系运算符">关系运算符</a></li><li class="depth-1"><a href="#布尔运算符" data-for="布尔运算符">布尔运算符</a></li><li class="depth-1"><a href="#逻辑运算符" data-for="逻辑运算符">逻辑运算符</a></li><li class="depth-1"><a href="#字符串运算符" data-for="字符串运算符">字符串运算符</a></li><li class="depth-1"><a href="#文件测试运算符" data-for="文件测试运算符">文件测试运算符</a></li><li class="depth-0"><a href="#返回代码" data-for="返回代码">返回代码</a></li><li class="depth-0"><a href="#bash-脚本" data-for="bash-脚本">Bash 脚本</a></li><li class="depth-1"><a href="#一个脚本例子" data-for="一个脚本例子">一个脚本例子</a></li><li class="depth-1"><a href="#脚本参数" data-for="脚本参数">脚本参数</a></li><li class="depth-1"><a href="#脚本的返回代码" data-for="脚本的返回代码">脚本的返回代码</a></li><li class="depth-1"><a href="#运行shell-脚本" data-for="运行shell-脚本">运行Shell 脚本</a></li><li class="depth-0"><a href="#函数" data-for="函数">函数</a></li><li class="depth-1"><a href="#函数参数" data-for="函数参数">函数参数</a></li><li class="depth-0"><a href="#跨脚本调用" data-for="跨脚本调用">跨脚本调用</a></li><li class="depth-0"><a href="#逻辑判断" data-for="逻辑判断">逻辑判断</a></li><li class="depth-1"><a href="#数值判断" data-for="数值判断">数值判断</a></li><li class="depth-2"><a href="#文本判断" data-for="文本判断">文本判断</a></li><li class="depth-1"><a href="#文件状态判断" data-for="文件状态判断">文件状态判断</a></li><li class="depth-1"><a href="#与或非" data-for="与或非">与或非</a></li><li class="depth-0"><a href="#选择结构" data-for="选择结构">选择结构</a></li><li class="depth-1"><a href="#if-fi" data-for="if-fi">if-fi</a></li><li class="depth-1"><a href="#if---else-fi" data-for="if---else-fi">if - else-fi</a></li><li class="depth-1"><a href="#case" data-for="case">case</a></li><li class="depth-1"><a href="#文本标签" data-for="文本标签">文本标签</a></li><li class="depth-0"><a href="#循环结构" data-for="循环结构">循环结构</a></li><li class="depth-1"><a href="#while" data-for="while">while</a></li><li class="depth-1"><a href="#for" data-for="for">for</a></li><li class="depth-1"><a href="#无限循环" data-for="无限循环">无限循环</a></li><li class="depth-1"><a href="#until-循环" data-for="until-循环">until 循环</a></li><li class="depth-1"><a href="#break" data-for="break">break</a></li><li class="depth-1"><a href="#continue" data-for="continue">continue</a></li><li class="depth-0"><a href="#输入输出重定向" data-for="输入输出重定向">输入输出重定向</a></li><li class="depth-0"><a href="#bash-和c语言" data-for="bash-和c语言">Bash 和C语言</a></li></ul></div></div><div class="backlinks"><h3>反向链接</h3><ul class="overflow"><li><a href="../" class="internal">index</a></li></ul></div><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div id="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false}"></div><svg version="1.1" id="global-graph-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+	s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+	c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+	C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+	c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+	v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+	s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+	C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+	S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+	s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+	s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></div><div id="global-graph-outer"><div id="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true}"></div></div></div></div></div><footer class><hr/><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.2.3</a> © 2024</p><ul><li><a href="https://github.com/googoo-s">GitHub</a></li></ul></footer></div></body><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">function c(){let t=this.parentElement;t.classList.toggle("is-collapsed");let l=t.classList.contains("is-collapsed")?this.scrollHeight:t.scrollHeight;t.style.maxHeight=l+"px";let o=t,e=t.parentElement;for(;e;){if(!e.classList.contains("callout"))return;let n=e.classList.contains("is-collapsed")?e.scrollHeight:e.scrollHeight+o.scrollHeight;e.style.maxHeight=n+"px",o=e,e=e.parentElement}}function i(){let t=document.getElementsByClassName("callout is-collapsible");for(let s of t){let l=s.firstElementChild;if(l){l.addEventListener("click",c),window.addCleanup(()=>l.removeEventListener("click",c));let e=s.classList.contains("is-collapsed")?l.scrollHeight:s.scrollHeight;s.style.maxHeight=e+"px"}}}document.addEventListener("nav",i);window.addEventListener("resize",i);
+</script><script type="module">
+          let mermaidImport = undefined
+          document.addEventListener('nav', async () => {
+            if (document.querySelector("code.mermaid")) {
+              mermaidImport ||= await import('https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs')
+              const mermaid = mermaidImport.default
+              const darkMode = document.documentElement.getAttribute('saved-theme') === 'dark'
+              mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: darkMode ? 'dark' : 'default'
+              })
+
+              await mermaid.run({
+                querySelector: '.mermaid'
+              })
+            }
+          });
+          </script><script src="../postscript.js" type="module"></script></html>
